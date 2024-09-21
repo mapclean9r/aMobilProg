@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -19,14 +18,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun LoginActivity(modifier: Modifier = Modifier) {
+fun RegisterActivity(modifier: Modifier = Modifier) {
 
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Welcome to Arena", fontSize = 28.sp, fontWeight = FontWeight.Bold)
+        Text(text = "Register Page", fontSize = 28.sp, fontWeight = FontWeight.Bold)
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -47,13 +46,13 @@ fun LoginActivity(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(20.dp))
 
         Button(onClick = {  }) {
-            Text(text = "Login")
+            Text(text = "Register")
         }
 
         Spacer(modifier = Modifier.height(10.dp))
 
         TextButton(onClick = { /*TODO*/ }) {
-            Text(text = "Don't have an account? Click to register")
+            Text(text = "Go to login page")
         }
     }
 
@@ -61,6 +60,6 @@ fun LoginActivity(modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-fun LoginActivityPreview() {
-    LoginActivity()
+fun RegisterActivityPreview() {
+    RegisterActivity()
 }
