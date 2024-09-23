@@ -21,6 +21,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.mobprog.data.printAllUsers
 
 @Composable
 fun LoginActivity(modifier: Modifier = Modifier) {
@@ -68,7 +69,7 @@ fun LoginActivity(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        TextButton(onClick = {  }) {
+        TextButton(onClick = { printAllUsers() }) {
             Text(text = "Don't have an account? Click to register")
         }
     }
