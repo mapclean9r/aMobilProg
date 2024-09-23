@@ -21,9 +21,11 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun RegisterActivity(modifier: Modifier = Modifier) {
+fun RegisterActivity(navController: NavController, modifier: Modifier = Modifier) {
 
     var usernameTextController by remember {
         mutableStateOf("")
@@ -68,7 +70,7 @@ fun RegisterActivity(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        TextButton(onClick = { /*TODO*/ }) {
+        TextButton(onClick = { navController.navigate("loginScreen") }) {
             Text(text = "Go to login page")
         }
     }
@@ -78,5 +80,5 @@ fun RegisterActivity(modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun RegisterActivityPreview() {
-    RegisterActivity()
+    RegisterActivity(navController = rememberNavController())
 }
