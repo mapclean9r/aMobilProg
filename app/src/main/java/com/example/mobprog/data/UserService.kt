@@ -27,6 +27,8 @@ import kotlinx.coroutines.tasks.await
             }
     }
 
+
+    //TODO Metoden under er ment for å hente en bruker basert på id, (beste hadde vært navn, men kan lage ny metode for det). Metoden fungerer ikke for øyeblikket
     suspend fun getUserWithId(id: String): DocumentSnapshot? {
         val db: FirebaseFirestore = FirebaseFirestore.getInstance()
         return try {
