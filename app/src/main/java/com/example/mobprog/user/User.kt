@@ -1,7 +1,10 @@
 package com.example.mobprog.user
 
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
 
-class ArenaUser(private var id: String = "", val name: String, var password: String) {
+
+class User(private var id: String = "", val name: String, var password: String) {
 
     constructor(name: String, password: String
     ): this("", name, password) {
