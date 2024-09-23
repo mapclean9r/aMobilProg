@@ -12,7 +12,7 @@ fun printAllUsers() {
         .get()
         .addOnSuccessListener { users ->
             for (user in users) {
-                println("userid: ${user.id}, username: ${user.get("username")}, Password: ${user.get("password")}",)
+                println("Userid: ${user.id}, Username: ${user.get("username")}, Password: ${user.get("password")}",)
             }
         }
         .addOnFailureListener { exception ->
