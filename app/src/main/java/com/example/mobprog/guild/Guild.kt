@@ -1,31 +1,37 @@
 package com.example.mobprog.guild
 
+import com.example.mobprog.createEvent.EventBase
 import com.example.mobprog.user.User
 
 class Guild (){
     private lateinit var name: String
     private lateinit var description: String
     private lateinit var picture: String
-
-    // change type to User
     private var guildMembers: ArrayList<User> = ArrayList()
-
-    //change type to Events
-    private var guildEvents: ArrayList<String> = ArrayList()
+    private var guildEvents: ArrayList<EventBase> = ArrayList()
 
     constructor(guildName: String, guildDescription: String, guildPicture: String) : this(){
         name = guildName
         description = guildDescription
         picture = guildPicture
+        //add user to guild and make owner (owner verification level) when created
     }
-    
+
     fun addGuildMember(user: User){
         guildMembers.add(user)
     }
 
-    // add param event
-    fun addEvent(){
-        guildEvents.add("")
+    fun addEvent(event: EventBase){
+        guildEvents.add(event)
+    }
+
+    fun deleteEvent(event: EventBase){
+        for (events in guildEvents){
+            if (event == events){
+                guildEvents.remove(event)
+                return
+            }
+        }
     }
 
     fun setPicture(newPicture: String){
@@ -52,7 +58,7 @@ class Guild (){
         return picture
     }
 
-    fun getEvents(): ArrayList<String> {
+    fun getEvents(): ArrayList<EventBase> {
         return guildEvents
     }
 
