@@ -21,6 +21,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.mobprog.user.User
 
 @Composable
 fun LoginActivity(modifier: Modifier = Modifier) {
@@ -62,7 +63,11 @@ fun LoginActivity(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Button(onClick = {  }) {
+        Button(onClick = {
+            if(passwordTextController.isNotBlank() && usernameTextController.isNotBlank()) {
+                val user = User(usernameTextController, passwordTextController);
+            }
+        }) {
             Text(text = "Login")
         }
 
@@ -71,6 +76,9 @@ fun LoginActivity(modifier: Modifier = Modifier) {
         TextButton(onClick = {  }) {
             Text(text = "Don't have an account? Click to register")
         }
+    }
+    if(passwordTextController.isNotBlank() && usernameTextController.isNotBlank()) {
+        val user = User(usernameTextController, passwordTextController);
     }
 
 }
