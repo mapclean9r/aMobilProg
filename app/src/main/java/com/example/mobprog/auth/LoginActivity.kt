@@ -77,9 +77,6 @@ fun LoginActivity(modifier: Modifier = Modifier) {
             Text(text = "Don't have an account? Click to register")
         }
     }
-    if(passwordTextController.isNotBlank() && usernameTextController.isNotBlank()) {
-        val user = User(usernameTextController, passwordTextController);
-    }
 
 }
 
