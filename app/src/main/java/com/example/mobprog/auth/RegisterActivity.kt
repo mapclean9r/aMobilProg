@@ -65,7 +65,11 @@ fun RegisterActivity(navController: NavController, modifier: Modifier = Modifier
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Button(onClick = { createUser(usernameTextController, passwordTextController) }) {
+        Button(onClick = {
+            createUser(usernameTextController, passwordTextController)
+            usernameTextController = ""
+            passwordTextController = ""
+        }) {
             Text(text = "Register")
         }
 

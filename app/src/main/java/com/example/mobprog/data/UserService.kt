@@ -6,9 +6,7 @@ import com.example.mobprog.user.User
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
-import kotlinx.coroutines.tasks.await
 
     fun printAllUsers() {
         val db = Firebase.firestore
