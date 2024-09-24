@@ -43,3 +43,19 @@ fun createUser(username: String, passoword: String) {
         .addOnSuccessListener { Log.d(TAG, "User created!") }
         .addOnFailureListener { e -> Log.w(TAG, "Error, cannot create user: ", e) }
 }
+
+fun checkIfUserExists(input: String) {
+    val db = Firebase.firestore
+    db.collection("users")
+        .whereEqualTo("username", input)
+        .get()
+        .addOnSuccessListener { docs ->
+            for (doc in docs) {
+                Log.d(TAG, "${doc.id} => ${doc.data}")
+            }
+            return true
+        }
+        .addOnFailureListener { e ->
+            Log.w(TAG, "Error, could not find user: ", e)
+        }
+}
