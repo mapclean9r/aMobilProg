@@ -23,7 +23,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.mobprog.data.createUser
 import com.example.mobprog.data.getUserWithId
+import com.example.mobprog.data.printAllUsers
 
 @Composable
 fun LoginActivity(navController: NavController, modifier: Modifier = Modifier) {
@@ -65,7 +67,7 @@ fun LoginActivity(navController: NavController, modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Button(onClick = {  }) {
+        Button(onClick = { }) {
             Text(text = "Login")
         }
 
