@@ -69,8 +69,6 @@ fun LoginActivity(navController: NavController, modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(20.dp))
 
         Button(onClick = {
-            var g = Guild("abc", "123", "123")
-            UserService().sendData(g)
         }) {
             Text(text = "Login")
         }
