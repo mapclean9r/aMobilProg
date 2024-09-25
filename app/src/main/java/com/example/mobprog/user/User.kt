@@ -1,29 +1,21 @@
 package com.example.mobprog.user
 
 
-class User(
-
-    private val username: String,
-    private var password: String,
-    private var isOnline: Boolean = false) {
+class User(private val username: String, private var password: String) {
 
     private val friends = ArrayList<User>()
     private var nickname = ""
-
-
-    constructor(username: String, password: String
-    ): this(username, password, isOnline = false)
 
     fun getName() : String {
         return nickname.ifBlank { username }
     }
 
-    fun isOnline() : Boolean {
-        return isOnline;
-    }
-
     fun getFriends() : ArrayList<User> {
         return friends
+    }
+
+    fun getPassword() : String {
+        return password
     }
 
     fun addFriend(user: User) : User {
@@ -31,6 +23,7 @@ class User(
         // TODO add friend to DB
         return this
     }
+
 
     fun removeFriend(user: User) : User {
         friends.remove(user)

@@ -37,9 +37,10 @@ fun getUserWithId(id: String): Task<DocumentSnapshot> {
 }
 
 fun createUser(username: String, password: String) {
+    val user = User(username, password)
     val db = Firebase.firestore
     db.collection("users")
-        .add(User(username, password))
+        .add(user)
         .addOnSuccessListener { Log.d(TAG, "User created!") }
         .addOnFailureListener { e -> Log.w(TAG, "Error, cannot create user: ", e) }
 }
