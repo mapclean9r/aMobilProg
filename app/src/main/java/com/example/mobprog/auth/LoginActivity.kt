@@ -30,12 +30,13 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlin.concurrent.timerTask
 
-private fun login(email: String, password: String) {
+private fun login(navController: NavController, email: String, password: String) {
     val auth = Firebase.auth;
     auth.signInWithEmailAndPassword(email, password)
         .addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val user = auth.currentUser
+                navController.navigate("homeScreen")
             }
         }
 }
@@ -82,7 +83,7 @@ private fun login(email: String, password: String) {
             Spacer(modifier = Modifier.height(20.dp))
 
             Button(onClick = {
-                login(emailTextController, passwordTextController)
+                login(navController, emailTextController, passwordTextController)
             }) {
                 Text(text = "Login")
             }

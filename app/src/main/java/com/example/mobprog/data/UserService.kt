@@ -7,15 +7,11 @@ import com.example.mobprog.user.User
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.firestore
 
 class UserService {
     private val db = Firebase.firestore
     private lateinit var userName: String
-
-
-
 
     fun getUsername(user: String) : String {
         return "e"
@@ -42,8 +38,8 @@ class UserService {
             }
     }
 
-    fun createUser(email: String, name: String, password: String) {
-        val user = User(email, name, password)
+    fun createUser(email: String, username: String, password: String) {
+        val user = User(email, username, password)
         db.collection("users")
             .add(user)
             .addOnSuccessListener { Log.d(TAG, "User created!") }

@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.mobprog.auth.LoginActivity
 import com.example.mobprog.auth.RegisterActivity
+import com.example.mobprog.home.HomeActivity
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,6 +31,9 @@ fun Arena() {
         }
         composable("registerScreen") { 
             RegisterActivity(navController = navController)
+        }
+        composable("homeScreen") {
+            HomeActivity(navController = navController)
         }
     }
 }
