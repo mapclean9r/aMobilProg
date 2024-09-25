@@ -24,10 +24,14 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobprog.data.UserService
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+
 
 @Composable
 fun RegisterActivity(navController: NavController, modifier: Modifier = Modifier) {
     val userService = UserService();
+    val auth = Firebase.auth;
 
     var emailTextController by remember {
         mutableStateOf("")
@@ -80,7 +84,8 @@ fun RegisterActivity(navController: NavController, modifier: Modifier = Modifier
 
         Button(onClick = {
             userService.createUser(emailTextController, usernameTextController, passwordTextController)
-            //firebaseAuth.onCreate(emailTextController, passwordTextController, null)
+            auth.createUserWithEmailAndPassword(emailTextController, passwordTextController)
+
             emailTextController = ""
             usernameTextController = ""
             passwordTextController = ""
