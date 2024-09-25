@@ -1,8 +1,5 @@
 package com.example.mobprog.auth
 
-import android.service.controls.ControlsProviderService.TAG
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -35,7 +32,6 @@ private fun login(navController: NavController, email: String, password: String)
     auth.signInWithEmailAndPassword(email, password)
         .addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                val user = auth.currentUser
                 navController.navigate("homeScreen")
             }
         }
