@@ -2,10 +2,12 @@ package com.example.mobprog.data
 
 import android.content.ContentValues.TAG
 import android.util.Log
+import com.example.mobprog.guild.Guild
 import com.example.mobprog.user.User
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.firestore
 
 class UserService {
@@ -88,4 +90,10 @@ class UserService {
             }
 
     }
+
+    fun sendData(guild: Guild) {
+        db.collection("guild-events")
+            .add(guild)
+    }
+
 }

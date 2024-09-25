@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobprog.data.UserService
+import com.example.mobprog.guild.Guild
 import com.example.mobprog.user.User
 
 @Composable
@@ -68,7 +69,8 @@ fun LoginActivity(navController: NavController, modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(20.dp))
 
         Button(onClick = {
-
+            var g = Guild("abc", "123", "123")
+            UserService().sendData(g)
         }) {
             Text(text = "Login")
         }
