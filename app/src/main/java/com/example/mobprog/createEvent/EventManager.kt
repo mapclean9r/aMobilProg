@@ -15,8 +15,24 @@ class EventManager() {
             }
         }
     }
-    
+
     fun getEvents() : ArrayList<EventBase>{
         return eventCollector
+    }
+
+    fun sendDataGuild(){
+        //sender data til Guild -> Eventmanager[Event]
+    }
+
+    fun sendDataUser(){
+        //sender data til User -> Eventmanager[Event]
+    }
+
+    fun getDataUser(){
+        //henter data fra User -> Eventmanager[Event]
+    }
+
+    fun getDataGuild(){
+        //hunter data fra Guild -> Eventmanager[Event]
     }
 }
