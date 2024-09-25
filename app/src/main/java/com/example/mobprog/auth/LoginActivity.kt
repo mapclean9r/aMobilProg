@@ -23,10 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.mobprog.data.checkIfUserExists
-import com.example.mobprog.data.createUser
-import com.example.mobprog.data.getUserWithId
-import com.example.mobprog.data.printAllUsers
+import com.example.mobprog.data.checkIfUsernameAndPasswordIsCorrect
 
 @Composable
 fun LoginActivity(navController: NavController, modifier: Modifier = Modifier) {
@@ -68,16 +65,14 @@ fun LoginActivity(navController: NavController, modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Button(onClick = 
-            {  userExist ->
-                if (userExist) {
+        Button(onClick = {
+                if (checkIfUsernameAndPasswordIsCorrect(usernameTextController, passwordTextController)) {
                     println("Field matches! Do something.")
                     // Her kan du oppdatere UI, vise en melding, etc.
                 } else {
                     println("Field does not match. Handle accordingly.")
                     // Her kan du håndtere at verdien ikke matcher.
                 }
-            }
         }) {
             Text(text = "Login")
         }

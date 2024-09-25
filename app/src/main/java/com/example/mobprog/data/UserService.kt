@@ -8,7 +8,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.firestore
 
-    fun printAllUsers() {
+fun printAllUsers() {
         val db = Firebase.firestore
         val allUsersRef = db.collection("users")
 
@@ -36,15 +36,15 @@ fun getUserWithId(id: String): Task<DocumentSnapshot> {
     return userRef;
 }
 
-fun createUser(username: String, passoword: String) {
+fun createUser(username: String, password: String) {
     val db = Firebase.firestore
     db.collection("users")
-        .add(User(username, passoword))
+        .add(User(username, password))
         .addOnSuccessListener { Log.d(TAG, "User created!") }
         .addOnFailureListener { e -> Log.w(TAG, "Error, cannot create user: ", e) }
 }
 
-fun checkIfUserExists(input: String) {
+fun getUserByUsername(input: String) {
     val db = Firebase.firestore
     db.collection("users")
         .whereEqualTo("username", input)
@@ -53,9 +53,34 @@ fun checkIfUserExists(input: String) {
             for (doc in docs) {
                 Log.d(TAG, "${doc.id} => ${doc.data}")
             }
-            return true
         }
         .addOnFailureListener { e ->
             Log.w(TAG, "Error, could not find user: ", e)
         }
+}
+
+fun checkIfUsernameAndPasswordIsCorrect(inputUsername: String, inputPassword: String): Boolean {
+    val db = Firebase.firestore
+    var correctUser = false
+    db.collection("users")
+        .get()
+        .addOnSuccessListener { docs ->
+            for (document in docs) {
+                val usernameField = document.getString("username")
+                val passwordField = document.getString("password")
+
+                if (usernameField == inputUsername && passwordField == inputPassword) {
+                    println("Found a match in document ID: ${document.id}")
+                    correctUser = true
+                    break
+                }
+            }
+            if (!correctUser) {
+                println("No document found with matching field value.")
+            }
+        }
+        .addOnFailureListener { exception ->
+            println("Error getting documents: $exception")
+        }
+    return correctUser;
 }
