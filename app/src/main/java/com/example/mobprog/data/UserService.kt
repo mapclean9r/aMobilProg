@@ -8,8 +8,18 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.firestore
 
-fun printAllUsers() {
-        val db = Firebase.firestore
+class UserService {
+    private val db = Firebase.firestore
+    private lateinit var userName: String
+
+
+
+
+    fun getUsername(user: String) : String {
+        return "e"
+    }
+
+    fun printAllUsers() {
         val allUsersRef = db.collection("users")
 
         allUsersRef
@@ -17,7 +27,7 @@ fun printAllUsers() {
             .addOnSuccessListener { users ->
                 for (user in users) {
                     println(
-                        "Userid: ${user.id}, Username: ${user.get("username")}, Password: ${
+                        "Userid: ${user.id}, Username: ${user.get("name")}, Password: ${
                             user.get(
                                 "password"
                             )
@@ -30,58 +40,52 @@ fun printAllUsers() {
             }
     }
 
-fun getUserWithId(id: String): Task<DocumentSnapshot> {
-    val db = Firebase.firestore
-    val userRef = db.collection("users").document(id).get()
-    return userRef;
-}
+    fun createUser(email: String, name: String, password: String) {
+        val user = User(email, name, password)
+        db.collection("users")
+            .add(user)
+            .addOnSuccessListener { Log.d(TAG, "User created!") }
+            .addOnFailureListener { e -> Log.w(TAG, "Error, cannot create user: ", e) }
+    }
 
-fun createUser(username: String, password: String) {
-    val user = User(username, password)
-    val db = Firebase.firestore
-    db.collection("users")
-        .add(user)
-        .addOnSuccessListener { Log.d(TAG, "User created!") }
-        .addOnFailureListener { e -> Log.w(TAG, "Error, cannot create user: ", e) }
-}
+    fun getUserWithId(id: String): Task<DocumentSnapshot> {
+        val userRef = db.collection("users").document(id).get()
+        return userRef;
+    }
 
-fun getUserByUsername(input: String) {
-    val db = Firebase.firestore
-    db.collection("users")
-        .whereEqualTo("username", input)
-        .get()
-        .addOnSuccessListener { docs ->
-            for (doc in docs) {
-                Log.d(TAG, "${doc.id} => ${doc.data}")
-            }
-        }
-        .addOnFailureListener { e ->
-            Log.w(TAG, "Error, could not find user: ", e)
-        }
-}
-
-fun checkIfUsernameAndPasswordIsCorrect(inputUsername: String, inputPassword: String): Boolean {
-    val db = Firebase.firestore
-    var correctUser = false
-    db.collection("users")
-        .get()
-        .addOnSuccessListener { docs ->
-            for (document in docs) {
-                val usernameField = document.getString("username")
-                val passwordField = document.getString("password")
-
-                if (usernameField == inputUsername && passwordField == inputPassword) {
-                    println("Found a match in document ID: ${document.id}")
-                    correctUser = true
-                    break
+    fun getUserByUsername(input: String) {
+        db.collection("users")
+            .whereEqualTo("name", input)
+            .get()
+            .addOnSuccessListener { docs ->
+                for (doc in docs) {
+                    Log.d(TAG, "${doc.id} => ${doc.data}")
                 }
             }
-            if (!correctUser) {
-                println("No document found with matching field value.")
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error, could not find user: ", e)
             }
-        }
-        .addOnFailureListener { exception ->
-            println("Error getting documents: $exception")
-        }
-    return correctUser;
+    }
+
+    fun loginAuthCheck(inputUsername: String, inputPassword: String) {
+        db.collection("users")
+            .get()
+            .addOnSuccessListener { doc ->
+                for (field in doc) {
+                    val usernameField = field.getString("name")
+                    val passwordField = field.getString("password")
+                    println(usernameField)
+                    println(passwordField)
+
+                    if (usernameField == inputUsername && passwordField == inputPassword) {
+
+                        println("Found a match in document ID: ${field.id}")
+                    }
+                }
+            }
+            .addOnFailureListener { e ->
+                println("Error getting documents: $e")
+            }
+
+    }
 }

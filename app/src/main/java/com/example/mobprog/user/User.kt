@@ -1,12 +1,17 @@
 package com.example.mobprog.user
 
 
-class User(private val username: String, private var password: String) {
+class User(private val email: String, private val username: String, private var password: String) {
 
     private val friends = ArrayList<User>()
     private var nickname = ""
 
-    fun getName() : String {
+
+    fun getEmail() : String {
+        return email
+    }
+
+    fun getUsername() : String {
         return nickname.ifBlank { username }
     }
 

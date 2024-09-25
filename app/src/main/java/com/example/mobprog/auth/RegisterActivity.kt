@@ -23,10 +23,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.mobprog.data.createUser
+import com.example.mobprog.data.UserService
 
 @Composable
 fun RegisterActivity(navController: NavController, modifier: Modifier = Modifier) {
+    val userService = UserService();
+
+    var emailTextController by remember {
+        mutableStateOf("")
+    }
 
     var usernameTextController by remember {
         mutableStateOf("")
@@ -45,7 +50,15 @@ fun RegisterActivity(navController: NavController, modifier: Modifier = Modifier
 
         Spacer(modifier = Modifier.height(28.dp))
 
-        Text(text = "Enter username and password", fontSize = 16.sp)
+        Text(text = "Enter email, username and password", fontSize = 16.sp)
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        OutlinedTextField(value = emailTextController, onValueChange = {
+            emailTextController = it
+        }, label = {
+            Text(text = "Email")
+        })
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -66,7 +79,9 @@ fun RegisterActivity(navController: NavController, modifier: Modifier = Modifier
         Spacer(modifier = Modifier.height(20.dp))
 
         Button(onClick = {
-            createUser(usernameTextController, passwordTextController)
+            userService.createUser(emailTextController, usernameTextController, passwordTextController)
+            //firebaseAuth.onCreate(emailTextController, passwordTextController, null)
+            emailTextController = ""
             usernameTextController = ""
             passwordTextController = ""
         }) {

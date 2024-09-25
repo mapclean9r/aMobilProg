@@ -23,12 +23,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.mobprog.data.checkIfUsernameAndPasswordIsCorrect
+import com.example.mobprog.data.UserService
+import com.example.mobprog.user.User
 
 @Composable
 fun LoginActivity(navController: NavController, modifier: Modifier = Modifier) {
+    val userService = UserService();
 
-    var usernameTextController by remember {
+    var emailTextController by remember {
         mutableStateOf("")
     }
 
@@ -45,14 +47,14 @@ fun LoginActivity(navController: NavController, modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(28.dp))
 
-        Text(text = "Enter username and password", fontSize = 16.sp)
+        Text(text = "Enter email and password", fontSize = 16.sp)
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        OutlinedTextField(value = usernameTextController, onValueChange = {
-            usernameTextController = it
+        OutlinedTextField(value = emailTextController, onValueChange = {
+            emailTextController = it
         }, label = {
-            Text(text = "Username")
+            Text(text = "Email")
         })
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -66,13 +68,7 @@ fun LoginActivity(navController: NavController, modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(20.dp))
 
         Button(onClick = {
-                if (checkIfUsernameAndPasswordIsCorrect(usernameTextController, passwordTextController)) {
-                    println("Field matches! Do something.")
-                    // Her kan du oppdatere UI, vise en melding, etc.
-                } else {
-                    println("Field does not match. Handle accordingly.")
-                    // Her kan du håndtere at verdien ikke matcher.
-                }
+
         }) {
             Text(text = "Login")
         }
