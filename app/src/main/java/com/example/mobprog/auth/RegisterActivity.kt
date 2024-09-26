@@ -88,8 +88,8 @@ fun RegisterActivity(navController: NavController, modifier: Modifier = Modifier
         Button(onClick = {
             userService.createUser(emailTextController, usernameTextController, passwordTextController)
             auth.createUserWithEmailAndPassword(emailTextController, passwordTextController)
-            //GuildService().registerEventsToGuild(Guild("bigBoys", "dragon hunters", "no picture"))
-            //GuildService().registerEvent(EventBase("bigboy", 5, "chu"))
+            GuildService().registerEventsToGuild(Guild("bigBoys", "dragon hunters", "no picture"))
+            GuildService().registerEvent(EventBase("bigboy", 5, "chu"))
 
             emailTextController = ""
             usernameTextController = ""

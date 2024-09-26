@@ -9,6 +9,8 @@ class EventBase(private var eventName: String, private var eventMaxAttendance: I
 
     //Update datatype when added
     private var price: String = "-1"
+    private var location: String = "N/A"
+    private var eventStartDate: String = "N/A"
 
     fun addComment(user: User, comment: String){
         eventComments.add(EventComment(user, comment))
@@ -16,6 +18,14 @@ class EventBase(private var eventName: String, private var eventMaxAttendance: I
 
     fun addGame(game: String){
         eventGames.add(game)
+    }
+
+    fun addLocation(newLocation: String){
+        location = newLocation
+    }
+
+    fun addEventStartDate(newDate: String){
+        eventStartDate = newDate;
     }
 
     fun deleteGame(game: String){
@@ -52,6 +62,14 @@ class EventBase(private var eventName: String, private var eventMaxAttendance: I
 
     fun getParticipants(): ArrayList<User> {
         return currentAttenders
+    }
+
+    fun getLocation(): String{
+        return location
+    }
+
+    fun getStartDate(): String{
+        return eventStartDate
     }
 
 
