@@ -40,10 +40,15 @@ class UserService {
 
     fun createUser(email: String, username: String, password: String) {
         val user = User(email, username, password)
-        db.collection("users")
-            .add(user)
-            .addOnSuccessListener { Log.d(TAG, "User created!") }
-            .addOnFailureListener { e -> Log.w(TAG, "Error, cannot create user: ", e) }
+        val userRef = db.collection("users")
+        val query = userRef.whereEqualTo("email", email).get()
+
+        if (query.result != null) {
+            db.collection("users")
+                .add(user)
+                .addOnSuccessListener { Log.d(TAG, "User created!") }
+                .addOnFailureListener { e -> Log.w(TAG, "Error, cannot create user: ", e) }
+        }
     }
 
     fun getUserWithId(id: String): Task<DocumentSnapshot> {
