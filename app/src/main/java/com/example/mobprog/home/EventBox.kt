@@ -44,7 +44,7 @@ fun EventBox(eventBase: EventBase) {
             fontWeight = FontWeight.SemiBold
         )
         Text(
-            text = "Free",
+            text = eventBase.getPrice(),
             fontSize = 16.sp,
             fontWeight = FontWeight.W400
         )
