@@ -23,7 +23,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.mobprog.createEvent.EventBase
+import com.example.mobprog.data.GuildService
 import com.example.mobprog.data.UserService
+import com.example.mobprog.guild.Guild
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -93,6 +96,7 @@ fun RegisterActivity(navController: NavController, modifier: Modifier = Modifier
                     println("Email not found")
                 }
             }
+
         }) {
             Text(text = "Register")
         }
