@@ -2,6 +2,7 @@ package com.example.mobprog.guild
 
 import com.example.mobprog.createEvent.EventBase
 import com.example.mobprog.user.User
+import java.io.Serializable
 
 class Guild (){
     private lateinit var name: String
@@ -9,6 +10,7 @@ class Guild (){
     private lateinit var picture: String
     private var guildMembers: ArrayList<User> = ArrayList()
     private var guildEvents: ArrayList<EventBase> = ArrayList()
+
 
     constructor(guildName: String, guildDescription: String, guildPicture: String) : this(){
         name = guildName
@@ -65,5 +67,6 @@ class Guild (){
     fun getMembers(): ArrayList<User> {
         return guildMembers
     }
+
 
 }
