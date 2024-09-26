@@ -8,7 +8,7 @@ class EventManager() {
 
     private var eventCollector: ArrayList<EventBase> = ArrayList()
 
-    private var userDB = UserService();
+    private var guildDB = GuildService();
 
     fun addEvent(event: EventBase){
         eventCollector.add(event)
@@ -28,7 +28,7 @@ class EventManager() {
 
     fun sendDataGuild(guild: Guild){
         //sender data til Guild -> Eventmanager[Event]
-        userDB.sendData(guild)
+        guildDB.registerEventsToGuild(guild)
     }
 
     fun sendDataUser(){
