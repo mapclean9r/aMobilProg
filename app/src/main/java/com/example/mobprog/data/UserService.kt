@@ -1,17 +1,18 @@
 package com.example.mobprog.data
 
-import android.content.ContentValues.TAG
 import android.util.Log
 import com.example.mobprog.guild.Guild
 import com.example.mobprog.user.User
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.firestore
 
 class UserService {
     private val db = Firebase.firestore
     private lateinit var userName: String
+    val auth = Firebase.auth
 
     fun getUsername(user: String) : String {
         return "e"
@@ -40,22 +41,8 @@ class UserService {
 
     fun createUser(email: String, username: String, password: String) {
         val newUser = User(email, username, password)
-        var emailField: String?
         db.collection("users")
-            .whereEqualTo("email", email)
-            .get()
-            .addOnSuccessListener { doc ->
-                for (field in doc) {
-                    emailField = field.getString("email")
-                    if (emailField.isNullOrEmpty()) {
-                        db.collection("users")
-                            .add(newUser)
-                            .addOnSuccessListener { Log.d(TAG, "User created!") }
-                            .addOnFailureListener { e -> Log.w(TAG, "Error, cannot create user: ", e) }
-
-                    }
-                }
-            }
+            .add(newUser)
     }
 
     fun getUserWithId(id: String): Task<DocumentSnapshot> {
@@ -69,26 +56,26 @@ class UserService {
             .get()
     }
 
-    fun loginAuthCheck(inputUsername: String, inputPassword: String) {
+    fun getEmailFromUserIfExists(inputEmail: String) {
         db.collection("users")
             .get()
-            .addOnSuccessListener { doc ->
-                for (field in doc) {
-                    val usernameField = field.getString("name")
-                    val passwordField = field.getString("password")
-                    println(usernameField)
-                    println(passwordField)
+            .addOnSuccessListener { users ->
+                for (user in users) {
 
-                    if (usernameField == inputUsername && passwordField == inputPassword) {
-
-                        println("Found a match in document ID: ${field.id}")
+                    val emailField = user.getString("email")
+                    if (emailField != null) {
+                        println("Field Value: ")
+                        println(emailField)
+                        return@addOnSuccessListener
                     }
                 }
+                println("could not find email")
             }
-            .addOnFailureListener { e ->
-                println("Error getting documents: $e")
-            }
+    }
 
+
+    fun loginAuthCheck(inputEmail: String, inputPassword: String) {
+        var existingUser = getUserByEmail(inputEmail)
     }
 
     fun sendData(guild: Guild) {

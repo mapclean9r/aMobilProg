@@ -83,8 +83,9 @@ fun RegisterActivity(navController: NavController, modifier: Modifier = Modifier
         Spacer(modifier = Modifier.height(20.dp))
 
         Button(onClick = {
-            userService.createUser(emailTextController, usernameTextController, passwordTextController)
-            auth.createUserWithEmailAndPassword(emailTextController, passwordTextController)
+            userService.getEmailFromUserIfExists("lol")
+            //userService.createUser(emailTextController, usernameTextController, passwordTextController)
+            //auth.createUserWithEmailAndPassword(emailTextController, passwordTextController)
 
             emailTextController = ""
             usernameTextController = ""
