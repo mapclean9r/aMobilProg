@@ -11,6 +11,7 @@ class EventBase(private var eventName: String, private var eventMaxAttendance: I
     private var price: String = "-1"
     private var location: String = "N/A"
     private var eventStartDate: String = "N/A"
+    private var host: String = "N/A"
 
     fun addComment(user: User, comment: String){
         eventComments.add(EventComment(user, comment))
@@ -35,6 +36,10 @@ class EventBase(private var eventName: String, private var eventMaxAttendance: I
                 return
             }
         }
+    }
+
+    fun setHost(newHost: String){
+        host = newHost
     }
 
     fun addParticipants(user: User){
@@ -72,6 +77,9 @@ class EventBase(private var eventName: String, private var eventMaxAttendance: I
         return eventStartDate
     }
 
+    fun getHost(): String {
+        return host
+    }
 
     fun getPrice(): String {
         if (price == "-1"){
