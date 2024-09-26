@@ -8,14 +8,14 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.mobprog.auth.LoginActivity
-import com.example.mobprog.auth.RegisterActivity
-import com.example.mobprog.createEvent.CreateEventActivity
-import com.example.mobprog.friends.FriendsActivity
-import com.example.mobprog.guild.GuildActivity
-import com.example.mobprog.home.HomeActivity
-import com.example.mobprog.profile.NotificationActivity
-import com.example.mobprog.profile.ProfileActivity
+import com.example.mobprog.gui.LoginActivity
+import com.example.mobprog.gui.RegisterActivity
+import com.example.mobprog.gui.CreateEventActivity
+import com.example.mobprog.gui.FriendsActivity
+import com.example.mobprog.gui.GuildActivity
+import com.example.mobprog.gui.HomeActivity
+import com.example.mobprog.gui.NotificationActivity
+import com.example.mobprog.gui.ProfileActivity
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -1,12 +1,8 @@
-package com.example.mobprog.home
+package com.example.mobprog.gui
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,19 +33,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.mobprog.R
 import com.example.mobprog.createEvent.EventBase
-import com.example.mobprog.createEvent.EventComment
 import com.example.mobprog.createEvent.EventManager
 import com.example.mobprog.data.NavigationBarItem
+import com.example.mobprog.home.EventBox
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -66,6 +59,12 @@ fun HomeActivity(navController: NavController, modifier: Modifier = Modifier) {
         mutableIntStateOf(0);
     }
 
+    var dummy = listOf(
+            EventBase("League Lan", 8, ""),
+            EventBase("Rocket League Fiesta", 12, ""),
+            EventBase("Justice League Party", 1337, ""),
+            )
+
     var events = EventManager().getEvents().toList()
 
     Scaffold(
@@ -74,8 +73,8 @@ fun HomeActivity(navController: NavController, modifier: Modifier = Modifier) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp)
-                    .padding(bottom = 10.dp)
+                    .height(88.dp)
+                    .padding(bottom = 10.dp, top = 24.dp)
                     .background(MaterialTheme.colorScheme.primary),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -93,7 +92,7 @@ fun HomeActivity(navController: NavController, modifier: Modifier = Modifier) {
                     fontWeight = FontWeight.Bold,
                     color = Color.White
                 )
-                IconButton(onClick = { /* TODO */ }) {
+                IconButton(onClick = { navController.navigate("profileScreen") }) {
                     Icon(
                         imageVector = Icons.Default.AccountCircle,
                         contentDescription = "Profile Icon",
@@ -109,7 +108,7 @@ fun HomeActivity(navController: NavController, modifier: Modifier = Modifier) {
                     .padding(paddingValues)
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
-                items(events) { event ->
+                items(dummy) { event ->
                     EventBox(eventBase = event)
                     Spacer(modifier = Modifier.height(16.dp))
                 }

@@ -1,4 +1,4 @@
-package com.example.mobprog.auth
+package com.example.mobprog.gui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
