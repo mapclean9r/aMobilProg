@@ -39,16 +39,23 @@ class UserService {
     }
 
     fun createUser(email: String, username: String, password: String) {
-        val user = User(email, username, password)
-        val userRef = db.collection("users")
-        val query = userRef.whereEqualTo("email", email).get()
+        val newUser = User(email, username, password)
+        var emailField: String?
+        db.collection("users")
+            .whereEqualTo("email", email)
+            .get()
+            .addOnSuccessListener { doc ->
+                for (field in doc) {
+                    emailField = field.getString("email")
+                    if (emailField.isNullOrEmpty()) {
+                        db.collection("users")
+                            .add(newUser)
+                            .addOnSuccessListener { Log.d(TAG, "User created!") }
+                            .addOnFailureListener { e -> Log.w(TAG, "Error, cannot create user: ", e) }
 
-        if (query.result != null) {
-            db.collection("users")
-                .add(user)
-                .addOnSuccessListener { Log.d(TAG, "User created!") }
-                .addOnFailureListener { e -> Log.w(TAG, "Error, cannot create user: ", e) }
-        }
+                    }
+                }
+            }
     }
 
     fun getUserWithId(id: String): Task<DocumentSnapshot> {
@@ -60,14 +67,6 @@ class UserService {
         db.collection("users")
             .whereEqualTo("email", inputEmail)
             .get()
-            .addOnSuccessListener { docs ->
-                for (doc in docs) {
-                    Log.d(TAG, "${doc.id} => ${doc.data}")
-                }
-            }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "Error, could not find user: ", e)
-            }
     }
 
     fun loginAuthCheck(inputUsername: String, inputPassword: String) {
