@@ -23,11 +23,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.mobprog.data.UserService
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import kotlin.concurrent.timerTask
 
 private fun login(navController: NavController, email: String, password: String) {
+
     val auth = Firebase.auth;
     auth.signInWithEmailAndPassword(email, password)
         .addOnCompleteListener { task ->
@@ -39,7 +40,6 @@ private fun login(navController: NavController, email: String, password: String)
 
     @Composable
     fun LoginActivity(navController: NavController, modifier: Modifier = Modifier) {
-
 
         var emailTextController by remember {
             mutableStateOf("")

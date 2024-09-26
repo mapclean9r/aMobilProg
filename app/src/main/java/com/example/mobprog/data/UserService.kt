@@ -51,9 +51,9 @@ class UserService {
         return userRef;
     }
 
-    fun getUserByUsername(input: String) {
+    fun getUserByEmail(inputEmail: String) {
         db.collection("users")
-            .whereEqualTo("name", input)
+            .whereEqualTo("email", inputEmail)
             .get()
             .addOnSuccessListener { docs ->
                 for (doc in docs) {
@@ -88,7 +88,7 @@ class UserService {
     }
 
     fun sendData(guild: Guild) {
-        db.collection("guild-events")
+        db.collection("guild")
             .add(guild)
     }
 
