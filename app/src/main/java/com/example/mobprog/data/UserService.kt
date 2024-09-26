@@ -88,7 +88,7 @@ class UserService {
     }
 
     fun sendData(guild: Guild) {
-        db.collection("guild-events")
+        db.collection("guild")
             .add(guild)
     }
 
