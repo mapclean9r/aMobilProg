@@ -56,20 +56,20 @@ class UserService {
             .get()
     }
 
-    fun getEmailFromUserIfExists(inputEmail: String) {
+    fun getEmailFromUserIfExists(inputEmail: String, callback: (String?) -> Unit) {
+        var emailField: String? = null
+
         db.collection("users")
             .get()
             .addOnSuccessListener { users ->
                 for (user in users) {
-
-                    val emailField = user.getString("email")
-                    if (emailField != null) {
-                        println("Field Value: ")
-                        println(emailField)
-                        return@addOnSuccessListener
+                    val email = user.getString("email")
+                    if (email != null && email == inputEmail) {
+                        emailField = email
+                        break
                     }
                 }
-                println("could not find email")
+                callback(emailField)
             }
     }
 

@@ -83,13 +83,16 @@ fun RegisterActivity(navController: NavController, modifier: Modifier = Modifier
         Spacer(modifier = Modifier.height(20.dp))
 
         Button(onClick = {
-            userService.getEmailFromUserIfExists("lol")
-            //userService.createUser(emailTextController, usernameTextController, passwordTextController)
-            //auth.createUserWithEmailAndPassword(emailTextController, passwordTextController)
-
-            emailTextController = ""
-            usernameTextController = ""
-            passwordTextController = ""
+            userService.getEmailFromUserIfExists(emailTextController) { email ->
+                if (email == null) {
+                    userService.createUser(emailTextController, usernameTextController, passwordTextController)
+                    emailTextController = ""
+                    usernameTextController = ""
+                    passwordTextController = ""
+                } else {
+                    println("Email not found")
+                }
+            }
         }) {
             Text(text = "Register")
         }
