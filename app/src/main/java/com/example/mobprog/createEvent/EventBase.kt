@@ -3,13 +3,15 @@ package com.example.mobprog.createEvent
 import com.example.mobprog.user.User
 
 class EventBase(private var eventName: String, private var eventMaxAttendance: Int, private var eventPicture: String) {
-    private var eventComments: ArrayList<EventComment> = ArrayList()
-    private var currentAttenders: ArrayList<User> = ArrayList()
-    private var eventGames: ArrayList<String> = ArrayList()
+    private val eventComments = ArrayList<EventComment>()
+    private val currentAttenders = ArrayList<User>()
+    private val eventGames = ArrayList<String>()
 
     //Update datatype when added
-    private lateinit var eventLocation: String
     private var price: String = "-1"
+    private var location: String = "N/A"
+    private var eventStartDate: String = "N/A"
+    private var host: String = "N/A"
 
     fun addComment(user: User, comment: String){
         eventComments.add(EventComment(user, comment))
@@ -17,6 +19,14 @@ class EventBase(private var eventName: String, private var eventMaxAttendance: I
 
     fun addGame(game: String){
         eventGames.add(game)
+    }
+
+    fun addLocation(newLocation: String){
+        location = newLocation
+    }
+
+    fun addEventStartDate(newDate: String){
+        eventStartDate = newDate;
     }
 
     fun deleteGame(game: String){
@@ -28,8 +38,8 @@ class EventBase(private var eventName: String, private var eventMaxAttendance: I
         }
     }
 
-    fun updateLocation(newLocation: String){
-        eventLocation = newLocation
+    fun setHost(newHost: String){
+        host = newHost
     }
 
     fun addParticipants(user: User){
@@ -59,8 +69,16 @@ class EventBase(private var eventName: String, private var eventMaxAttendance: I
         return currentAttenders
     }
 
-    fun getLocation(): String {
-        return eventLocation
+    fun getLocation(): String{
+        return location
+    }
+
+    fun getStartDate(): String{
+        return eventStartDate
+    }
+
+    fun getHost(): String {
+        return host
     }
 
     fun getPrice(): String {
@@ -70,23 +88,4 @@ class EventBase(private var eventName: String, private var eventMaxAttendance: I
         return price
     }
 
-    fun setLocation(newLocation: String){
-        eventLocation = newLocation
-    }
-
-    fun setName(newName: String){
-        eventName = newName
-    }
-
-    fun setAttendance(newAttendance: Int){
-        eventMaxAttendance = newAttendance
-    }
-
-    fun setPicture(newPicture: String){
-        eventPicture = newPicture
-    }
-
-    fun setPrice(newPrice: String){
-        price = newPrice
-    }
 }

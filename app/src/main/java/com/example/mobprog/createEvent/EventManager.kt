@@ -1,5 +1,6 @@
 package com.example.mobprog.createEvent
 
+import com.example.mobprog.data.GuildService
 import com.example.mobprog.data.UserService
 import com.example.mobprog.guild.Guild
 
@@ -7,7 +8,7 @@ class EventManager() {
 
     private var eventCollector: ArrayList<EventBase> = ArrayList()
 
-    private var userDB = UserService();
+    private var guildDB = GuildService();
 
     fun addEvent(event: EventBase){
         eventCollector.add(event)
@@ -27,7 +28,7 @@ class EventManager() {
 
     fun sendDataGuild(guild: Guild){
         //sender data til Guild -> Eventmanager[Event]
-        userDB.sendData(guild)
+        guildDB.registerEventsToGuild(guild)
     }
 
     fun sendDataUser(){

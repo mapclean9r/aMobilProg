@@ -24,14 +24,16 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobprog.data.UserService
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 
 
 @Composable
-fun RegisterActivity(navController: NavController, modifier: Modifier = Modifier) {
-    val userService = UserService();
-    val auth = Firebase.auth;
+fun RegisterActivity(navController: NavController) {
+    val userService = UserService()
+    lateinit var auth: FirebaseAuth
+    auth = Firebase.auth
 
     var emailTextController by remember {
         mutableStateOf("")
@@ -83,12 +85,18 @@ fun RegisterActivity(navController: NavController, modifier: Modifier = Modifier
         Spacer(modifier = Modifier.height(20.dp))
 
         Button(onClick = {
-            userService.createUser(emailTextController, usernameTextController, passwordTextController)
-            auth.createUserWithEmailAndPassword(emailTextController, passwordTextController)
+            userService.getEmailFromUserIfExists(emailTextController) { email ->
+                if (email == null) {
+                    userService.createUser(emailTextController, usernameTextController, passwordTextController)
+                    auth.createUserWithEmailAndPassword(emailTextController, passwordTextController)
+                    emailTextController = ""
+                    usernameTextController = ""
+                    passwordTextController = ""
+                } else {
+                    println("Email not found")
+                }
+            }
 
-            emailTextController = ""
-            usernameTextController = ""
-            passwordTextController = ""
         }) {
             Text(text = "Register")
         }

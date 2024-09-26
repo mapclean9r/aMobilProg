@@ -1,14 +1,16 @@
 package com.example.mobprog.guild
 
 import com.example.mobprog.createEvent.EventBase
+import com.example.mobprog.createEvent.EventManager
 import com.example.mobprog.user.User
+import java.io.Serializable
 
 class Guild (){
     private lateinit var name: String
     private lateinit var description: String
     private lateinit var picture: String
     private var guildMembers: ArrayList<User> = ArrayList()
-    private var guildEvents: ArrayList<EventBase> = ArrayList()
+    private lateinit var guildEvents: EventManager
 
     constructor(guildName: String, guildDescription: String, guildPicture: String) : this(){
         name = guildName
@@ -21,18 +23,10 @@ class Guild (){
         guildMembers.add(user)
     }
 
-    fun addEvent(event: EventBase){
-        guildEvents.add(event)
+    fun addEventManager(eventManager: EventManager){
+        guildEvents = eventManager
     }
 
-    fun deleteEvent(event: EventBase){
-        for (events in guildEvents){
-            if (event == events){
-                guildEvents.remove(event)
-                return
-            }
-        }
-    }
 
     fun setPicture(newPicture: String){
         picture =  newPicture
@@ -59,11 +53,12 @@ class Guild (){
     }
 
     fun getEvents(): ArrayList<EventBase> {
-        return guildEvents
+        return guildEvents.getEvents()
     }
 
     fun getMembers(): ArrayList<User> {
         return guildMembers
     }
+
 
 }
