@@ -3,13 +3,14 @@ package com.example.mobprog.data
 import android.util.Log
 import com.example.mobprog.guild.Guild
 import com.example.mobprog.user.User
-import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
-import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
 
 class UserService {
     private val db = Firebase.firestore
+
+    //Fungerer 100% @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
     fun printAllUsers() {
         val allUsersRef = db.collection("users")
@@ -38,17 +39,6 @@ class UserService {
             .add(newUser)
     }
 
-    fun getUserWithId(id: String): Task<DocumentSnapshot> {
-        val userRef = db.collection("users").document(id).get()
-        return userRef
-    }
-
-    private fun getUserByEmail(inputEmail: String) {
-        db.collection("users")
-            .whereEqualTo("email", inputEmail)
-            .get()
-    }
-
     fun getEmailFromUserIfExists(inputEmail: String, callback: (String?) -> Unit) {
         var emailField: String? = null
 
@@ -64,6 +54,14 @@ class UserService {
                 }
                 callback(emailField)
             }
+    }
+
+    //In Progress @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+    fun getCurrentUserByEmail(){
+        db.collection("users")
+            .whereEqualTo("email", FirebaseAuth.getInstance().currentUser?.email.toString())
+            .get()
     }
 
     fun sendData(guild: Guild) {

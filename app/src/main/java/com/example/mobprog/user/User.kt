@@ -6,7 +6,6 @@ class User(private val email: String, private val username: String, private var 
     private val friends = ArrayList<User>()
     private var nickname = ""
 
-
     fun getEmail() : String {
         return email
     }

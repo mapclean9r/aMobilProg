@@ -42,11 +42,14 @@ import androidx.navigation.compose.rememberNavController
 import com.example.mobprog.createEvent.EventBase
 import com.example.mobprog.createEvent.EventManager
 import com.example.mobprog.data.NavigationBarItem
+import com.example.mobprog.data.UserService
 import com.example.mobprog.home.EventBox
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeActivity(navController: NavController, modifier: Modifier = Modifier) {
+
+    val userService = UserService()
 
     val navigationBarItemsList = listOf(
         NavigationBarItem("Home", Icons.Default.Home),
@@ -59,7 +62,7 @@ fun HomeActivity(navController: NavController, modifier: Modifier = Modifier) {
         mutableIntStateOf(0);
     }
 
-    var dummy = listOf(
+    val dummy = listOf(
             EventBase("League Lan", 8, ""),
             EventBase("Rocket League Fiesta", 12, ""),
             EventBase("Justice League Party", 1337, ""),
@@ -79,7 +82,9 @@ fun HomeActivity(navController: NavController, modifier: Modifier = Modifier) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                IconButton(onClick = { /* TODO */ }) {
+                IconButton(onClick = {
+                    println(userService.getCurrentUserByEmail())
+                }) {
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = "Search Icon",
