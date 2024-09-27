@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -19,9 +20,10 @@ import com.example.mobprog.data.NavBarItem
 fun BottomNavBar(navController: NavController) {
     val navigationBarItemsList = listOf(
         NavBarItem("Home", Icons.Default.Home, "homeScreen"),
-        NavBarItem("Create Event", Icons.Default.Add, "createEventScreen"),
+        NavBarItem("Event", Icons.Default.Add, "createEventScreen"),
         NavBarItem("Friends", Icons.Default.AccountBox, "friendsScreen"),
-        NavBarItem("Guild", Icons.Default.Share, "guildScreen")
+        NavBarItem("Guild", Icons.Default.Share, "guildScreen"),
+        NavBarItem("Profile", Icons.Default.Person, "profileScreen")
     )
 
     NavigationBar {

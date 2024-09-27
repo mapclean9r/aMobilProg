@@ -6,6 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -52,8 +53,6 @@ import com.example.mobprog.user.User
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun FriendsView(navController: NavController) {
-
-
     Scaffold(topBar = {
         Row(
             modifier = Modifier
@@ -62,30 +61,29 @@ fun FriendsView(navController: NavController) {
                 .padding(bottom = 10.dp, top = 24.dp)
                 .background(MaterialTheme.colorScheme.primary),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            //horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            IconButton(onClick = {
-                UserService().getCurrentUserData { docFields ->
-                    println("$docFields")
+            Box(modifier = Modifier.fillMaxWidth()) {
+
+                IconButton(onClick = {
+                    UserService().getCurrentUserData { docFields ->
+                        println("$docFields")
+                    }
+                },
+                    modifier = Modifier.align(Alignment.CenterStart)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = "Search Icon",
+                        tint = Color.White
+                    )
                 }
-            }) {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = "Search Icon",
-                    tint = Color.White
-                )
-            }
-            Text(
-                text = "Friends",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-            IconButton(onClick = { navController.navigate("profileScreen") }) {
-                Icon(
-                    imageVector = Icons.Default.AccountCircle,
-                    contentDescription = "Profile Icon",
-                    tint = Color.White
+                Text(
+                    text = "Friends",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    modifier = Modifier.align(Alignment.Center)
                 )
             }
         }

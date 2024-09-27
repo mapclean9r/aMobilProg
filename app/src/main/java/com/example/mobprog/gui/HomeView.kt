@@ -3,6 +3,7 @@ package com.example.mobprog.gui
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -61,28 +62,24 @@ fun HomeView(navController: NavController, modifier: Modifier = Modifier) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                IconButton(onClick = {
-                    eventService.getEventById("O47UxJAkXFd1jToaGnxt") { event ->
-                        println(event)
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    IconButton(onClick = {
+                        eventService.getEventById("O47UxJAkXFd1jToaGnxt") { event ->
+                            println(event)
+                        }
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search Icon",
+                            tint = Color.White
+                        )
                     }
-                }) {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Search Icon",
-                        tint = Color.White
-                    )
-                }
-                Text(
-                    text = "Homepage",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-                IconButton(onClick = { navController.navigate("profileScreen") }) {
-                    Icon(
-                        imageVector = Icons.Default.AccountCircle,
-                        contentDescription = "Profile Icon",
-                        tint = Color.White
+                    Text(
+                        text = "Homepage",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        modifier = Modifier.align(Alignment.Center)
                     )
                 }
             }

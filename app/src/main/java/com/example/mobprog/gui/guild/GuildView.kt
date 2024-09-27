@@ -66,14 +66,6 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier) {
                         color = Color.White,
                         modifier = Modifier.align(Alignment.Center)
                     )
-                    IconButton(onClick = { navController.navigate("profileScreen") },
-                        modifier = Modifier.align(Alignment.CenterEnd)) {
-                        Icon(
-                            imageVector = Icons.Default.AccountCircle,
-                            contentDescription = "Profile Icon",
-                            tint = Color.White,
-                        )
-                    }
                 }
             }
         },
