@@ -51,10 +51,10 @@ import com.example.mobprog.data.NavigationBarItem
 fun CreateEventActivity(navController: NavController, modifier: Modifier = Modifier) {
 
     val navigationBarItemsList = listOf(
-        NavigationBarItem("Home", Icons.Default.Home),
-        NavigationBarItem("Create Event", Icons.Default.Add),
-        NavigationBarItem("Friends", Icons.Default.AccountBox),
-        NavigationBarItem("Guild", Icons.Default.Share)
+        NavigationBarItem("Home", Icons.Default.Home, "homeScreen"),
+        NavigationBarItem("Create Event", Icons.Default.Add, "createEventScreen"),
+        NavigationBarItem("Friends", Icons.Default.AccountBox, "friendsScreen"),
+        NavigationBarItem("Guild", Icons.Default.Share, "guildScreen")
     )
 
     var selectedNavigationBarItem by remember {
