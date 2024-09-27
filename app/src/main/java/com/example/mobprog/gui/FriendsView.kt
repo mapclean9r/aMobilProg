@@ -6,12 +6,12 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun FriendsActivity(navController: NavController) {
+fun FriendsView(navController: NavController) {
 
 }
 
 @Preview(showBackground = true)
 @Composable
-fun FriendsActivityPreview() {
-    FriendsActivity(navController = rememberNavController())
+fun FriendsViewPreview() {
+    FriendsView(navController = rememberNavController())
 }

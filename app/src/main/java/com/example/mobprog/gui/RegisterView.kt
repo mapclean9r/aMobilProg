@@ -30,7 +30,7 @@ import com.google.firebase.auth.auth
 
 
 @Composable
-fun RegisterActivity(navController: NavController) {
+fun RegisterView(navController: NavController) {
     val userService = UserService()
     lateinit var auth: FirebaseAuth
     auth = Firebase.auth
@@ -112,6 +112,6 @@ fun RegisterActivity(navController: NavController) {
 
 @Preview(showBackground = true)
 @Composable
-fun RegisterActivityPreview() {
-    RegisterActivity(navController = rememberNavController())
+fun RegisterViewPreview() {
+    RegisterView(navController = rememberNavController())
 }

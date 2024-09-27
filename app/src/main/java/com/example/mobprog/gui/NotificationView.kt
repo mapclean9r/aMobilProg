@@ -6,12 +6,12 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun NotificationActivity(navController: NavController) {
+fun NotificationView(navController: NavController) {
 
 }
 
 @Preview(showBackground = true)
 @Composable
-fun NotificationActivityPreview() {
-    NotificationActivity(navController = rememberNavController())
+fun NotificationViewPreview() {
+    NotificationView(navController = rememberNavController())
 }

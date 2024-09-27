@@ -48,7 +48,7 @@ import com.example.mobprog.gui.components.BottomNavBar
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun CreateEventActivity(navController: NavController, modifier: Modifier = Modifier) {
+fun CreateEventView(navController: NavController, modifier: Modifier = Modifier) {
 
     /* TODO - legge til alle felter som trengs og endre tekst felter til å benytte disse */
     var title by remember { mutableStateOf("")}
@@ -194,7 +194,7 @@ fun CreateEventActivity(navController: NavController, modifier: Modifier = Modif
 
 @Preview(showBackground = true)
 @Composable
-fun CreateEventActivityPreview() {
-    CreateEventActivity(navController = rememberNavController())
+fun CreateEventViewPreview() {
+    CreateEventView(navController = rememberNavController())
 }
 

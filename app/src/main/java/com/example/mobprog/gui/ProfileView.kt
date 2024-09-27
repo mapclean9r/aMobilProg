@@ -6,12 +6,12 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun ProfileActivity(navController: NavController) {
+fun ProfileView(navController: NavController) {
 
 }
 
 @Preview(showBackground = true)
 @Composable
-fun ProfileActivityPreview() {
-    ProfileActivity(navController = rememberNavController())
+fun ProfileViewPreview() {
+    ProfileView(navController = rememberNavController())
 }
