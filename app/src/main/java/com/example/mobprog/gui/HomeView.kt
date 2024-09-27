@@ -41,6 +41,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobprog.createEvent.EventBase
 import com.example.mobprog.createEvent.EventManager
+import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.home.EventBox
 
@@ -69,7 +70,7 @@ fun HomeActivity(navController: NavController, modifier: Modifier = Modifier) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 IconButton(onClick = {
-                    userService.getCurrentUserData { docFields ->
+                    UserService().getCurrentUserData { docFields ->
                         println("$docFields")
                     }
                 }) {
