@@ -52,10 +52,10 @@ fun HomeActivity(navController: NavController, modifier: Modifier = Modifier) {
     val userService = UserService()
 
     val navigationBarItemsList = listOf(
-        NavigationBarItem("Home", Icons.Default.Home),
-        NavigationBarItem("Create Event", Icons.Default.Add),
-        NavigationBarItem("Friends", Icons.Default.AccountBox),
-        NavigationBarItem("Guild", Icons.Default.Share)
+        NavigationBarItem("Home", Icons.Default.Home, "homeScreen"),
+        NavigationBarItem("Create Event", Icons.Default.Add, "createEventScreen"),
+        NavigationBarItem("Friends", Icons.Default.AccountBox, "friendsScreen"),
+        NavigationBarItem("Guild", Icons.Default.Share, "guildScreen")
     )
 
     var selectedNavigationBarItem by remember {
@@ -128,7 +128,7 @@ fun HomeActivity(navController: NavController, modifier: Modifier = Modifier) {
                 navigationBarItemsList.forEachIndexed {index, navigationBarItem ->
                     NavigationBarItem(
                         selected = selectedNavigationBarItem == index,
-                        onClick = { selectedNavigationBarItem = index },
+                        onClick = { navController.navigate(navigationBarItem.route)},
                         icon = { Icon(imageVector = navigationBarItem.icon, contentDescription = "Icon") },
                         label = { Text(navigationBarItem.label) })
                 }
