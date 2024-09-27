@@ -12,7 +12,7 @@ class GuildService {
     private val db = Firebase.firestore
 
     fun registerEventsToGuild(guild: Guild) {
-        db.collection("guilds").add(guild)
+        db.collection("guilds").document(guild.getGuildName()).set(guild)
     }
 
     fun registerEvent(event: EventBase){
