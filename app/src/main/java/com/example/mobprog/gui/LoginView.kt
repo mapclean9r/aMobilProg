@@ -42,7 +42,7 @@ private fun login(navController: NavController, email: String, password: String)
 }
 
     @Composable
-    fun LoginActivity(navController: NavController) {
+    fun LoginView(navController: NavController) {
 
         var emailTextController by remember {
             mutableStateOf("")
@@ -106,7 +106,7 @@ private fun login(navController: NavController, email: String, password: String)
 
     @Preview(showBackground = true)
     @Composable
-    fun LoginActivityPreview() {
-        LoginActivity(navController = rememberNavController())
+    fun LoginViewPreview() {
+        LoginView(navController = rememberNavController())
     }
 

@@ -8,14 +8,14 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.mobprog.gui.LoginActivity
-import com.example.mobprog.gui.RegisterActivity
-import com.example.mobprog.gui.CreateEventActivity
-import com.example.mobprog.gui.FriendsActivity
-import com.example.mobprog.gui.GuildActivity
-import com.example.mobprog.gui.HomeActivity
-import com.example.mobprog.gui.NotificationActivity
-import com.example.mobprog.gui.ProfileActivity
+import com.example.mobprog.gui.LoginView
+import com.example.mobprog.gui.RegisterView
+import com.example.mobprog.gui.CreateEventView
+import com.example.mobprog.gui.FriendsView
+import com.example.mobprog.gui.guild.GuildView
+import com.example.mobprog.gui.HomeView
+import com.example.mobprog.gui.NotificationView
+import com.example.mobprog.gui.ProfileView
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,30 +30,30 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Arena() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "loginScreen") {
+    NavHost(navController = navController, startDestination = "homeScreen") {
         composable("loginScreen") {
-            LoginActivity(navController = navController)
+            LoginView(navController = navController)
         }
         composable("registerScreen") { 
-            RegisterActivity(navController = navController)
+            RegisterView(navController = navController)
         }
         composable("homeScreen") {
-            HomeActivity(navController = navController)
+            HomeView(navController = navController)
         }
         composable("createEventScreen") {
-            CreateEventActivity(navController = navController)
+            CreateEventView(navController = navController)
         }
         composable("friendsScreen") {
-            FriendsActivity(navController = navController)
+            FriendsView(navController = navController)
         }
         composable("guildScreen") {
-            GuildActivity(navController = navController)
+            GuildView(navController = navController)
         }
         composable("profileScreen") {
-            ProfileActivity(navController = navController)
+            ProfileView(navController = navController)
         }
         composable("notificationScreen") {
-            NotificationActivity(navController = navController)
+            NotificationView(navController = navController)
         }
     }
 }

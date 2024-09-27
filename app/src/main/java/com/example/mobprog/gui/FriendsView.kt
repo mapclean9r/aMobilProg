@@ -51,7 +51,7 @@ import com.example.mobprog.user.User
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun FriendsActivity(navController: NavController) {
+fun FriendsView(navController: NavController) {
 
 
     Scaffold(topBar = {
@@ -172,6 +172,6 @@ fun FriendItem(friend: User, onClick: () -> Unit) {
 
 @Preview(showBackground = true)
 @Composable
-fun FriendsActivityPreview() {
-    FriendsActivity(navController = rememberNavController())
+fun FriendsViewPreview() {
+    FriendsView(navController = rememberNavController())
 }

@@ -37,7 +37,7 @@ import com.example.mobprog.home.EventBox
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomeActivity(navController: NavController, modifier: Modifier = Modifier) {
+fun HomeView(navController: NavController, modifier: Modifier = Modifier) {
 
     val eventService = EventService()
 
@@ -119,6 +119,6 @@ fun HomeActivity(navController: NavController, modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-fun HomeActivityPreview() {
-    HomeActivity(navController = rememberNavController())
+fun HomeViewPreview() {
+    HomeView(navController = rememberNavController())
 }
