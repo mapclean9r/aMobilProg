@@ -10,16 +10,18 @@ import kotlin.collections.ArrayList
 class GuildService {
     private val db = Firebase.firestore
 
-    fun registerEventsToGuild(guild: Guild) {
-        var events = db.collection("events")
-        events.document("Friends of Legends").set(EventBase("Friends of Legends", 23, "small boy"))
-        db.collection("guilds").document(guild.getGuildName()).set(guild)
+    //Fungerer 100% @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+    fun registerEvent(event: EventBase){
+        db.collection("events").add(event)
     }
 
-    fun getEventRef(guildEvents: EventManager): ArrayList<String>{
-        var guildRef: ArrayList<String> = ArrayList()
+    //In Progress @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-        var events = db.collection("events").document().id
+    fun getEventRef(guildEvents: EventManager): ArrayList<String>{
+        val guildRef: ArrayList<String> = ArrayList()
+
+        val events = db.collection("events").document().id
 
         for (e in guildEvents.getEvents()){
             for (i in events){
@@ -31,7 +33,10 @@ class GuildService {
         return guildRef
     }
 
-    fun registerEvent(event: EventBase){
-        db.collection("events").add(event)
+    fun registerEventsToGuild(guild: Guild) {
+        val events = db.collection("events")
+        events.document("Friends of Legends").set(EventBase("Friends of Legends", 23, "small boy"))
+        db.collection("guilds").document(guild.getGuildName()).set(guild)
     }
+
 }

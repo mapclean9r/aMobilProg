@@ -41,12 +41,15 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobprog.createEvent.EventBase
 import com.example.mobprog.createEvent.EventManager
+import com.example.mobprog.data.EventService
 import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.home.EventBox
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeActivity(navController: NavController, modifier: Modifier = Modifier) {
+
+    val eventService = EventService()
 
     var dummy = listOf(
             EventBase("League Lan", 8, ""),
@@ -69,8 +72,14 @@ fun HomeActivity(navController: NavController, modifier: Modifier = Modifier) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 IconButton(onClick = {
-                    userService.getCurrentUserData { docFields ->
-                        println("$docFields")
+                    eventService.getAllEvents {eventsList ->
+                        if (eventsList != null) {
+                            for (event in eventsList) {
+                                println("Event: ${event.getValue("comments")}")
+                            }
+                        } else {
+                            println("No Events found")
+                        }
                     }
                 }) {
                     Icon(
