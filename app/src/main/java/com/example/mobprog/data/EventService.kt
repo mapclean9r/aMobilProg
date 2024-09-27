@@ -56,8 +56,6 @@ class EventService {
             }
     }
 
-    //In Progress @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
     fun getEventById(id: String, callback: (Map<String, Any>?) -> Unit) {
         val eventRef = db.collection("events").document(id)
         eventRef.get()
@@ -72,6 +70,10 @@ class EventService {
                         callback(hashmap)
                     }
                 }
-        }
+            }
     }
+
+    //In Progress @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
 }
