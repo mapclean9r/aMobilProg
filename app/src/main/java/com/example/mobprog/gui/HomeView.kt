@@ -83,7 +83,9 @@ fun HomeActivity(navController: NavController, modifier: Modifier = Modifier) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 IconButton(onClick = {
-                    println(userService.getCurrentUserByEmail())
+                    userService.getCurrentUserData { docFields ->
+                        println("$docFields")
+                    }
                 }) {
                     Icon(
                         imageVector = Icons.Default.Search,

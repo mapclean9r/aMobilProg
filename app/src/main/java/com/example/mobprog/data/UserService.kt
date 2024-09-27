@@ -5,6 +5,7 @@ import com.example.mobprog.guild.Guild
 import com.example.mobprog.user.User
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 
 class UserService {
@@ -58,10 +59,31 @@ class UserService {
 
     //In Progress @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-    fun getCurrentUserByEmail(){
-        db.collection("users")
-            .whereEqualTo("email", FirebaseAuth.getInstance().currentUser?.email.toString())
-            .get()
+    fun getCurrentUserData(callback:  (Map<String, Any>?) -> Unit){
+        val currentUserEmail = FirebaseAuth.getInstance().currentUser?.email.toString()
+        val db = FirebaseFirestore.getInstance()
+        val docRef = db.collection("users").whereEqualTo("email", currentUserEmail)
+        var userData: Map<String, Any>? = null
+
+        docRef.get().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val docs = task.result
+                    if (docs != null && !docs.isEmpty) {
+                        val doc = docs.first()
+
+                        userData = doc.data
+                        callback(doc.data)
+                    }
+                    else {
+                        println("No User found.")
+                        callback(null)
+                    }
+                }
+                else {
+                    println("Error: ${task.exception}")
+                    callback(null)
+                }
+        }
     }
 
     fun sendData(guild: Guild) {
