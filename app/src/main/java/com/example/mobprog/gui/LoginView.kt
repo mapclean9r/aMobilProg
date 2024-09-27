@@ -79,7 +79,10 @@ private fun login(navController: NavController, email: String, password: String)
             Spacer(modifier = Modifier.height(20.dp))
 
             Button(onClick = {
-                login(navController, emailTextController, passwordTextController)
+                if(emailTextController != "" && passwordTextController != ""){
+                    login(navController, emailTextController, passwordTextController)
+                }
+                
             }) {
                 Text(text = "Login")
             }
