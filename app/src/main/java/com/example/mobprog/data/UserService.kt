@@ -57,8 +57,6 @@ class UserService {
             }
     }
 
-    //In Progress @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
     fun getCurrentUserData(callback:  (Map<String, Any>?) -> Unit){
         val currentUserEmail = FirebaseAuth.getInstance().currentUser?.email.toString()
         val db = FirebaseFirestore.getInstance()
@@ -74,17 +72,11 @@ class UserService {
                         userData = doc.data
                         callback(doc.data)
                     }
-                    else {
-                        println("No User found.")
-                        callback(null)
-                    }
-                }
-                else {
-                    println("Error: ${task.exception}")
-                    callback(null)
                 }
         }
     }
+
+    //In Progress @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
     fun sendData(guild: Guild) {
         db.collection("guild")
