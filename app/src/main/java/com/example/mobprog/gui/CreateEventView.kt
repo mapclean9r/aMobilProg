@@ -44,22 +44,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobprog.createEvent.EventBase
-import com.example.mobprog.data.NavigationBarItem
+import com.example.mobprog.gui.components.BottomNavBar
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CreateEventActivity(navController: NavController, modifier: Modifier = Modifier) {
-
-    val navigationBarItemsList = listOf(
-        NavigationBarItem("Home", Icons.Default.Home, "homeScreen"),
-        NavigationBarItem("Create Event", Icons.Default.Add, "createEventScreen"),
-        NavigationBarItem("Friends", Icons.Default.AccountBox, "friendsScreen"),
-        NavigationBarItem("Guild", Icons.Default.Share, "guildScreen")
-    )
-
-    var selectedNavigationBarItem by remember {
-        mutableIntStateOf(0);
-    }
 
     /* TODO - legge til alle felter som trengs og endre tekst felter til å benytte disse */
     var title by remember { mutableStateOf("")}
@@ -115,7 +104,8 @@ fun CreateEventActivity(navController: NavController, modifier: Modifier = Modif
                     Text(text = "Title",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W400,
-                        modifier = Modifier.padding(6.dp)
+                        modifier = Modifier
+                            .padding(6.dp)
                             .align(Alignment.Start))
                     TextField(
                         value = title,
@@ -130,7 +120,8 @@ fun CreateEventActivity(navController: NavController, modifier: Modifier = Modif
                     Text(text = "Location",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W400,
-                        modifier = Modifier.padding(6.dp)
+                        modifier = Modifier
+                            .padding(6.dp)
                             .align(Alignment.Start))
                     TextField(
                         value = title,
@@ -145,7 +136,8 @@ fun CreateEventActivity(navController: NavController, modifier: Modifier = Modif
                     Text(text = "Date",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W400,
-                        modifier = Modifier.padding(6.dp)
+                        modifier = Modifier
+                            .padding(6.dp)
                             .align(Alignment.Start))
                     TextField(
                         value = title,
@@ -160,7 +152,8 @@ fun CreateEventActivity(navController: NavController, modifier: Modifier = Modif
                     Text(text = "Description",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W400,
-                        modifier = Modifier.padding(6.dp)
+                        modifier = Modifier
+                            .padding(6.dp)
                             .align(Alignment.Start))
                     TextField(
                         value = title,
@@ -187,15 +180,7 @@ fun CreateEventActivity(navController: NavController, modifier: Modifier = Modif
             bottomBar = {
                 // inspirert av link under for å lage navbar.
                 // https://www.youtube.com/watch?v=O9csfKW3dZ4
-                NavigationBar {
-                    navigationBarItemsList.forEachIndexed {index, navigationBarItem ->
-                        NavigationBarItem(
-                            selected = selectedNavigationBarItem == index,
-                            onClick = { selectedNavigationBarItem = index },
-                            icon = { Icon(imageVector = navigationBarItem.icon, contentDescription = "Icon") },
-                            label = { Text(navigationBarItem.label) })
-                    }
-                }
+                BottomNavBar(navController = navController)
             }
     )
 

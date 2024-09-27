@@ -41,23 +41,12 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobprog.createEvent.EventBase
 import com.example.mobprog.createEvent.EventManager
-import com.example.mobprog.data.NavigationBarItem
+import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.home.EventBox
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeActivity(navController: NavController, modifier: Modifier = Modifier) {
-
-    val navigationBarItemsList = listOf(
-        NavigationBarItem("Home", Icons.Default.Home, "homeScreen"),
-        NavigationBarItem("Create Event", Icons.Default.Add, "createEventScreen"),
-        NavigationBarItem("Friends", Icons.Default.AccountBox, "friendsScreen"),
-        NavigationBarItem("Guild", Icons.Default.Share, "guildScreen")
-    )
-
-    var selectedNavigationBarItem by remember {
-        mutableIntStateOf(0);
-    }
 
     var dummy = listOf(
             EventBase("League Lan", 8, ""),
@@ -117,15 +106,7 @@ fun HomeActivity(navController: NavController, modifier: Modifier = Modifier) {
         bottomBar = {
             // inspirert av link under for å lage navbar.
             // https://www.youtube.com/watch?v=O9csfKW3dZ4
-            NavigationBar {
-                navigationBarItemsList.forEachIndexed {index, navigationBarItem ->
-                    NavigationBarItem(
-                        selected = selectedNavigationBarItem == index,
-                        onClick = { navController.navigate(navigationBarItem.route)},
-                        icon = { Icon(imageVector = navigationBarItem.icon, contentDescription = "Icon") },
-                        label = { Text(navigationBarItem.label) })
-                }
-            }
+            BottomNavBar(navController = navController)
         }
     )
 
