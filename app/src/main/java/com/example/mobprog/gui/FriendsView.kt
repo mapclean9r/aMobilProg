@@ -153,7 +153,7 @@ fun FriendItem(friend: User, onClick: () -> Unit) {
                 modifier = Modifier
                     .clip(shape = CircleShape)
                     .size(56.dp),
-                painter = painterResource(id = R.drawable.lol),
+                painter = painterResource(id = R.drawable.profile),
                 contentDescription = null,
                 contentScale = ContentScale.Crop
             )
