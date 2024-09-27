@@ -34,8 +34,6 @@ class EventService {
             }
     }
 
-    //In Progress @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
     fun getAllEvents(callback: (List<Map<String, Any>>?) -> Unit) {
         val allEventsRef = db.collection("events")
 
@@ -43,12 +41,12 @@ class EventService {
             .get()
             .addOnCompleteListener { events ->
                 if (events.isSuccessful) {
-                    val docs = events.result
-                    if (docs != null && !docs.isEmpty) {
+                    val doc = events.result
+                    if (doc != null && !doc.isEmpty) {
                         val allDocuments = mutableListOf<Map<String, Any>>()
 
-                        for (doc in docs) {
-                            doc.data.let {
+                        for (field in doc) {
+                            field.data.let {
                                 allDocuments.add(it)
                             }
                         }
@@ -56,5 +54,24 @@ class EventService {
                     }
                 }
             }
+    }
+
+    //In Progress @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+    fun getEventById(id: String, callback: (Map<String, Any>?) -> Unit) {
+        val eventRef = db.collection("events").document(id)
+        eventRef.get()
+            .addOnCompleteListener { doc ->
+                if (doc.isSuccessful) {
+                    val document = doc.result
+                    if (document != null && document.exists()) {
+                        val hashmap = HashMap<String, Any>()
+                        document.data?.forEach { (key, value) ->
+                            hashmap[key] = value
+                        }
+                        callback(hashmap)
+                    }
+                }
+        }
     }
 }

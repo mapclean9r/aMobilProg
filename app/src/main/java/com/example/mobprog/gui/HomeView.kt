@@ -41,7 +41,7 @@ fun HomeView(navController: NavController, modifier: Modifier = Modifier) {
 
     val eventService = EventService()
 
-    var dummy = listOf(
+    val dummy = listOf(
             EventBase("League Lan", 8, ""),
             EventBase("Rocket League Fiesta", 12, ""),
             EventBase("Justice League Party", 1337, ""),
@@ -62,15 +62,8 @@ fun HomeView(navController: NavController, modifier: Modifier = Modifier) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 IconButton(onClick = {
-
-                    eventService.getAllEvents {eventsList ->
-                        if (eventsList != null) {
-                            for (event in eventsList) {
-                                println("Event: ${event.getValue("comments")}")
-                            }
-                        } else {
-                            println("No Events found")
-                        }
+                    eventService.getEventById("O47UxJAkXFd1jToaGnxt") { event ->
+                        println(event)
                     }
                 }) {
                     Icon(
