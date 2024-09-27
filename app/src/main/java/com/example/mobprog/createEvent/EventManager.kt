@@ -26,6 +26,7 @@ class EventManager() {
         return eventCollector
     }
 
+
     fun sendDataGuild(guild: Guild){
         //sender data til Guild -> Eventmanager[Event]
         guildDB.registerEventsToGuild(guild)

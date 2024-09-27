@@ -2,6 +2,7 @@ package com.example.mobprog.guild
 
 import com.example.mobprog.createEvent.EventBase
 import com.example.mobprog.createEvent.EventManager
+import com.example.mobprog.data.GuildService
 import com.example.mobprog.user.User
 import java.io.Serializable
 
@@ -54,6 +55,10 @@ class Guild (){
 
     fun getEvents(): ArrayList<EventBase> {
         return guildEvents.getEvents()
+    }
+
+    fun getEventsRef(): ArrayList<String> {
+        return GuildService().getEventRef(guildEvents)
     }
 
     fun getMembers(): ArrayList<User> {

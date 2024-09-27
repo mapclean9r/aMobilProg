@@ -23,7 +23,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.mobprog.data.UserService
+import com.example.mobprog.createEvent.EventBase
+import com.example.mobprog.createEvent.EventManager
+import com.example.mobprog.data.GuildService
+import com.example.mobprog.guild.Guild
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -79,10 +82,15 @@ private fun login(navController: NavController, email: String, password: String)
             Spacer(modifier = Modifier.height(20.dp))
 
             Button(onClick = {
-                if(emailTextController != "" && passwordTextController != ""){
+                if(emailTextController != "" && passwordTextController != "") {
                     login(navController, emailTextController, passwordTextController)
+                    var eventman = EventManager()
+                    eventman.addEvent(EventBase("League of Legends", 42, "BigboyPicture"))
+                    eventman.addEvent(EventBase("Friends of Legends", 23, "small boy"))
+                    var g = Guild("FF15", "ff or else", "re")
+                    g.addEventManager(eventman)
+                    GuildService().registerEventsToGuild(guild = g)
                 }
-                
             }) {
                 Text(text = "Login")
             }

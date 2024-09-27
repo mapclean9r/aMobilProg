@@ -78,9 +78,6 @@ class UserService {
 
     //In Progress @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-    fun sendData(guild: Guild) {
-        db.collection("guild")
-            .add(guild)
-    }
+
 
 }
