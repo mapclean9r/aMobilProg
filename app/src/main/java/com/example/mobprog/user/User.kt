@@ -3,8 +3,12 @@ package com.example.mobprog.user
 
 class User(private val email: String, private val username: String, private var password: String) {
 
-    private val friends = ArrayList<User>()
+    private var friends = ArrayList<User>()
     private var nickname = ""
+
+    constructor(email: String, username: String, password: String, friends: ArrayList<User>) : this(email, username, password) {
+        this.friends = friends;
+    }
 
     fun getEmail() : String {
         return email
