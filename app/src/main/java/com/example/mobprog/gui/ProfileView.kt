@@ -10,7 +10,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -29,6 +33,18 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobprog.gui.components.BottomNavBar
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+
+private fun logout(navController: NavController) {
+    val auth = Firebase.auth
+    auth.signOut()
+    navController.navigate("loginScreen")                      {
+        popUpTo("loginScreen")
+    }
+
+
+}
 
 @Composable
 fun ProfileView(navController: NavController) {
@@ -51,7 +67,7 @@ fun ProfileView(navController: NavController) {
                         color = Color.White,
                         modifier = Modifier.align(Alignment.Center)
                     )
-                    IconButton(onClick = { navController.navigate("notificationScreen") },
+                    IconButton(onClick = {  },
                         modifier = Modifier.align(Alignment.CenterEnd)) {
                         Icon(
                             imageVector = Icons.Default.Settings,
@@ -71,11 +87,56 @@ fun ProfileView(navController: NavController) {
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ){
-                Text(text = "Profile Page",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.W400,
-                    modifier = Modifier.padding(12.dp)
-                )
+                Box(
+                    modifier = Modifier
+                        .size(62.dp) // The size of the circular container
+                        .background(
+                            Color.LightGray,
+                            shape = CircleShape
+                        ) // Background with circle shape and light grey color
+                        .padding(10.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "Profile icon",
+                        tint = Color.Black,
+                        modifier = Modifier.size(50.dp)
+                    )
+                }
+                Column (modifier = Modifier
+                    .fillMaxSize()
+                    .padding(12.dp)) {
+                    Text(text = "Username: ",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.W400,
+                        modifier = Modifier
+                            .padding(12.dp)
+                            .align(Alignment.Start)
+                    )
+                    Text(text = "Email: ",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.W400,
+                        modifier = Modifier
+                            .padding(12.dp)
+                            .align(Alignment.Start)
+                    )
+                    Text(text = "User created: ",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.W400,
+                        modifier = Modifier
+                            .padding(12.dp)
+                            .align(Alignment.Start)
+                    )
+                    Spacer(
+                        modifier = Modifier.height(20.dp)
+                    )
+                        Button(onClick = {
+                           logout(navController)
+
+                                         }, ) {
+                            Text(text = "Logout")
+                        }
+                }
             }
         },
         bottomBar = {
