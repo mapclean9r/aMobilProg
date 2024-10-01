@@ -16,7 +16,7 @@ class User(private val email: String, private val username: String, private var 
     private fun generateId(): String {
         return UUID.randomUUID().toString()
     }
-    
+
     fun getCreatorId(): String {
         return creatorId
     }
