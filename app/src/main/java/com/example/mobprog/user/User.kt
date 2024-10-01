@@ -1,13 +1,24 @@
 package com.example.mobprog.user
 
+import java.util.UUID
+
 
 class User(private val email: String, private val username: String, private var password: String) {
 
     private var friends = ArrayList<User>()
     private var nickname = ""
+    private var creatorId = generateId()
 
     constructor(email: String, username: String, password: String, friends: ArrayList<User>) : this(email, username, password) {
         this.friends = friends;
+    }
+
+    private fun generateId(): String {
+        return UUID.randomUUID().toString()
+    }
+    
+    fun getCreatorId(): String {
+        return creatorId
     }
 
     fun getEmail() : String {
