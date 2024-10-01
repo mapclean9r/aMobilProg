@@ -44,10 +44,11 @@ fun HomeView(navController: NavController, modifier: Modifier = Modifier) {
     val eventService = EventService()
 
     fun parseToEventData(data: Map<String, Any>): EventData? {
+        println("Raw Data: $data")
         return try {
             EventData(
-                eventName = data["eventName"] as? String ?: "",
-                eventDate = data["eventDate"] as? String ?: "",
+                name = data["name"] as? String ?: "",
+                startDate = data["startDate"] as? String ?: "",
                 creatorId = data["creatorId"] as? String ?: "",
                 description = data["description"] as? String ?: "",
                 price = data["price"] as? String ?: "Free",
@@ -56,7 +57,7 @@ fun HomeView(navController: NavController, modifier: Modifier = Modifier) {
                 host = data["host"] as? String ?: "N/A",
                 date = data["date"] as? String ?: "N/A",
                 comments = data["comments"] as? List<String> ?: emptyList(),
-                attenders = data["attenders"] as? List<String> ?: emptyList(),
+                attendance = data["attendance"] as? Int ?: 0,
                 members = data["members"] as? List<String> ?: emptyList()
             )
         } catch (e: Exception) {
@@ -65,32 +66,48 @@ fun HomeView(navController: NavController, modifier: Modifier = Modifier) {
         }
     }
 
+    fun loadEvents(onEventsLoaded: (List<EventData>) -> Unit) {
+        eventService.getAllEvents { eventsList ->
+            eventsList?.let { documents ->
+                val eventDataList = documents.mapNotNull { document ->
+                    parseToEventData(document)
+                }
+
+                // Pass the data back via the callback
+                onEventsLoaded(eventDataList)
+            } ?: run {
+                onEventsLoaded(emptyList()) // If no events, return an empty list
+            }
+        }
+    }
 /*    val dummy = listOf(
             EventBase("League Lan", 8, ""),
             EventBase("Rocket League Fiesta", 12, ""),
             EventBase("Justice League Party", 1337, ""),
             ) */
 
-    var events = listOf(EventData())
+    var events: List<EventData> = emptyList()
 
-    eventService.getAllEvents { eventsList ->
+    /* eventService.getAllEvents { eventsList ->
         eventsList?.let { documents ->
-            val eventDataList = documents.mapNotNull { document ->
+            var eventDataList = documents.mapNotNull { document ->
                 parseToEventData(document)
             }
             events = eventDataList
 
             for (event in eventDataList) {
-                println("Event Name: ${event.eventName}")
-                println("Event Date: ${event.eventDate}")
+                println("Event Name: ${event.name}")
+                println("Event Date: ${event.startDate}")
                 println("Creator: ${event.creatorId}")
                 // Access other fields as needed
             }
         } ?: run {
             println("No events found")
         }
+    } */
 
-    }
+    println("@@@@@@@@@@" + events.size)
+
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -133,6 +150,7 @@ fun HomeView(navController: NavController, modifier: Modifier = Modifier) {
                     .padding(paddingValues)
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
+                loadEvents { eventDataList -> events = eventDataList }
                 items(events) { event ->
                     EventBox(eventData = event)
                     Spacer(modifier = Modifier.height(16.dp))

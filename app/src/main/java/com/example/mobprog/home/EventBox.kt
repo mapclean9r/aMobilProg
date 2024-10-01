@@ -32,7 +32,7 @@ fun EventBox(eventData: EventData) {
     ) {
         Image(
             painter = painterResource(R.drawable.lol), /* TODO: Må få til henting fra API*/
-            contentDescription = eventData.eventName,
+            contentDescription = eventData.name,
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxWidth()
@@ -40,7 +40,7 @@ fun EventBox(eventData: EventData) {
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Name: " + eventData.eventName,
+            text = "Name: " + eventData.name,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold
         )
@@ -55,7 +55,7 @@ fun EventBox(eventData: EventData) {
             fontWeight = FontWeight.Light
         )
         Text(
-            text = "Dato: " + eventData.eventDate,
+            text = "Dato: " + eventData.startDate,
             fontSize = 13.sp,
             fontWeight = FontWeight.W300
         )
