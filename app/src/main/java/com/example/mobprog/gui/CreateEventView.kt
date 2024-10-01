@@ -44,16 +44,18 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobprog.createEvent.EventBase
+import com.example.mobprog.createEvent.EventData
+import com.example.mobprog.data.EventService
 import com.example.mobprog.gui.components.BottomNavBar
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun CreateEventView(navController: NavController, modifier: Modifier = Modifier) {
+fun CreateEventView(navController: NavController, eventService: EventService, modifier: Modifier = Modifier) {
 
     /* TODO - legge til alle felter som trengs og endre tekst felter til å benytte disse */
-    var title by remember { mutableStateOf("")}
+    var name by remember { mutableStateOf("")}
     var location by remember { mutableStateOf("") }
-    var date by remember { mutableStateOf("") }
+    var startDate by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var attendance by remember { mutableStateOf(0) }
 
@@ -100,9 +102,9 @@ fun CreateEventView(navController: NavController, modifier: Modifier = Modifier)
                             .padding(6.dp)
                             .align(Alignment.Start))
                     TextField(
-                        value = title,
+                        value = name,
                         onValueChange = { newText ->
-                            title = newText
+                            name = newText
                             /* TODO behandle input her */
                         },
                         label = { Text("Enter Title") },
@@ -116,9 +118,9 @@ fun CreateEventView(navController: NavController, modifier: Modifier = Modifier)
                             .padding(6.dp)
                             .align(Alignment.Start))
                     TextField(
-                        value = title,
+                        value = location,
                         onValueChange = { newText ->
-                            title = newText
+                            location = newText
                             /* TODO behandle input her */
                         },
                         label = { Text("Enter Location") },
@@ -132,9 +134,9 @@ fun CreateEventView(navController: NavController, modifier: Modifier = Modifier)
                             .padding(6.dp)
                             .align(Alignment.Start))
                     TextField(
-                        value = title,
+                        value = startDate,
                         onValueChange = { newText ->
-                            title = newText
+                            startDate = newText
                             /* TODO behandle input her */
                         },
                         label = { Text("Enter Date") },
@@ -148,9 +150,9 @@ fun CreateEventView(navController: NavController, modifier: Modifier = Modifier)
                             .padding(6.dp)
                             .align(Alignment.Start))
                     TextField(
-                        value = title,
+                        value = description,
                         onValueChange = { newText ->
-                            title = newText
+                            description = newText
                             /* TODO behandle input her */
                         },
                         label = { Text("Enter Description") },
@@ -160,7 +162,7 @@ fun CreateEventView(navController: NavController, modifier: Modifier = Modifier)
                     Spacer(modifier = Modifier.height(22.dp))
                     Button(
                         onClick = {
-                            /* onSubmit(title, attendance, picture, location) */
+                            onSubmit(name, attendance, location, startDate, description = "", eventService = eventService)
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
@@ -178,15 +180,15 @@ fun CreateEventView(navController: NavController, modifier: Modifier = Modifier)
 
 }
 
-/*fun onSubmit(title: String, attendance: Int, picture: String, location: String, date: String, description: String) {
-    var newEvent = EventBase(title, attendance, picture)
+fun onSubmit(name: String, attendance: Int, location: String, startDate: String, description: String, eventService: EventService) {
+    eventService.createEvent(EventData(name = name, attendance = attendance, location = location, startDate = startDate))
     /* TODO bruke set-funksjoner for de ulike feltene
     *   newEvent.setLocation(location) */
-}*/
+}
 
 @Preview(showBackground = true)
 @Composable
 fun CreateEventViewPreview() {
-    CreateEventView(navController = rememberNavController())
+    CreateEventView(navController = rememberNavController(), eventService = EventService())
 }
 

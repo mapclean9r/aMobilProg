@@ -42,7 +42,7 @@ fun Arena() {
             HomeView(navController = navController, eventService = EventService())
         }
         composable("createEventScreen") {
-            CreateEventView(navController = navController)
+            CreateEventView(navController = navController, eventService = EventService())
         }
         composable("friendsScreen") {
             FriendsView(navController = navController)
