@@ -20,9 +20,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mobprog.R
 import com.example.mobprog.createEvent.EventBase
+import com.example.mobprog.createEvent.EventData
 
 @Composable
-fun EventBox(eventBase: EventBase) {
+fun EventBox(eventData: EventData) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -31,7 +32,7 @@ fun EventBox(eventBase: EventBase) {
     ) {
         Image(
             painter = painterResource(R.drawable.lol), /* TODO: Må få til henting fra API*/
-            contentDescription = eventBase.getName(),
+            contentDescription = eventData.eventName,
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxWidth()
@@ -39,27 +40,27 @@ fun EventBox(eventBase: EventBase) {
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = eventBase.getName(),
+            text = "Name: " + eventData.eventName,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold
         )
         Text(
-            text = eventBase.getPrice(),
+            text = eventData.price,
             fontSize = 16.sp,
             fontWeight = FontWeight.W400
         )
         Text(
-            text = "Location: " + eventBase.getLocation(),
+            text = "Location: " + eventData.location,
             fontSize = 12.sp,
             fontWeight = FontWeight.Light
         )
         Text(
-            text = "Dato: " + eventBase.getStartDate(),
+            text = "Dato: " + eventData.eventDate,
             fontSize = 13.sp,
             fontWeight = FontWeight.W300
         )
         Text(
-            text = "Arrangør: " + eventBase.getHost(),
+            text = "Arrangør: " + eventData.host,
             fontSize = 13.sp,
             fontWeight = FontWeight.W300
         )

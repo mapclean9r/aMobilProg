@@ -27,11 +27,6 @@ class EventManager() {
     }
 
 
-    fun sendDataGuild(guild: Guild){
-        //sender data til Guild -> Eventmanager[Event]
-        guildDB.registerEventsToGuild(guild)
-    }
-
     fun sendDataUser(){
         //sender data til User -> Eventmanager[Event]
     }

@@ -84,12 +84,7 @@ private fun login(navController: NavController, email: String, password: String)
             Button(onClick = {
                 if(emailTextController != "" && passwordTextController != "") {
                     login(navController, emailTextController, passwordTextController)
-                    var eventman = EventManager()
-                    eventman.addEvent(EventBase("League of Legends", 42, "BigboyPicture"))
-                    eventman.addEvent(EventBase("Friends of Legends", 23, "small boy"))
-                    var g = Guild("FF15", "ff or else", "re")
-                    g.addEventManager(eventman)
-                    GuildService().registerEventsToGuild(guild = g)
+
                 }
             }) {
                 Text(text = "Login")

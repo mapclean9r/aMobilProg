@@ -21,6 +21,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,8 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.mobprog.createEvent.EventBase
-import com.example.mobprog.createEvent.EventManager
+import com.example.mobprog.createEvent.EventData
 import com.example.mobprog.data.EventService
 import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.home.EventBox
@@ -42,13 +43,54 @@ fun HomeView(navController: NavController, modifier: Modifier = Modifier) {
 
     val eventService = EventService()
 
-    val dummy = listOf(
+    fun parseToEventData(data: Map<String, Any>): EventData? {
+        return try {
+            EventData(
+                eventName = data["eventName"] as? String ?: "",
+                eventDate = data["eventDate"] as? String ?: "",
+                creatorId = data["creatorId"] as? String ?: "",
+                description = data["description"] as? String ?: "",
+                price = data["price"] as? String ?: "Free",
+                location = data["location"] as? String ?: "N/A",
+                picture = data["picture"] as? String ?: "",
+                host = data["host"] as? String ?: "N/A",
+                date = data["date"] as? String ?: "N/A",
+                comments = data["comments"] as? List<String> ?: emptyList(),
+                attenders = data["attenders"] as? List<String> ?: emptyList(),
+                members = data["members"] as? List<String> ?: emptyList()
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+/*    val dummy = listOf(
             EventBase("League Lan", 8, ""),
             EventBase("Rocket League Fiesta", 12, ""),
             EventBase("Justice League Party", 1337, ""),
-            )
+            ) */
 
-    var events = EventManager().getEvents().toList()
+    var events = listOf(EventData())
+
+    eventService.getAllEvents { eventsList ->
+        eventsList?.let { documents ->
+            val eventDataList = documents.mapNotNull { document ->
+                parseToEventData(document)
+            }
+            events = eventDataList
+
+            for (event in eventDataList) {
+                println("Event Name: ${event.eventName}")
+                println("Event Date: ${event.eventDate}")
+                println("Creator: ${event.creatorId}")
+                // Access other fields as needed
+            }
+        } ?: run {
+            println("No events found")
+        }
+
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -91,8 +133,8 @@ fun HomeView(navController: NavController, modifier: Modifier = Modifier) {
                     .padding(paddingValues)
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
-                items(dummy) { event ->
-                    EventBox(eventBase = event)
+                items(events) { event ->
+                    EventBox(eventData = event)
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }
