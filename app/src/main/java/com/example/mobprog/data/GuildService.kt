@@ -3,6 +3,7 @@ package com.example.mobprog.data
 import com.example.mobprog.createEvent.EventBase
 import com.example.mobprog.createEvent.EventManager
 import com.example.mobprog.guild.Guild
+import com.example.mobprog.guild.GuildData
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import kotlin.collections.ArrayList
@@ -33,10 +34,14 @@ class GuildService {
         return guildRef
     }
 
-    fun registerEventsToGuild(guild: Guild) {
-        val events = db.collection("events")
-        events.document("Friends of Legends").set(EventBase("Friends of Legends", 23, "small boy"))
-        db.collection("guilds").document(guild.getGuildName()).set(guild)
+
+    //
+    fun createEventsForGuild(guildData: GuildData) {
+        db.collection("events").add(guildData)
+    }
+
+    fun fetchEventsForGuild(guildId: String) {
+        db.collection("events").whereEqualTo("creatorId", guildId).get()
     }
 
 }
