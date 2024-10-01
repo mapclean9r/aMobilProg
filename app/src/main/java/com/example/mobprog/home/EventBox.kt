@@ -30,17 +30,18 @@ fun EventBox(eventData: EventData) {
             .border(2.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
             .padding(12.dp)
     ) {
-        Image(
+        DynamicImageSelector(imageName = eventData.picture)
+        /*Image(
             painter = painterResource(R.drawable.lol), /* TODO: Må få til henting fra API*/
             contentDescription = eventData.name,
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(200.dp)
-        )
+        )*/
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Name: " + eventData.name,
+            text = eventData.name,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold
         )
@@ -52,7 +53,7 @@ fun EventBox(eventData: EventData) {
         Text(
             text = "Location: " + eventData.location,
             fontSize = 12.sp,
-            fontWeight = FontWeight.Light
+            fontWeight = FontWeight.W300
         )
         Text(
             text = "Dato: " + eventData.startDate,
@@ -64,5 +65,29 @@ fun EventBox(eventData: EventData) {
             fontSize = 13.sp,
             fontWeight = FontWeight.W300
         )
+        Text(
+            text = "Beskrivelse: " + eventData.description,
+            fontSize = 13.sp,
+            fontWeight = FontWeight.W300
+        )
     }
+}
+
+@Composable
+fun DynamicImageSelector(imageName: String) {
+    val imageResource = when (imageName) {
+        "lol" -> R.drawable.lol
+        "rocket" -> R.drawable.rocket
+        "heart" -> R.drawable.heart
+        else -> R.drawable.lol // A default image in case of an invalid name
+    }
+
+    Image(
+        painter = painterResource(id = imageResource),
+        contentDescription = imageName,
+        contentScale = ContentScale.Crop,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp)
+    )
 }

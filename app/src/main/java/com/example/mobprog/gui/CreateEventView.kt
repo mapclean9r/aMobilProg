@@ -162,7 +162,7 @@ fun CreateEventView(navController: NavController, eventService: EventService, mo
                     Spacer(modifier = Modifier.height(22.dp))
                     Button(
                         onClick = {
-                            onSubmit(name, attendance, location, startDate, description = "", eventService = eventService)
+                            onSubmit(name, attendance, location, startDate, description, eventService = eventService)
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
@@ -181,7 +181,7 @@ fun CreateEventView(navController: NavController, eventService: EventService, mo
 }
 
 fun onSubmit(name: String, attendance: Int, location: String, startDate: String, description: String, eventService: EventService) {
-    eventService.createEvent(EventData(name = name, attendance = attendance, location = location, startDate = startDate))
+    eventService.createEvent(EventData(name = name, attendance = attendance, location = location, description = description, startDate = startDate))
     /* TODO bruke set-funksjoner for de ulike feltene
     *   newEvent.setLocation(location) */
 }
