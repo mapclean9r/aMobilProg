@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.mobprog.data.EventService
 import com.example.mobprog.gui.LoginView
 import com.example.mobprog.gui.RegisterView
 import com.example.mobprog.gui.CreateEventView
@@ -38,7 +39,7 @@ fun Arena() {
             RegisterView(navController = navController)
         }
         composable("homeScreen") {
-            HomeView(navController = navController)
+            HomeView(navController = navController, eventService = EventService())
         }
         composable("createEventScreen") {
             CreateEventView(navController = navController)

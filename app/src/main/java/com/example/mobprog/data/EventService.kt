@@ -9,7 +9,7 @@ class EventService {
 
     //Fungerer 100% @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-    fun createEvent(event: EventBase){
+    fun createEvent(event: EventData){
         db.collection("events").add(event)
     }
 
@@ -74,6 +74,28 @@ class EventService {
             }
     }
 
+
+    fun parseToEventData(data: Map<String, Any>): EventData? {
+        return try {
+            EventData(
+                name = data["name"] as? String ?: "",
+                startDate = data["startDate"] as? String ?: "",
+                creatorId = data["creatorId"] as? String ?: "",
+                description = data["description"] as? String ?: "",
+                price = data["price"] as? String ?: "Free",
+                location = data["location"] as? String ?: "N/A",
+                picture = data["picture"] as? String ?: "",
+                host = data["host"] as? String ?: "N/A",
+                date = data["date"] as? String ?: "N/A",
+                comments = data["comments"] as? List<String> ?: emptyList(),
+                attendance = data["attendance"] as? Int ?: 0,
+                members = data["members"] as? List<String> ?: emptyList()
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
 
     //In Progress @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
