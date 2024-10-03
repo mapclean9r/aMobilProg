@@ -1,6 +1,7 @@
 package com.example.mobprog.data
 
 import android.util.Log
+import androidx.compose.runtime.LaunchedEffect
 import com.example.mobprog.guild.Guild
 import com.example.mobprog.user.User
 import com.google.firebase.Firebase
