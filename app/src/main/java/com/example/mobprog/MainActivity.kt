@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.mobprog.data.EventService
+import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.LoginView
 import com.example.mobprog.gui.RegisterView
 import com.example.mobprog.gui.CreateEventView
@@ -31,7 +32,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Arena() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "homeScreen") {
+    NavHost(navController = navController, startDestination = "loginScreen") {
         composable("loginScreen") {
             LoginView(navController = navController)
         }
@@ -51,7 +52,7 @@ fun Arena() {
             GuildView(navController = navController)
         }
         composable("profileScreen") {
-            ProfileView(navController = navController)
+            ProfileView(navController = navController, userService = UserService())
         }
         composable("notificationScreen") {
             NotificationView(navController = navController)

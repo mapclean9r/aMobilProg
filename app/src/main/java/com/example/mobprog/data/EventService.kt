@@ -79,17 +79,17 @@ class EventService {
         return try {
             EventData(
                 name = data["name"] as? String ?: "",
-                startDate = data["startDate"] as? String ?: "",
+                startDate = data["startDate"] as? String ?: "N/A",
+                endDate = data["date"] as? String ?: "N/A",
                 creatorId = data["creatorId"] as? String ?: "",
                 description = data["description"] as? String ?: "",
                 price = data["price"] as? String ?: "Free",
                 location = data["location"] as? String ?: "N/A",
                 picture = data["picture"] as? String ?: "",
                 host = data["host"] as? String ?: "N/A",
-                date = data["date"] as? String ?: "N/A",
                 comments = data["comments"] as? List<String> ?: emptyList(),
-                attendance = data["attendance"] as? Int ?: 0,
-                members = data["members"] as? List<String> ?: emptyList()
+                maxAttendance = data["attendance"] as? Int ?: 0,
+                attending = data["attending"] as? List<String> ?: emptyList()
             )
         } catch (e: Exception) {
             e.printStackTrace()
