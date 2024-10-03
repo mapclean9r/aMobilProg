@@ -10,9 +10,7 @@ import com.google.firebase.firestore.firestore
 
 class UserService {
     private val db = Firebase.firestore
-
-    //Fungerer 100% @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
+    
     fun printAllUsers() {
         val allUsersRef = db.collection("users")
 
@@ -21,11 +19,10 @@ class UserService {
             .addOnSuccessListener { users ->
                 for (user in users) {
                     println(
-                        "Userid: ${user.id}, Username: ${user.get("name")}, Password: ${
-                            user.get(
-                                "password"
-                            )
-                        }",
+                        "Userid:   ${user.id}, " +
+                        "Username: ${user.get("name")}, " +
+                        "Password: ${user.get("password")}" +
+                        "Email:    ${user.get("email")}",
                     )
                 }
             }
@@ -35,9 +32,12 @@ class UserService {
     }
 
     fun createUser(email: String, username: String, password: String) {
-        val newUser = User(email, username, password)
-        db.collection("users")
-            .add(newUser)
+
+        val newUser = UserData( email = email,
+                                name = username,
+                                password = password )
+
+        db.collection("users").add(newUser)
     }
 
     fun getEmailFromUserIfExists(inputEmail: String, callback: (String?) -> Unit) {
@@ -61,23 +61,15 @@ class UserService {
         val currentUserEmail = FirebaseAuth.getInstance().currentUser?.email.toString()
         val db = FirebaseFirestore.getInstance()
         val docRef = db.collection("users").whereEqualTo("email", currentUserEmail)
-        var userData: Map<String, Any>? = null
 
         docRef.get().addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val docs = task.result
                     if (docs != null && !docs.isEmpty) {
                         val doc = docs.first()
-
-                        userData = doc.data
                         callback(doc.data)
                     }
                 }
         }
     }
-
-    //In Progress @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-
-
 }

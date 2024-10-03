@@ -1,5 +1,6 @@
 package com.example.mobprog.gui
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,6 +24,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -43,11 +50,28 @@ private fun logout(navController: NavController) {
         popUpTo("loginScreen")
     }
 
-
 }
 
 @Composable
-fun ProfileView(navController: NavController) {
+fun ProfileView(navController: NavController, userService: UserService) {
+
+    var username by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        userService.getCurrentUserData { userData ->
+            println(userData)
+            if (userData != null) {
+                val fetchedName = userData["name"] as? String
+                val fetchedEmail = userData["email"] as? String
+                username = fetchedName ?: ""
+                email = fetchedEmail ?: ""
+            } else {
+                Log.w("UserData", "No user data found for current user")
+            }
+        }
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -106,14 +130,14 @@ fun ProfileView(navController: NavController) {
                 Column (modifier = Modifier
                     .fillMaxSize()
                     .padding(12.dp)) {
-                    Text(text = "Username: ",
+                    Text(text = "Username: $username",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.W400,
                         modifier = Modifier
                             .padding(12.dp)
                             .align(Alignment.Start)
                     )
-                    Text(text = "Email: ",
+                    Text(text = "Email: $email",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.W400,
                         modifier = Modifier
@@ -150,5 +174,5 @@ fun ProfileView(navController: NavController) {
 @Preview(showBackground = true)
 @Composable
 fun ProfileViewPreview() {
-    ProfileView(navController = rememberNavController())
+    ProfileView(navController = rememberNavController(), userService = UserService())
 }
