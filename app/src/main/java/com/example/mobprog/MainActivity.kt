@@ -18,6 +18,7 @@ import com.example.mobprog.gui.guild.GuildView
 import com.example.mobprog.gui.HomeView
 import com.example.mobprog.gui.NotificationView
 import com.example.mobprog.gui.ProfileView
+import com.example.mobprog.gui.guild.CreateGuildView
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,6 +51,9 @@ fun Arena() {
         }
         composable("guildScreen") {
             GuildView(navController = navController)
+        }
+        composable("createGuildScreen") {
+            CreateGuildView(navController = navController, userService = UserService())
         }
         composable("profileScreen") {
             ProfileView(navController = navController, userService = UserService())

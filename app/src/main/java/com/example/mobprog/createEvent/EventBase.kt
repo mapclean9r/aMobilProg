@@ -2,6 +2,8 @@ package com.example.mobprog.createEvent
 
 import com.example.mobprog.user.User
 
+/* @@@@@@   BRUKER IKKE DENNE LENGRE  @@@@@@ */
+
 class EventBase(private var eventName: String, private var eventMaxAttendance: Int, private var eventPicture: String) {
     private val eventComments = ArrayList<EventComment>()
     private val currentAttenders = ArrayList<User>()
