@@ -6,7 +6,7 @@ data class UserData (
     val name: String = "",
     val password: String = "",
     val email: String = "",
-    val nickname: String = "",
+    val displayName: String = "",
     val picture: String = "",
     val creatorId: String = generateId(),
     val friends: List<String> = emptyList()
