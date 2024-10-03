@@ -35,7 +35,8 @@ class UserService {
 
         val newUser = UserData( email = email,
                                 name = username,
-                                password = password )
+                                password = password,
+                                )
 
         db.collection("users").add(newUser)
     }

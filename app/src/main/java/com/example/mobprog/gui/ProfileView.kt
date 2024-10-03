@@ -57,6 +57,7 @@ fun ProfileView(navController: NavController, userService: UserService) {
 
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
+    var createdAt by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
         userService.getCurrentUserData { userData ->
@@ -64,8 +65,10 @@ fun ProfileView(navController: NavController, userService: UserService) {
             if (userData != null) {
                 val fetchedName = userData["name"] as? String
                 val fetchedEmail = userData["email"] as? String
+                val fetchedDate = userData["dateCreated"] as? String
                 username = fetchedName ?: ""
                 email = fetchedEmail ?: ""
+                createdAt = fetchedDate ?: ""
             } else {
                 Log.w("UserData", "No user data found for current user")
             }
@@ -144,7 +147,7 @@ fun ProfileView(navController: NavController, userService: UserService) {
                             .padding(12.dp)
                             .align(Alignment.Start)
                     )
-                    Text(text = "User created: ",
+                    Text(text = "User created: $createdAt",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.W400,
                         modifier = Modifier
