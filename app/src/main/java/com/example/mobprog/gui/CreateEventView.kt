@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.AlignmentLine
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -55,9 +56,11 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
     /* TODO - legge til alle felter som trengs og endre tekst felter til å benytte disse */
     var name by remember { mutableStateOf("")}
     var location by remember { mutableStateOf("") }
+    var price by remember { mutableStateOf("") }
     var startDate by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var maxAttendance by remember { mutableIntStateOf(0) }
+    var maxAttendanceString by remember { mutableStateOf("") }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -127,6 +130,38 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                         placeholder = { Text("location") },
                         modifier = Modifier.fillMaxWidth()
                     )
+                    Text(text = "Price",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.W400,
+                        modifier = Modifier
+                            .padding(6.dp)
+                            .align(Alignment.Start))
+                    TextField(
+                        value = price,
+                        onValueChange = { newText ->
+                            price = newText
+                        },
+                        label = { Text("Enter Price") },
+                        placeholder = { Text("price") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Text(text = "Max Attendance",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.W400,
+                        modifier = Modifier
+                            .padding(6.dp)
+                            .align(Alignment.Start))
+                    TextField(
+                        value = maxAttendanceString,
+                        onValueChange = { newText ->
+                            maxAttendance = newText.toInt()
+                        },
+                        label = { Text("Enter Attendance") },
+                        placeholder = { Text("attendance") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
                     Text(text = "Date",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W400,
@@ -162,7 +197,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                     Spacer(modifier = Modifier.height(22.dp))
                     Button(
                         onClick = {
-                            onSubmit(name, maxAttendance, location, startDate, description, eventService = eventService)
+                            onSubmit(name, maxAttendance, price, location, startDate, description, eventService = eventService)
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
@@ -180,8 +215,8 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
 
 }
 
-fun onSubmit(name: String, maxAttendance: Int, location: String, startDate: String, description: String, eventService: EventService) {
-    eventService.createEvent(EventData(name = name, maxAttendance = maxAttendance, location = location, description = description, startDate = startDate))
+fun onSubmit(name: String, maxAttendance: Int, price: String, location: String, startDate: String, description: String, eventService: EventService) {
+    eventService.createEvent(EventData(name = name, maxAttendance = maxAttendance, location = location, description = description, startDate = startDate, price = price))
 }
 
 @Preview(showBackground = true)
