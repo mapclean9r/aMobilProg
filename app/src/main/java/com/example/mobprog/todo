@@ -34,3 +34,5 @@ Guild:
  - Søke etter guilds
  - Invitere medlemer knappen trenger funksjonalitet
  - Create Guild Event knappen trenger et view
+ - Brukeren som lager guilden skal være guild-Lederen
+ - En leder skal kunne gi medlemer utlike statuser eller gi bort "guild-leder" posisjonen
