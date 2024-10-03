@@ -1,0 +1,36 @@
+Todo:
+
+Events:
+- Nytt view for clicked event
+  * Mer info fra event data klassen
+  * Knapp med påmelding som legger brukeren inn i eventet samt eventet i brukeren
+
+
+ Create Event:
+ - API uthentning
+  * Bilder, Tittel, kategori (ikke vise kategori)
+  * EventeBildet skal kunne velges utifra API'ets bilder, defaultet til det første spillet
+ - Legge til mer data som tilhører EventData
+
+HomePage:
+ - legge til en knapp som viser eventene som man har meldt seg på (top-right)
+ - Det skal gå an å søke etter et event med navn
+ - Legge til et nytt view for eventet man har trykket på
+
+
+FriendList
+ - Gjøre det mulig å hente ut den påloggeted bruker sine venner
+ - Det skal gå an å søke etter en bruker
+
+
+Profil:
+ - Redigere brukerinfoen
+  * Legge til et bilde fra brukerens mobil
+ - Instillinger knappen trenger et view / popup
+
+
+Guild:
+ - Det skal være en side hvor alle guildene kommer opp hvis du ikke er medlem av en guild
+ - Søke etter guilds
+ - Invitere medlemer knappen trenger funksjonalitet
+ - Create Guild Event knappen trenger et view
