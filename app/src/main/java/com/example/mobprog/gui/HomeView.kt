@@ -23,6 +23,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -47,8 +48,12 @@ import com.example.mobprog.home.EventBox
 fun HomeView(navController: NavController, eventService: EventService, modifier: Modifier = Modifier) {
 
     var events by remember { mutableStateOf(emptyList<EventData>()) }
+
     var showSearch by remember { mutableStateOf(false) }
     var searchText by remember { mutableStateOf("") }
+
+    var filteredEvents by remember { mutableStateOf(emptyList<EventData>()) }
+
 
     eventService.getAllEvents { eventsList ->
         eventsList?.let { documents ->
@@ -59,6 +64,12 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
         } ?: run {
             println("No events found")
         }
+    }
+
+    LaunchedEffect(searchText) {
+        filteredEvents = events.filter { event ->
+            event.name.contains(searchText, ignoreCase = true)
+        } ?: emptyList()
     }
 
 
@@ -103,9 +114,14 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
                     .padding(paddingValues)
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
-                items(events) { event ->
+                if(filteredEvents.isEmpty()){
+                    items(events) { event ->
+                        EventBox(eventData = event)
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }   
+                }
+                items(filteredEvents) { event ->
                     EventBox(eventData = event)
-                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
         },
@@ -131,7 +147,8 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
             onValueChange = { searchText = it },
             placeholder = { Text("Search...") },
             modifier = Modifier
-                .fillMaxWidth().fillMaxSize(fraction = 0.09f)
+                .fillMaxWidth()
+                .fillMaxSize(fraction = 0.09f)
                 .padding(top = 24.dp),
             singleLine = true
         )
