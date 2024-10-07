@@ -95,7 +95,7 @@ class GuildService {
     }
 
     fun fetchEventsForGuild(guildId: String) {
-        db.collection("events").whereEqualTo("creatorId", guildId).get()
+        db.collection("events").whereEqualTo("guildId", guildId).get()
     }
 
 }
