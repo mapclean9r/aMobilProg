@@ -25,7 +25,7 @@ class GuildService {
             leader = map["leader"] as? String ?: "",
             description = map["description"] as? String ?: "",
             picture = map["picture"] as? String ?: "",
-            creatorId = map["creatorId"] as? String ?: generateId(),
+            guildId = map["guildId"] as? String ?: generateId(),
             members = map["members"] as? List<String> ?: emptyList(),
             dateCreated = map["dateCreated"] as? String ?: formattedDateTime
         )
