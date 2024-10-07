@@ -68,11 +68,14 @@ fun SettingsView(navController: NavController){
                 },
                     modifier = Modifier.align(Alignment.CenterStart)
                 ) {
+                    IconButton(onClick = { navController.navigate("profileScreen") },
+                        modifier = Modifier.align(Alignment.CenterEnd)) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back Button",
                         tint = Color.White
                     )
+                }
                 }
                 Text(
                     text = "Settings",

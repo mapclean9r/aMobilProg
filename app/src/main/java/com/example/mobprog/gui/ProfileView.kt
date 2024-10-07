@@ -94,12 +94,13 @@ fun ProfileView(navController: NavController, userService: UserService) {
                         color = Color.White,
                         modifier = Modifier.align(Alignment.Center)
                     )
-                    IconButton(onClick = {  },
+                    IconButton(onClick = { navController.navigate("settingsScreen") },
                         modifier = Modifier.align(Alignment.CenterEnd)) {
                         Icon(
                             imageVector = Icons.Default.Settings,
                             contentDescription = "Profile Icon",
                             tint = Color.White,
+
                         )
                     }
                 }
