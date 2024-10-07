@@ -59,6 +59,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
     var price by remember { mutableStateOf("") }
     var startDate by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
+
     var maxAttendance by remember { mutableIntStateOf(0) }
     var maxAttendanceString by remember { mutableStateOf("") }
 
@@ -155,7 +156,8 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                     TextField(
                         value = maxAttendanceString,
                         onValueChange = { newText ->
-                            maxAttendance = newText.toInt()
+                            maxAttendanceString = newText
+                            maxAttendance = maxAttendanceString.toInt()
                         },
                         label = { Text("Enter Attendance") },
                         placeholder = { Text("attendance") },
