@@ -61,7 +61,7 @@ class UserService {
         val currentUserEmail = FirebaseAuth.getInstance().currentUser?.email.toString()
         val db = FirebaseFirestore.getInstance()
         val docRef = db.collection("users").whereEqualTo("email", currentUserEmail)
-
+        
         docRef.get().addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val docs = task.result

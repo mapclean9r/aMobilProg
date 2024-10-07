@@ -77,6 +77,7 @@ fun DynamicImageSelector(imageName: String) {
         "lol" -> R.drawable.lol
         "rocket" -> R.drawable.rocket
         "heart" -> R.drawable.heart
+        "guild" -> R.drawable.guild
         else -> R.drawable.lol // A default image in case of an invalid name
     }
 

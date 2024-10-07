@@ -41,6 +41,8 @@ import com.example.mobprog.data.EventService
 import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.gui.components.EventBox
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -53,6 +55,16 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
 
     var filteredEvents by remember { mutableStateOf(emptyList<EventData>()) }
 
+    val currentUser = FirebaseAuth.getInstance().currentUser
+    if (currentUser != null) {
+        val uid = currentUser.uid
+        val db = FirebaseFirestore.getInstance()
+        val userRef = db.collection("users").document(uid)
+        println("uid: $uid")
+        println("db: $db")
+        println("userRef: $userRef")
+        println("currentUser: $currentUser")
+    }
 
     eventService.getAllEvents { eventsList ->
         eventsList?.let { documents ->

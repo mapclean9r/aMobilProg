@@ -13,7 +13,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -27,12 +30,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.mobprog.R
 import com.example.mobprog.data.GuildService
 import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
@@ -87,6 +94,20 @@ fun NoGuildView(navController: NavController, guildService: GuildService, modifi
                 }
             }
         },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { navController.navigate("createGuildScreen") },
+                modifier = Modifier.padding(16.dp),  // Padding from the bottom and right
+                content = {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "add",
+                        tint = Color.Black
+                    )
+                }
+            )
+        },
+        floatingActionButtonPosition = FabPosition.End,
         content = { paddingValues ->
             LazyColumn(
                 modifier = Modifier

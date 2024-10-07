@@ -57,7 +57,7 @@ fun Arena() {
         composable("createGuildScreen") {
             CreateGuildView(navController = navController, userService = UserService())
         }
-        composable("noGuildView") {
+        composable("noGuildScreen") {
             NoGuildView(navController = navController, guildService = GuildService())
         }
         composable("profileScreen") {

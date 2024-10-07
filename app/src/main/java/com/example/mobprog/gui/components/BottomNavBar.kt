@@ -40,7 +40,7 @@ fun BottomNavBar(navController: NavController, userService: UserService) {
         NavBarItem(
             "Guild",
             Icons.Default.Share,
-            "guildConditionalScreen",
+            "guildScreenTemp",
             routeAlternatives = listOf("guildScreen", "noGuildScreen")
         ),
         NavBarItem("Profile", Icons.Default.Person, "profileScreen")
