@@ -72,4 +72,47 @@ class UserService {
                 }
         }
     }
+
+    fun getCurrentUserGuild(callback: (String?) -> Unit) {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser == null) {
+            callback(null)
+            return
+        }
+
+        val uid = currentUser.uid
+        val db = FirebaseFirestore.getInstance()
+        val userRef = db.collection("users").document(uid)
+
+        userRef.get().addOnSuccessListener { documentSnapshot ->
+            if (documentSnapshot.exists()) {
+                val guild = documentSnapshot.getString("guild")
+                callback(guild)
+            } else {
+                callback(null)
+            }
+        }.addOnFailureListener { exception ->
+            exception.printStackTrace()
+            callback(null)
+        }
+    }
+
+    fun updateUserGuild(guildId: String, callback: (Boolean, Exception?) -> Unit) {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser != null) {
+            val uid = currentUser.uid
+            val db = FirebaseFirestore.getInstance()
+            val userRef = db.collection("users").document(uid)
+
+            userRef.update("guild", guildId)
+                .addOnSuccessListener {
+                    callback(true, null)
+                }
+                .addOnFailureListener { exception ->
+                    callback(false, exception)
+                }
+        } else {
+            callback(false, Exception("User not authenticated"))
+        }
+    }
 }

@@ -91,7 +91,7 @@ fun FriendsView(navController: NavController) {
     }, bottomBar = {
             // inspirert av link under for å lage navbar.
             // https://www.youtube.com/watch?v=O9csfKW3dZ4
-            BottomNavBar(navController = navController)
+            BottomNavBar(navController = navController, userService = UserService())
         })
 }
 

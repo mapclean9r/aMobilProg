@@ -34,12 +34,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobprog.data.GuildService
+import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.guild.GuildData
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun noGuildView(navController: NavController, guildService: GuildService, modifier: Modifier = Modifier) {
+fun NoGuildView(navController: NavController, guildService: GuildService, modifier: Modifier = Modifier) {
 
     var guilds by remember { mutableStateOf(emptyList<GuildData>()) }
 
@@ -102,7 +103,7 @@ fun noGuildView(navController: NavController, guildService: GuildService, modifi
         bottomBar = {
             // inspirert av link under for å lage navbar.
             // https://www.youtube.com/watch?v=O9csfKW3dZ4
-            BottomNavBar(navController = navController)
+            BottomNavBar(navController = navController, userService = UserService())
         }
     )
 
@@ -112,5 +113,5 @@ fun noGuildView(navController: NavController, guildService: GuildService, modifi
 @Preview(showBackground = true)
 @Composable
 fun NoGuildViewPreview() {
-    noGuildView(navController = rememberNavController(), guildService = GuildService())
+    NoGuildView(navController = rememberNavController(), guildService = GuildService())
 }
