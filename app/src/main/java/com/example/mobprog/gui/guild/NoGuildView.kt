@@ -40,7 +40,7 @@ import com.example.mobprog.guild.GuildData
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun noGuildView(navController: NavController, guildService: GuildService, modifier: Modifier = Modifier) {
+fun NoGuildView(navController: NavController, guildService: GuildService, modifier: Modifier = Modifier) {
 
     var guilds by remember { mutableStateOf(emptyList<GuildData>()) }
 
@@ -113,5 +113,5 @@ fun noGuildView(navController: NavController, guildService: GuildService, modifi
 @Preview(showBackground = true)
 @Composable
 fun NoGuildViewPreview() {
-    noGuildView(navController = rememberNavController(), guildService = GuildService())
+    NoGuildView(navController = rememberNavController(), guildService = GuildService())
 }
