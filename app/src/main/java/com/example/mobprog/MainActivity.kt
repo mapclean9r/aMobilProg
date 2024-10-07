@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Arena() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "loginScreen") {
+    NavHost(navController = navController, startDestination = "homeScreen") {
         composable("loginScreen") {
             LoginView(navController = navController)
         }

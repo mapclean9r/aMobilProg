@@ -2,6 +2,7 @@ package com.example.mobprog.gui
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -20,6 +21,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -45,6 +47,8 @@ import com.example.mobprog.home.EventBox
 fun HomeView(navController: NavController, eventService: EventService, modifier: Modifier = Modifier) {
 
     var events by remember { mutableStateOf(emptyList<EventData>()) }
+    var showSearch by remember { mutableStateOf(false) }
+    var searchText by remember { mutableStateOf("") }
 
     eventService.getAllEvents { eventsList ->
         eventsList?.let { documents ->
@@ -71,11 +75,9 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Box(modifier = Modifier.fillMaxWidth()) {
-                    IconButton(onClick = {
-                        eventService.getEventById("O47UxJAkXFd1jToaGnxt") { event ->
-                            println(event)
-                        }
-                    }) {
+                    IconButton(onClick = { showSearch = true })
+
+                    {
                         Icon(
                             imageVector = Icons.Default.Search,
                             contentDescription = "Search Icon",
@@ -92,6 +94,8 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
                 }
             }
         },
+
+
         content = { paddingValues ->
             LazyColumn(
                 modifier = Modifier
@@ -111,6 +115,27 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
             BottomNavBar(navController = navController)
         }
     )
+
+    if (showSearch) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.5f))
+                .padding()
+                .clickable {
+                    showSearch = false
+                }
+        )
+        TextField(
+            value = searchText,
+            onValueChange = { searchText = it },
+            placeholder = { Text("Search...") },
+            modifier = Modifier
+                .fillMaxWidth().fillMaxSize(fraction = 0.09f)
+                .padding(top = 24.dp),
+            singleLine = true
+        )
+    }
 
 
 }
