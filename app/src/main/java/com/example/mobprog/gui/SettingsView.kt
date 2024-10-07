@@ -91,7 +91,7 @@ fun SettingsView(navController: NavController, onDarkModeToggle: (Boolean) -> Un
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = if (isDarkTheme) "Night Mode ON" else "Night Mode OFF",
+                        text = if (isDarkTheme) "Dark Mode ON" else "Dark Mode OFF",
                         style = MaterialTheme.typography.headlineLarge
                     )
                     Spacer(modifier = Modifier.height(16.dp))
@@ -99,7 +99,7 @@ fun SettingsView(navController: NavController, onDarkModeToggle: (Boolean) -> Un
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Night Mode")
+                        Text("Dark Mode")
                         Spacer(modifier = Modifier.width(8.dp))
                         Switch(
                             checked = isDarkTheme,
