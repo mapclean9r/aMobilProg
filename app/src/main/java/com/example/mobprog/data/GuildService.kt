@@ -1,11 +1,11 @@
 package com.example.mobprog.data
 
-import com.example.mobprog.createEvent.EventBase
-import com.example.mobprog.createEvent.EventManager
-import com.example.mobprog.guild.Guild
+import com.example.mobprog.z_Old_Code.EventBase
+import com.example.mobprog.z_Old_Code.EventManager
 import com.example.mobprog.guild.GuildData
+import com.example.mobprog.guild.formattedDateTime
+import com.example.mobprog.guild.generateId
 import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import kotlin.collections.ArrayList
@@ -19,16 +19,22 @@ class GuildService {
         db.collection("guilds").add(guild)
     }
 
-    private fun parseGuildData(map: Map<String, Any>): GuildData {
-        return GuildData(
-            name = map["name"] as? String ?: "",
-            leader = map["leader"] as? String ?: "",
-            description = map["description"] as? String ?: "",
-            picture = map["picture"] as? String ?: "",
-            guildId = map["guildId"] as? String ?: generateId(),
-            members = map["members"] as? List<String> ?: emptyList(),
-            dateCreated = map["dateCreated"] as? String ?: formattedDateTime
-        )
+    fun parseGuildData(map: Map<String, Any>): GuildData? {
+        return try {
+            GuildData(
+                name = map["name"] as? String ?: "",
+                leader = map["leader"] as? String ?: "",
+                description = map["description"] as? String ?: "",
+                picture = map["picture"] as? String ?: "",
+                guildId = map["guildId"] as? String ?: generateId(),
+                members = map["members"] as? List<String> ?: emptyList(),
+                dateCreated = map["dateCreated"] as? String ?: formattedDateTime
+            )
+        }
+        catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
 
 
@@ -66,12 +72,29 @@ class GuildService {
         }
     }
 
+    fun getAllGuilds(callback: (List<Map<String, Any>>?) -> Unit) {
+        val allGuildsRef = db.collection("guilds")
 
-    fun registerEvent(event: EventBase){
-        db.collection("events").add(event)
+        allGuildsRef
+            .get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val doc = task.result
+                    if (doc != null && !doc.isEmpty) {
+                        val guildDataMap = mutableListOf<Map<String, Any>>()
+                        for (field in doc) {
+                            field.data.let {
+                                guildDataMap.add(it)
+                            }
+                        }
+                        callback(guildDataMap)
+                    }
+                    else {
+                        callback(null)
+                    }
+                }
+            }
     }
-
-    //In Progress @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
     fun getEventRef(guildEvents: EventManager): ArrayList<String>{
         val guildRef: ArrayList<String> = ArrayList()
@@ -89,13 +112,16 @@ class GuildService {
     }
 
 
-    //
     fun createEventsForGuild(guildData: GuildData) {
         db.collection("events").add(guildData)
     }
 
     fun fetchEventsForGuild(guildId: String) {
         db.collection("events").whereEqualTo("guildId", guildId).get()
+    }
+
+    fun registerEvent(event: EventBase){
+        db.collection("events").add(event)
     }
 
 }

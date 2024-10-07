@@ -1,4 +1,4 @@
-package com.example.mobprog.gui
+package com.example.mobprog.gui.guild
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
@@ -33,23 +33,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.mobprog.createEvent.EventData
-import com.example.mobprog.data.EventService
+import com.example.mobprog.data.GuildService
 import com.example.mobprog.gui.components.BottomNavBar
-import com.example.mobprog.gui.components.EventBox
+import com.example.mobprog.guild.GuildData
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomeView(navController: NavController, eventService: EventService, modifier: Modifier = Modifier) {
+fun noGuildView(navController: NavController, guildService: GuildService, modifier: Modifier = Modifier) {
 
-    var events by remember { mutableStateOf(emptyList<EventData>()) }
+    var guilds by remember { mutableStateOf(emptyList<GuildData>()) }
 
-    eventService.getAllEvents { eventsList ->
-        eventsList?.let { documents ->
+    guildService.getAllGuilds { guildList ->
+        guildList?.let { documents ->
             val eventDataList = documents.mapNotNull { document ->
-                eventService.parseToEventData(document)
+                guildService.parseGuildData(document)
             }
-            events = eventDataList
+            guilds = eventDataList
         } ?: run {
             println("No events found")
         }
@@ -69,11 +68,8 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Box(modifier = Modifier.fillMaxWidth()) {
-                    IconButton(onClick = {
-                        eventService.getEventById("O47UxJAkXFd1jToaGnxt") { event ->
-                            println(event)
-                        }
-                    }) {
+                    IconButton(onClick = {/*TODO: legge til funksjon her for søk i guilds*/})
+                    {
                         Icon(
                             imageVector = Icons.Default.Search,
                             contentDescription = "Search Icon",
@@ -81,7 +77,7 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
                         )
                     }
                     Text(
-                        text = "Homepage",
+                        text = "Guilds",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White,
@@ -97,8 +93,8 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
                     .padding(paddingValues)
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
-                items(events) { event ->
-                    EventBox(eventData = event)
+                items(guilds) { guild ->
+                    GuildBox(guildData = guild)
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }
@@ -115,6 +111,6 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
 
 @Preview(showBackground = true)
 @Composable
-fun HomeViewPreview() {
-    HomeView(navController = rememberNavController(), eventService = EventService())
+fun NoGuildViewPreview() {
+    noGuildView(navController = rememberNavController(), guildService = GuildService())
 }

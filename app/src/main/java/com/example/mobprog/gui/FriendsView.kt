@@ -20,7 +20,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -48,7 +47,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.mobprog.R
 import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
-import com.example.mobprog.user.User
+import com.example.mobprog.z_Old_Code.User
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
