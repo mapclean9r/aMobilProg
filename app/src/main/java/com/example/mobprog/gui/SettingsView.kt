@@ -2,7 +2,6 @@ package com.example.mobprog.gui
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,10 +39,9 @@ import com.example.mobprog.ui.theme.MobProgTheme
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun SettingsView(navController: NavController, isDarkMode: Boolean,
-                 onDarkModeToggle: (Boolean) -> Unit){
+fun SettingsView(navController: NavController, onDarkModeToggle: (Boolean) -> Unit){
 
-    var isNightMode by remember { mutableStateOf(false) }
+    var isDarkTheme by remember { mutableStateOf(false) }
 
     Scaffold(topBar = {
         Row(
@@ -93,12 +91,9 @@ fun SettingsView(navController: NavController, isDarkMode: Boolean,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = if (isNightMode) "Night Mode ON" else "Night Mode OFF",
-                        color = if (isNightMode) Color.Yellow else Color.Black,
-
-                        style = MaterialTheme.typography.headlineMedium
+                        text = if (isDarkTheme) "Night Mode ON" else "Night Mode OFF",
+                        style = MaterialTheme.typography.headlineLarge
                     )
-
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Row(
@@ -107,8 +102,9 @@ fun SettingsView(navController: NavController, isDarkMode: Boolean,
                         Text("Night Mode")
                         Spacer(modifier = Modifier.width(8.dp))
                         Switch(
-                            checked = isNightMode,
+                            checked = isDarkTheme,
                             onCheckedChange = { isChecked ->
+                                isDarkTheme = isChecked
                                 onDarkModeToggle(isChecked)
                             }
                         )
@@ -130,7 +126,6 @@ fun SettingsViewPreview() {
     MobProgTheme(darkTheme = isDarkMode) {
         SettingsView(
             navController = rememberNavController(),
-            isDarkMode = isDarkMode,
             onDarkModeToggle = { isDarkMode = it }
         )
     }

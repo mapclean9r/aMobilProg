@@ -78,7 +78,7 @@ fun Arena() {
                 NotificationView(navController = navController)
             }
             composable("settingsScreen") {
-                SettingsView(navController = navController, isDarkMode = isDarkMode, onDarkModeToggle = { isDarkMode = it})
+                SettingsView(navController = navController, onDarkModeToggle = { isDarkMode = it})
             }
         }
     }
