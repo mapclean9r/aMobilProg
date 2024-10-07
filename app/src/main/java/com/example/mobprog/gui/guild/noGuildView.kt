@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobprog.data.GuildService
+import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.guild.GuildData
 
@@ -102,7 +103,7 @@ fun noGuildView(navController: NavController, guildService: GuildService, modifi
         bottomBar = {
             // inspirert av link under for å lage navbar.
             // https://www.youtube.com/watch?v=O9csfKW3dZ4
-            BottomNavBar(navController = navController)
+            BottomNavBar(navController = navController, userService = UserService())
         }
     )
 

@@ -159,9 +159,18 @@ fun CreateGuildView(navController: NavController, modifier: Modifier = Modifier,
                 Spacer(modifier = Modifier.height(22.dp))
                 Button(
                     onClick = {
-                        onSubmit(name, description, picture = picture, guildService = GuildService(), username)
-                        name = ""; description = ""; picture = "";
-                        navController.navigate("guildScreen")
+                        onSubmit(
+                            name,
+                            description,
+                            picture = picture,
+                            guildService = GuildService(),
+                            leader = username,
+                            userService = userService,
+                            navController = navController
+                        )
+                        name = ""
+                        description = ""
+                        picture = ""
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -171,14 +180,35 @@ fun CreateGuildView(navController: NavController, modifier: Modifier = Modifier,
             }
         },
         bottomBar = {
-            BottomNavBar(navController = navController)
+            BottomNavBar(navController = navController, userService = UserService())
         }
     )
 
 }
 
-fun onSubmit(name: String, description: String, picture: String, guildService: GuildService, leader: String) {
-    guildService.createGuild(GuildData(name = name, description = description, leader = leader, picture = picture))
+fun onSubmit(
+    name: String,
+    description: String,
+    picture: String,
+    guildService: GuildService,
+    leader: String,
+    userService: UserService,
+    navController: NavController
+) {
+    val guildData = GuildData(name = name, description = description, leader = leader, picture = picture)
+    guildService.createGuild(guildData) { guildId, exception ->
+        if (exception != null) {
+            Log.e("CreateGuild", "Failed to create guild", exception)
+        } else if (guildId != null) {
+            userService.updateUserGuild(guildId) { success, error ->
+                if (success) {
+                    navController.navigate("guildScreen")
+                } else {
+                    Log.e("UpdateUserGuild", "Failed to update user's guild field", error)
+                }
+            }
+        }
+    }
 }
 
 @Preview(showBackground = true)

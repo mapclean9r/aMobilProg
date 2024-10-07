@@ -38,6 +38,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobprog.createEvent.EventData
 import com.example.mobprog.data.EventService
+import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.gui.components.EventBox
 
@@ -126,7 +127,7 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
         bottomBar = {
             // inspirert av link under for å lage navbar.
             // https://www.youtube.com/watch?v=O9csfKW3dZ4
-            BottomNavBar(navController = navController)
+            BottomNavBar(navController = navController, userService = UserService())
         }
     )
 

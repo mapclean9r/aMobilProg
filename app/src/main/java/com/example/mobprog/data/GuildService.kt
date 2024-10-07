@@ -13,10 +13,18 @@ import kotlin.collections.ArrayList
 class GuildService {
     val db = Firebase.firestore
 
-    //Fungerer 100% @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    fun createGuild(guildData: GuildData, callback: (String?, Exception?) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+        val guildsCollection = db.collection("guilds")
+        val guildId = guildData.guildId
 
-    fun createGuild(guild: GuildData) {
-        db.collection("guilds").add(guild)
+        guildsCollection.document(guildId).set(guildData)
+            .addOnSuccessListener {
+                callback(guildId, null)
+            }
+            .addOnFailureListener { exception ->
+                callback(null, exception)
+            }
     }
 
     fun parseGuildData(map: Map<String, Any>): GuildData? {
