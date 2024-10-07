@@ -1,6 +1,5 @@
 package com.example.mobprog.data;
 
-import com.example.mobprog.createEvent.EventBase
 import com.example.mobprog.createEvent.EventData
 import com.google.firebase.firestore.FirebaseFirestore
 

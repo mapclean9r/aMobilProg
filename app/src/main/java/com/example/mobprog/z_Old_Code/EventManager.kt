@@ -1,8 +1,6 @@
-package com.example.mobprog.createEvent
+package com.example.mobprog.z_Old_Code
 
 import com.example.mobprog.data.GuildService
-import com.example.mobprog.data.UserService
-import com.example.mobprog.guild.Guild
 
 class EventManager() {
 

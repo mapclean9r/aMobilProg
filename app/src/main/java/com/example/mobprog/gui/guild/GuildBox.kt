@@ -1,4 +1,4 @@
-package com.example.mobprog.home
+package com.example.mobprog.gui.guild
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -11,28 +11,26 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.mobprog.R
-import com.example.mobprog.createEvent.EventBase
-import com.example.mobprog.createEvent.EventData
+import com.example.mobprog.gui.components.DynamicImageSelector
+import com.example.mobprog.guild.GuildData
 
 @Composable
-fun EventBox(eventData: EventData) {
+fun GuildBox(guildData: GuildData) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .border(2.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
             .padding(12.dp)
     ) {
-        DynamicImageSelector(imageName = eventData.picture)
+        DynamicImageSelector(imageName = guildData.picture)
         /*Image(
-            painter = painterResource(R.drawable.lol), /* TODO: Må få til henting fra API*/
+            painter = painterResource(R.drawable.lol),
             contentDescription = eventData.name,
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -41,53 +39,19 @@ fun EventBox(eventData: EventData) {
         )*/
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = eventData.name,
+            text = "Guild name: $guildData.name",
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold
         )
         Text(
-            text = eventData.price,
+            text = "Guildleader: $guildData.leader",
             fontSize = 16.sp,
             fontWeight = FontWeight.W400
         )
         Text(
-            text = "Location: " + eventData.location,
+            text = "Member: " + guildData.members,
             fontSize = 12.sp,
             fontWeight = FontWeight.W300
         )
-        Text(
-            text = "Dato: " + eventData.startDate,
-            fontSize = 13.sp,
-            fontWeight = FontWeight.W300
-        )
-        Text(
-            text = "Arrangør: " + eventData.host,
-            fontSize = 13.sp,
-            fontWeight = FontWeight.W300
-        )
-        Text(
-            text = "Beskrivelse: " + eventData.description,
-            fontSize = 13.sp,
-            fontWeight = FontWeight.W300
-        )
     }
-}
-
-@Composable
-fun DynamicImageSelector(imageName: String) {
-    val imageResource = when (imageName) {
-        "lol" -> R.drawable.lol
-        "rocket" -> R.drawable.rocket
-        "heart" -> R.drawable.heart
-        else -> R.drawable.lol // A default image in case of an invalid name
-    }
-
-    Image(
-        painter = painterResource(id = imageResource),
-        contentDescription = imageName,
-        contentScale = ContentScale.Crop,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(200.dp)
-    )
 }

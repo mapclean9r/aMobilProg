@@ -1,6 +1,4 @@
-package com.example.mobprog.createEvent
-
-import com.example.mobprog.user.User
+package com.example.mobprog.z_Old_Code
 
 /* @@@@@@   BRUKER IKKE DENNE LENGRE  @@@@@@ */
 
