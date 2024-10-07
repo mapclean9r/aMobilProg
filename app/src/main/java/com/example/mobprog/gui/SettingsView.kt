@@ -1,0 +1,132 @@
+package com.example.mobprog.gui
+
+import android.annotation.SuppressLint
+import android.content.res.Resources.Theme
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.mobprog.data.UserService
+import com.example.mobprog.gui.components.BottomNavBar
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@Composable
+fun SettingsView(navController: NavController){
+
+    var isNightMode by remember { mutableStateOf(false) }
+    val colors = if (isNightMode) darkColorScheme() else lightColorScheme()
+
+    Scaffold(topBar = {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(88.dp)
+                .padding(bottom = 10.dp, top = 24.dp)
+                .background(MaterialTheme.colorScheme.primary),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(modifier = Modifier.fillMaxWidth()) {
+
+                IconButton(onClick = {
+                    UserService().getCurrentUserData { docFields ->
+                        println("$docFields")
+                    }
+                },
+                    modifier = Modifier.align(Alignment.CenterStart)
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back Button",
+                        tint = Color.White
+                    )
+                }
+                Text(
+                    text = "Settings",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+        }
+    }, content = { paddingValues ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = if (isNightMode) "Night Mode ON" else "Night Mode OFF",
+                        color = if (isNightMode) Color.Yellow else Color.Black,
+
+                        style = MaterialTheme.typography.headlineMedium
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("Night Mode")
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Switch(
+                            checked = isNightMode,
+                            onCheckedChange = { isChecked ->
+                                isNightMode = isChecked
+                            }
+                        )
+                    }
+                }
+            }
+    }, bottomBar = {
+        // inspirert av link under for å lage navbar.
+        // https://www.youtube.com/watch?v=O9csfKW3dZ4
+        BottomNavBar(navController = navController)
+    })
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun SettingsViewPreview() {
+    SettingsView(navController = rememberNavController())
+}
