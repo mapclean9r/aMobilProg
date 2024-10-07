@@ -1,9 +1,7 @@
 package com.example.mobprog.data
 
 import android.util.Log
-import androidx.compose.runtime.LaunchedEffect
-import com.example.mobprog.guild.Guild
-import com.example.mobprog.user.User
+import com.example.mobprog.user.UserData
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore

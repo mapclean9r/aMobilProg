@@ -1,10 +1,6 @@
-package com.example.mobprog.guild
+package com.example.mobprog.z_Old_Code
 
-import com.example.mobprog.createEvent.EventBase
-import com.example.mobprog.createEvent.EventManager
 import com.example.mobprog.data.GuildService
-import com.example.mobprog.user.User
-import java.io.Serializable
 
 class Guild (){
     private lateinit var name: String

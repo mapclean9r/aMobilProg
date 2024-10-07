@@ -1,8 +1,7 @@
-package com.example.mobprog.gui
+package com.example.mobprog.gui.guild
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -20,9 +19,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,38 +33,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.mobprog.createEvent.EventData
-import com.example.mobprog.data.EventService
+import com.example.mobprog.data.GuildService
 import com.example.mobprog.gui.components.BottomNavBar
-import com.example.mobprog.gui.components.EventBox
+import com.example.mobprog.guild.GuildData
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomeView(navController: NavController, eventService: EventService, modifier: Modifier = Modifier) {
+fun noGuildView(navController: NavController, guildService: GuildService, modifier: Modifier = Modifier) {
 
-    var events by remember { mutableStateOf(emptyList<EventData>()) }
+    var guilds by remember { mutableStateOf(emptyList<GuildData>()) }
 
-    var showSearch by remember { mutableStateOf(false) }
-    var searchText by remember { mutableStateOf("") }
-
-    var filteredEvents by remember { mutableStateOf(emptyList<EventData>()) }
-
-
-    eventService.getAllEvents { eventsList ->
-        eventsList?.let { documents ->
+    guildService.getAllGuilds { guildList ->
+        guildList?.let { documents ->
             val eventDataList = documents.mapNotNull { document ->
-                eventService.parseToEventData(document)
+                guildService.parseGuildData(document)
             }
-            events = eventDataList
+            guilds = eventDataList
         } ?: run {
             println("No events found")
         }
-    }
-
-    LaunchedEffect(searchText) {
-        filteredEvents = events.filter { event ->
-            event.name.contains(searchText, ignoreCase = true)
-        } ?: emptyList()
     }
 
 
@@ -84,8 +68,7 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Box(modifier = Modifier.fillMaxWidth()) {
-                    IconButton(onClick = { showSearch = true })
-
+                    IconButton(onClick = {/*TODO: legge til funksjon her for søk i guilds*/})
                     {
                         Icon(
                             imageVector = Icons.Default.Search,
@@ -94,7 +77,7 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
                         )
                     }
                     Text(
-                        text = "Homepage",
+                        text = "Guilds",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White,
@@ -103,8 +86,6 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
                 }
             }
         },
-
-
         content = { paddingValues ->
             LazyColumn(
                 modifier = Modifier
@@ -112,14 +93,9 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
                     .padding(paddingValues)
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
-                if(filteredEvents.isEmpty()){
-                    items(events) { event ->
-                        EventBox(eventData = event)
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }   
-                }
-                items(filteredEvents) { event ->
-                    EventBox(eventData = event)
+                items(guilds) { guild ->
+                    GuildBox(guildData = guild)
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
         },
@@ -130,33 +106,11 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
         }
     )
 
-    if (showSearch) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.5f))
-                .padding()
-                .clickable {
-                    showSearch = false
-                }
-        )
-        TextField(
-            value = searchText,
-            onValueChange = { searchText = it },
-            placeholder = { Text("Search...") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxSize(fraction = 0.09f)
-                .padding(top = 24.dp),
-            singleLine = true
-        )
-    }
-
 
 }
 
 @Preview(showBackground = true)
 @Composable
-fun HomeViewPreview() {
-    HomeView(navController = rememberNavController(), eventService = EventService())
+fun NoGuildViewPreview() {
+    noGuildView(navController = rememberNavController(), guildService = GuildService())
 }

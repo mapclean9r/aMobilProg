@@ -1,4 +1,4 @@
-package com.example.mobprog.data
+package com.example.mobprog.gui.components
 
 import androidx.compose.ui.graphics.vector.ImageVector
 

@@ -1,6 +1,4 @@
-package com.example.mobprog.createEvent
-
-import com.example.mobprog.user.User
+package com.example.mobprog.z_Old_Code
 
 class EventComment(private var user: User, private var comment: String) {
 
