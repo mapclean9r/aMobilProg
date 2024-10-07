@@ -85,7 +85,6 @@ private fun login(navController: NavController, email: String, password: String)
             Button(onClick = {
                 if(emailTextController != "" && passwordTextController != "") {
                     login(navController, emailTextController, passwordTextController)
-
                 }
             }) {
                 Text(text = "Login")

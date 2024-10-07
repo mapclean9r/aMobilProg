@@ -101,7 +101,6 @@ fun ProfileView(navController: NavController, userService: UserService) {
                             imageVector = Icons.Default.Settings,
                             contentDescription = "Profile Icon",
                             tint = Color.White,
-
                         )
                     }
                 }
@@ -118,11 +117,11 @@ fun ProfileView(navController: NavController, userService: UserService) {
             ){
                 Box(
                     modifier = Modifier
-                        .size(62.dp) // The size of the circular container
+                        .size(62.dp)
                         .background(
                             Color.LightGray,
                             shape = CircleShape
-                        ) // Background with circle shape and light grey color
+                        )
                         .padding(10.dp)
                 ) {
                     Icon(

@@ -83,7 +83,6 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
         } ?: emptyList()
     }
 
-
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -116,8 +115,6 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
                 }
             }
         },
-
-
         content = { paddingValues ->
             LazyColumn(
                 modifier = Modifier
@@ -142,7 +139,6 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
             BottomNavBar(navController = navController, userService = UserService())
         }
     )
-
     if (showSearch) {
         Box(
             modifier = Modifier
@@ -164,8 +160,6 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
             singleLine = true
         )
     }
-
-
 }
 
 @Preview(showBackground = true)
