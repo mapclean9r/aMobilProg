@@ -16,7 +16,7 @@ data class GuildData(
     val leader: String = "",
     val description: String = "",
     val picture: String = "",
-    val creatorId: String = generateId(),
+    val guildId: String = generateId(),
     val members: List<String> = emptyList(),
     val dateCreated: String = formattedDateTime
 )
