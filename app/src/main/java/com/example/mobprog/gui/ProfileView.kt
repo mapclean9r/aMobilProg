@@ -49,6 +49,7 @@ private fun logout(navController: NavController) {
         popUpTo("homeScreen") {
             inclusive = true
         }
+        navController.popBackStack()
     }
 }
 

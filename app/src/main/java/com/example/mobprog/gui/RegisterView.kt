@@ -103,7 +103,11 @@ fun RegisterView(navController: NavController) {
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        TextButton(onClick = { navController.navigate("loginScreen") }) {
+        TextButton(onClick = {
+            navController.navigate("loginScreen") {
+                navController.popBackStack()
+            }
+        }) {
             Text(text = "Go to login page")
         }
     }

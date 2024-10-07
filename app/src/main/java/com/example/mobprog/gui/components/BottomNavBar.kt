@@ -65,11 +65,13 @@ fun BottomNavBar(navController: NavController, userService: UserService) {
                         }
                         if (guild.isNullOrEmpty()) {
                             navController.navigate("noGuildScreen") {
+                                navController.popBackStack()
                                 launchSingleTop = true
                                 restoreState = true
                             }
                         } else {
                             navController.navigate("guildScreen") {
+                                navController.popBackStack()
                                 launchSingleTop = true
                                 restoreState = true
                             }
@@ -77,6 +79,7 @@ fun BottomNavBar(navController: NavController, userService: UserService) {
                     } else {
                         if (!isSelected) {
                             navController.navigate(navigationBarItem.route) {
+                                navController.popBackStack()
                                 launchSingleTop = true
                                 restoreState = true
                             }

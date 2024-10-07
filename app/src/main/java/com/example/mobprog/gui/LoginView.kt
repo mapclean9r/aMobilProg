@@ -93,7 +93,11 @@ private fun login(navController: NavController, email: String, password: String)
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            TextButton(onClick = { navController.navigate("registerScreen") }) {
+            TextButton(onClick = {
+                navController.navigate("registerScreen") {
+                    navController.popBackStack()
+                }
+            }) {
                 Text(text = "Don't have an account? Click to register")
             }
         }
