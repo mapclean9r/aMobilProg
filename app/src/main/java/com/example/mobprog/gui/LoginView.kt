@@ -32,7 +32,11 @@ private fun login(navController: NavController, email: String, password: String)
     auth.signInWithEmailAndPassword(email, password)
         .addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                navController.navigate("homeScreen")
+                navController.navigate("homeScreen") {
+                    popUpTo("loginScreen") {
+                        inclusive = true
+                    }
+                }
             }
         }
 }
