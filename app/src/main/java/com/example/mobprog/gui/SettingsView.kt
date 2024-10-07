@@ -1,8 +1,8 @@
 package com.example.mobprog.gui
 
 import android.annotation.SuppressLint
-import android.content.res.Resources.Theme
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,18 +14,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,13 +36,14 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
+import com.example.mobprog.ui.theme.MobProgTheme
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun SettingsView(navController: NavController){
+fun SettingsView(navController: NavController, isDarkMode: Boolean,
+                 onDarkModeToggle: (Boolean) -> Unit){
 
     var isNightMode by remember { mutableStateOf(false) }
-    val colors = if (isNightMode) darkColorScheme() else lightColorScheme()
 
     Scaffold(topBar = {
         Row(
@@ -114,7 +109,7 @@ fun SettingsView(navController: NavController){
                         Switch(
                             checked = isNightMode,
                             onCheckedChange = { isChecked ->
-                                isNightMode = isChecked
+                                onDarkModeToggle(isChecked)
                             }
                         )
                     }
@@ -131,5 +126,12 @@ fun SettingsView(navController: NavController){
 @Preview(showBackground = true)
 @Composable
 fun SettingsViewPreview() {
-    SettingsView(navController = rememberNavController())
+    var isDarkMode by remember { mutableStateOf(false) }
+    MobProgTheme(darkTheme = isDarkMode) {
+        SettingsView(
+            navController = rememberNavController(),
+            isDarkMode = isDarkMode,
+            onDarkModeToggle = { isDarkMode = it }
+        )
+    }
 }
