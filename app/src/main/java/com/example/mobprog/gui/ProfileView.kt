@@ -45,8 +45,11 @@ import com.google.firebase.ktx.Firebase
 private fun logout(navController: NavController) {
     val auth = Firebase.auth
     auth.signOut()
-    navController.popBackStack("loginScreen", false)
-
+    navController.navigate("loginScreen") {
+        popUpTo("homeScreen") {
+            inclusive = true
+        }
+    }
 }
 
 @Composable
@@ -155,9 +158,7 @@ fun ProfileView(navController: NavController, userService: UserService) {
                         modifier = Modifier.height(20.dp)
                     )
                         Button(onClick = {
-                           logout(navController)
-
-                                         }, ) {
+                           logout(navController) }, ) {
                             Text(text = "Logout")
                         }
                 }
