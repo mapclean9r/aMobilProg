@@ -19,6 +19,7 @@ import com.example.mobprog.gui.guild.GuildView
 import com.example.mobprog.gui.HomeView
 import com.example.mobprog.gui.NotificationView
 import com.example.mobprog.gui.ProfileView
+import com.example.mobprog.gui.SettingsView
 import com.example.mobprog.gui.guild.CreateGuildView
 import com.example.mobprog.gui.guild.NoGuildView
 
@@ -65,6 +66,9 @@ fun Arena() {
         }
         composable("notificationScreen") {
             NotificationView(navController = navController)
+        }
+        composable("settingsScreen") {
+            SettingsView(navController = navController)
         }
     }
 }
