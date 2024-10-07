@@ -45,6 +45,7 @@ import com.example.mobprog.data.EventService
 import com.example.mobprog.data.GuildService
 import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
+import com.example.mobprog.gui.components.BottomNavBarDoublePop
 import com.example.mobprog.guild.GuildData
 import com.google.firebase.ktx.Firebase
 
@@ -180,7 +181,7 @@ fun CreateGuildView(navController: NavController, modifier: Modifier = Modifier,
             }
         },
         bottomBar = {
-            BottomNavBar(navController = navController, userService = UserService())
+            BottomNavBarDoublePop(navController = navController, userService = UserService())
         }
     )
 
