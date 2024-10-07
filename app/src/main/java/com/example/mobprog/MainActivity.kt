@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Arena() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "homeScreen") {
+    NavHost(navController = navController, startDestination = "loginScreen") {
         composable("loginScreen") {
             LoginView(navController = navController)
         }
