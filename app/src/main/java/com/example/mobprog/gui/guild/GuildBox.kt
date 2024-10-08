@@ -46,7 +46,11 @@ fun GuildBox(guildData: GuildData, userService: UserService, navController: NavC
             onClick = { userService.updateUserGuild(guildData.guildId){success, exception ->
                 if (success) {
                     /* TODO: Lage notification for joined guild */
-                    navController.navigate("guildScreen")
+                    navController.navigate("guildScreen")  {
+                        while (navController.popBackStack() == true) {
+                            navController.popBackStack()
+                        }
+                    }
                 }
                 else {
                     /* TODO: Lage feilmelding til bruker hvis det ikke gikk å joine guild */

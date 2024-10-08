@@ -190,7 +190,11 @@ fun onSubmit(
         } else if (guildId != null) {
             userService.updateUserGuild(guildId) { success, error ->
                 if (success) {
-                    navController.navigate("guildScreen")
+                    navController.navigate("guildScreen")  {
+                        while (navController.popBackStack() == true) {
+                            navController.popBackStack()
+                        }
+                    }
                 } else {
                     Log.e("UpdateUserGuild", "Failed to update user's guild field", error)
                 }

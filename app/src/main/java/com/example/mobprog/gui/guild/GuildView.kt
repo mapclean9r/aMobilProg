@@ -160,7 +160,11 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
                                 onClick = { userService.updateUserGuild("") { success, exception ->
                                     if (success) {
                                         /* TODO: Lage notification for left guild */
-                                        navController.navigate("noGuildScreen")
+                                        navController.navigate("noGuildScreen") {
+                                            while (navController.popBackStack() == true) {
+                                                navController.popBackStack()
+                                            }
+                                        }
                                     } else {
                                         /* TODO: Lage feilmelding til bruker hvis det ikke gikk å leave guild */
                                         exception?.printStackTrace()
