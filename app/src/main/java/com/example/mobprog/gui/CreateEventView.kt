@@ -2,6 +2,7 @@ package com.example.mobprog.gui
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,12 +15,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -35,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.mobprog.api.GameData
 import com.example.mobprog.api.GamingApi
 import com.example.mobprog.createEvent.EventData
 import com.example.mobprog.data.EventService
@@ -54,10 +60,20 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
     var price by remember { mutableStateOf("") }
     var startDate by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
-    var game by remember { mutableStateOf("") }
 
     var maxAttendance by remember { mutableIntStateOf(0) }
     var maxAttendanceString by remember { mutableStateOf("") }
+
+    var showSearch by remember { mutableStateOf(false) }
+    var searchGameText by remember { mutableStateOf("") }
+    val games by remember { mutableStateOf(emptyList<GameData>()) }
+    var filteredGames by remember { mutableStateOf(emptyList<GameData>()) }
+
+    LaunchedEffect(searchGameText) {
+        filteredGames = games.filter { game ->
+            game.title.contains(searchGameText, ignoreCase = true)
+        } ?: emptyList()
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -72,7 +88,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
             ) {
                 Box(modifier = Modifier.fillMaxWidth()){
                     Text(
-                        text = "Event",
+                        text = "Create Event",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White,
@@ -91,11 +107,6 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ){
-                    Text(text = "Create Event",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.W400,
-                        modifier = Modifier.padding(12.dp)
-                    )
                     Text(text = "Title",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W400,
@@ -199,16 +210,22 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                         modifier = Modifier
                             .padding(6.dp)
                             .align(Alignment.Start))
-                    TextField(
-                        value = game,
-                        onValueChange = { newText ->
-                            game = newText
-                            /* TODO behandle input her */
+                    Button(
+                        onClick = {
+                            showSearch = true
+                            // TODO Make this button work
                         },
-                        label = { Text("Select Game") },
-                        placeholder = { Text("Game") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Gray, // Bakgrunnsfarge på knappen
+                            contentColor = Color.White // Farge på teksten
+                        )
+
+
+
+                    ) {
+                        Text("Select Game")
+                    }
                     Spacer(modifier = Modifier.height(22.dp))
                     Button(
                         onClick = {
@@ -227,6 +244,27 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                 BottomNavBar(navController = navController, userService = UserService())
             }
     )
+    if (showSearch) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.5f))
+                .padding()
+                .clickable {
+                    showSearch = false
+                }
+        )
+        TextField(
+            value = searchGameText,
+            onValueChange = { searchGameText = it },
+            placeholder = { Text("Search...") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxSize(fraction = 0.09f)
+                .padding(top = 24.dp),
+            singleLine = true
+        )
+    }
 
 }
 
