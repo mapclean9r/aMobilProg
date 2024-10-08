@@ -90,15 +90,12 @@ fun SettingsView(navController: NavController, onDarkModeToggle: (Boolean) -> Un
                     .fillMaxSize()
                     .padding(paddingValues)
                     .padding(16.dp),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.TopStart
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        text = if (isDarkTheme) "Dark Mode ON" else "Dark Mode OFF",
-                        style = MaterialTheme.typography.headlineLarge
-                    )
+
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Row(
@@ -112,6 +109,11 @@ fun SettingsView(navController: NavController, onDarkModeToggle: (Boolean) -> Un
                                 isDarkTheme = isChecked
                                 onDarkModeToggle(isChecked)
                             }
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = if (isDarkTheme) "ON" else "OFF",
+                            style = MaterialTheme.typography.bodyLarge
                         )
                     }
                 }
