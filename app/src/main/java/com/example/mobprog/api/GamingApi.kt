@@ -23,7 +23,7 @@ class GamingApi {
                 val responseData = response.body?.string()
 
                 withContext(Dispatchers.Main) {
-                    Log.d("Response Data", responseData ?: "No response data")
+                    Log.d("Data", responseData ?: "No response")
                 }
             }
         }

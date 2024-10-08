@@ -35,7 +35,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
-import com.example.mobprog.gui.components.BottomNavBarDoublePop
 import com.example.mobprog.ui.theme.MobProgTheme
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -115,7 +114,7 @@ fun SettingsView(navController: NavController, onDarkModeToggle: (Boolean) -> Un
     }, bottomBar = {
         // inspirert av link under for å lage navbar.
         // https://www.youtube.com/watch?v=O9csfKW3dZ4
-        BottomNavBarDoublePop(navController = navController, userService = UserService())
+        BottomNavBar(navController = navController, userService = UserService())
     })
 }
 
