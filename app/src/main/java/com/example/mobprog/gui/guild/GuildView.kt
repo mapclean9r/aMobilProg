@@ -11,20 +11,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -32,7 +30,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -45,7 +42,7 @@ import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.guild.GuildData
 
 @Composable
-fun GuildView(navController: NavController, modifier: Modifier = Modifier) {
+fun GuildView(navController: NavController, modifier: Modifier = Modifier, userService: UserService) {
 
     val guildDataState = remember { mutableStateOf<GuildData?>(null) }
     val isLoading = remember { mutableStateOf(true) }
@@ -149,16 +146,33 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier) {
                                     .padding(12.dp)
                                     .align(Alignment.Start)
                             )
-                            Spacer(modifier = Modifier.height(230.dp))
-                            Row(modifier = Modifier.fillMaxWidth()) {
-                                Button(onClick = { /*TODO*/ },) {
+                            Spacer(modifier = Modifier.height(320.dp))
+                            Row(modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceAround) {
+                                Button(onClick = { /*TODO*/ }) {
                                     Text(text = "Invite members")
                                 }
-                                Spacer(modifier = Modifier.width(10.dp))
                                 Button(onClick = { /*TODO*/ }) {
                                     Text(text = "Create Guild Event")
                                 }
                             }
+                            Button(
+                                onClick = { userService.updateUserGuild("") { success, exception ->
+                                    if (success) {
+                                        /* TODO: Lage notification for left guild */
+                                        navController.navigate("noGuildScreen")
+                                    } else {
+                                        /* TODO: Lage feilmelding til bruker hvis det ikke gikk å leave guild */
+                                        exception?.printStackTrace()
+                                    }
+                                } },
+                                colors = ButtonColors(Color.Red, Color.White, Color.Gray, Color.White),
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .align(Alignment.End)){
+                                Text(text = "Leave Guild")
+                            }
+
 
                         }
                     }
@@ -176,5 +190,5 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun GuildViewPreview() {
-    GuildView(navController = rememberNavController())
+    GuildView(navController = rememberNavController(), userService = UserService())
 }

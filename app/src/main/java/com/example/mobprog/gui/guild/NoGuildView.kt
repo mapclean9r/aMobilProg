@@ -116,7 +116,7 @@ fun NoGuildView(navController: NavController, guildService: GuildService, modifi
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
                 items(guilds) { guild ->
-                    GuildBox(guildData = guild)
+                    GuildBox(guildData = guild, userService = UserService(), navController)
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }
