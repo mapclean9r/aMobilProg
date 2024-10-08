@@ -1,7 +1,6 @@
 package com.example.mobprog.gui
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.EnterTransition.Companion.None
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,8 +11,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.InputTransformation.Companion.keyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.mobprog.api.GamingApi
 import com.example.mobprog.createEvent.EventData
 import com.example.mobprog.data.EventService
 import com.example.mobprog.data.UserService
@@ -44,6 +45,8 @@ import com.example.mobprog.gui.components.BottomNavBar
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CreateEventView(navController: NavController, eventService: EventService) {
+    val scrollState = rememberScrollState()
+    val gamingApi = GamingApi()
 
     /* TODO - legge til alle felter som trengs og endre tekst felter til å benytte disse */
     var name by remember { mutableStateOf("")}
@@ -51,6 +54,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
     var price by remember { mutableStateOf("") }
     var startDate by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
+    var game by remember { mutableStateOf("") }
 
     var maxAttendance by remember { mutableIntStateOf(0) }
     var maxAttendanceString by remember { mutableStateOf("") }
@@ -81,6 +85,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
+                        .verticalScroll(scrollState)
                         .padding(paddingValues)
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                     verticalArrangement = Arrangement.Top,
@@ -168,7 +173,6 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                         value = startDate,
                         onValueChange = { newText ->
                             startDate = newText
-                            /* TODO behandle input her */
                         },
                         label = { Text("Enter Date") },
                         placeholder = { Text("date") },
@@ -184,10 +188,25 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                         value = description,
                         onValueChange = { newText ->
                             description = newText
-                            /* TODO behandle input her */
                         },
                         label = { Text("Enter Description") },
                         placeholder = { Text("description") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Text(text = "Game",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.W400,
+                        modifier = Modifier
+                            .padding(6.dp)
+                            .align(Alignment.Start))
+                    TextField(
+                        value = game,
+                        onValueChange = { newText ->
+                            game = newText
+                            /* TODO behandle input her */
+                        },
+                        label = { Text("Select Game") },
+                        placeholder = { Text("Game") },
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(22.dp))

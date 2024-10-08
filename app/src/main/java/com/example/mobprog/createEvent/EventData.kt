@@ -1,7 +1,5 @@
 package com.example.mobprog.createEvent
 
-import java.util.UUID
-
 data class EventData(
     val name: String = "",
     val startDate: String = "N/A",
