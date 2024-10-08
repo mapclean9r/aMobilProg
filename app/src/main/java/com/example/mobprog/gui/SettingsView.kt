@@ -123,7 +123,7 @@ fun SettingsView(navController: NavController, onDarkModeToggle: (Boolean) -> Un
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = if (isDarkTheme) "ON" else "OFF",
+                            text = if (isPreChecked) "ON" else "OFF",
                             style = MaterialTheme.typography.bodyLarge
                         )
                     }
