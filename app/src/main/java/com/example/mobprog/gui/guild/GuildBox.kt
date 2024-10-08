@@ -16,11 +16,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.DynamicImageSelector
 import com.example.mobprog.guild.GuildData
 
 @Composable
-fun GuildBox(guildData: GuildData) {
+fun GuildBox(guildData: GuildData, userService: UserService, navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -40,7 +42,17 @@ fun GuildBox(guildData: GuildData) {
             fontWeight = FontWeight.W400
         )
         Button(
-            onClick = { /* TODO */ },
+            /* TODO: Lage logikk som hindrer en bruker å joine guild ved visse tilfeller (full guild) */
+            onClick = { userService.updateUserGuild(guildData.guildId){success, exception ->
+                if (success) {
+                    /* TODO: Lage notification for joined guild */
+                    navController.navigate("guildScreen")
+                }
+                else {
+                    /* TODO: Lage feilmelding til bruker hvis det ikke gikk å joine guild */
+                    exception?.printStackTrace()
+                }
+            } },
             shape = ButtonDefaults.textShape
         ) {
             Text(text = "Join Guild")

@@ -63,7 +63,7 @@ fun Arena() {
                 FriendsView(navController = navController)
             }
             composable("guildScreen") {
-                GuildView(navController = navController)
+                GuildView(navController = navController, userService = UserService())
             }
             composable("createGuildScreen") {
                 CreateGuildView(navController = navController, userService = UserService())
