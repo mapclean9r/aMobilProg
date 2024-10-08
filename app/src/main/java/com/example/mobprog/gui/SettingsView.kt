@@ -61,7 +61,12 @@ fun SettingsView(navController: NavController, onDarkModeToggle: (Boolean) -> Un
                 },
                     modifier = Modifier.align(Alignment.CenterStart)
                 ) {
-                    IconButton(onClick = { navController.navigate("profileScreen") },
+                    IconButton(onClick = {
+                        navController.navigate("profileScreen") {
+                            while (navController.popBackStack() == true) {
+                                navController.popBackStack()
+                            }
+                        } },
                         modifier = Modifier.align(Alignment.CenterEnd)) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
