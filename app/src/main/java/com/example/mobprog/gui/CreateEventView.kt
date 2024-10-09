@@ -78,6 +78,8 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
     var games by remember { mutableStateOf(emptyList<GameData>()) }
     var filteredGames by remember { mutableStateOf(emptyList<GameData>()) }
 
+    var selectedGame by remember { mutableStateOf<GameData?>(null) }
+
     GamingApi().fetchAllGames { gameList ->
         gameList?.let {
             games = gameList
@@ -241,7 +243,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                     modifier = Modifier.fillMaxWidth()
                 )
                 Text(
-                    text = "Game",
+                    text = "Game: " + (selectedGame?.title ?: "None"),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.W400,
                     modifier = Modifier
@@ -335,19 +337,25 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
             if (filteredGames.isEmpty()) {
                 items(games) { game ->
                     Spacer(modifier = Modifier.height(8.dp))
-                    GameBox(gameData = game)
+                    GameBox(gameData = game) {
+                        selectedGame = game
+                        showSearch = false
+                    }
 
                 }
             }
+
             items(filteredGames) { game ->
                 Spacer(modifier = Modifier.height(8.dp))
-                GameBox(gameData = game)
-
+                GameBox(gameData = game) {
+                    selectedGame = game
+                    showSearch = false
+                }
+            }
+            println(selectedGame)
             }
         }
 
-
-    }
 }
 
 fun onSubmit(name: String, maxAttendance: Int, price: String, location: String, startDate: String, description: String, eventService: EventService) {

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,7 +30,7 @@ import com.example.mobprog.createEvent.EventData
 import com.example.mobprog.util.titleLengthCheck
 
 @Composable
-fun GameBox (gameData: GameData) {
+fun GameBox (gameData: GameData, onClick: (GameData) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -41,7 +42,7 @@ fun GameBox (gameData: GameData) {
                 .fillMaxSize()
                 .padding()
                 .clickable {
-
+                    onClick(gameData)
                 }
         ) {
             Spacer(modifier = Modifier.height(8.dp))
