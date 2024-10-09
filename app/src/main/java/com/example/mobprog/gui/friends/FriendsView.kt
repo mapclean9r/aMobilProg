@@ -1,4 +1,4 @@
-package com.example.mobprog.gui
+package com.example.mobprog.gui.friends
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
@@ -20,13 +20,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -47,11 +50,23 @@ import androidx.navigation.compose.rememberNavController
 import com.example.mobprog.R
 import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
-import com.example.mobprog.z_Old_Code.User
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun FriendsView(navController: NavController) {
+
+    var friends = remember { mutableStateOf<ArrayList<String>?>(null) }
+    val isLoading = remember { mutableStateOf(true) }
+
+    LaunchedEffect(Unit) {
+        UserService().getUserFriends { friendData ->
+            if(friendData != null) {
+                friends.value = friendData
+            }
+            isLoading.value = false
+        }
+    }
+
     Scaffold(topBar = {
         Row(
             modifier = Modifier
@@ -87,30 +102,38 @@ fun FriendsView(navController: NavController) {
             }
         }
     }, content = {
-        FriendsList()
+        if(!isLoading.value) {
+            friends.value?.let { it1 -> FriendsList(it1) }
+        }
     }, bottomBar = {
             // inspirert av link under for å lage navbar.
             // https://www.youtube.com/watch?v=O9csfKW3dZ4
             BottomNavBar(navController = navController, userService = UserService())
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { navController.navigate("addFriendScreen") },
+                modifier = Modifier.padding(16.dp),  // Padding from the bottom and right
+                content = {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "add",
+                        tint = Color.Black
+                    )
+                }
+            )
         })
 }
 
 @Composable
-fun FriendsList() {
+fun FriendsList(friends: ArrayList<String>) {
     Column(
         modifier = Modifier.fillMaxSize().padding(28.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val friends = ArrayList<User>()
 
-        friends.add(User("Aksel", "Aksel", "123"))
-        friends.add(User("Fredrik", "Fredrik", "123"))
-        friends.add(User("Tobias", "Tobias", "123"))
-        friends.add(User("Ole", "Ole", "123"))
-
-
-        val selectedFriend = remember { mutableStateOf<User?>(null) }
+        val selectedFriend = remember { mutableStateOf<String?>(null) }
 
         BackHandler(selectedFriend.value != null) {
             selectedFriend.value = null
@@ -134,7 +157,7 @@ fun FriendsList() {
 }
 
 @Composable
-fun FriendItem(friend: User, onClick: () -> Unit) {
+fun FriendItem(friend: String, onClick: () -> Unit) {
     Row (
         modifier = Modifier
             .fillMaxWidth()
@@ -158,7 +181,7 @@ fun FriendItem(friend: User, onClick: () -> Unit) {
                 modifier = Modifier.padding(start = 16.dp)
             ) {
                 Text(
-                    text = friend.getUsername(),
+                    text = friend,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = TextStyle(fontFamily = FontFamily.SansSerif, fontSize = 18.sp, color = Color.Black)

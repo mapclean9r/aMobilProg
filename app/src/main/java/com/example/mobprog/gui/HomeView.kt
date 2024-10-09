@@ -66,6 +66,7 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
         println("currentUser: $currentUser")
     }
 
+
     eventService.getAllEvents { eventsList ->
         eventsList?.let { documents ->
             val eventDataList = documents.mapNotNull { document ->
