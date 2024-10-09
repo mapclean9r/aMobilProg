@@ -2,6 +2,7 @@ package com.example.mobprog.gui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,17 +18,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.mobprog.R
 import com.example.mobprog.createEvent.EventData
 
 @Composable
-fun EventBox(eventData: EventData) {
+fun EventBox(navController: NavController, eventData: EventData) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .border(2.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
             .padding(12.dp)
+            .clickable { navController.navigate(("eventScreen")) }
     ) {
         CoverImageAPI(eventData.image)
         //DynamicImageSelector(imageName = eventData.image)

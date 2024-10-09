@@ -269,6 +269,11 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                             gameCoverImage,
                             eventService = eventService
                         )
+                        navController.navigate("homeScreen") {
+                            while (navController.popBackStack()) {
+                                navController.popBackStack()
+                            }
+                        }
                     },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(

@@ -113,12 +113,12 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
             ) {
                 if(filteredEvents.isEmpty()){
                     items(events) { event ->
-                        EventBox(eventData = event)
+                        EventBox(navController, eventData = event)
                         Spacer(modifier = Modifier.height(16.dp))
                     }   
                 }
                 items(filteredEvents) { event ->
-                    EventBox(eventData = event)
+                    EventBox(navController, eventData = event)
                 }
             }
         },

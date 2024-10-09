@@ -13,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.mobprog.createEvent.EventData
 import com.example.mobprog.data.EventService
 import com.example.mobprog.data.GuildService
 import com.example.mobprog.data.UserService
@@ -24,6 +25,7 @@ import com.example.mobprog.gui.NotificationView
 import com.example.mobprog.gui.ProfileView
 import com.example.mobprog.gui.RegisterView
 import com.example.mobprog.gui.SettingsView
+import com.example.mobprog.gui.event.EventView
 import com.example.mobprog.gui.friends.AddFriendView
 import com.example.mobprog.gui.guild.CreateGuildView
 import com.example.mobprog.gui.guild.GuildView
@@ -68,6 +70,9 @@ fun Arena(darkMODE: Boolean) {
             }
             composable("createEventScreen") {
                 CreateEventView(navController = navController, eventService = EventService())
+            }
+            composable("eventScreen") {
+                EventView(navController = navController, eventData = EventData())
             }
             composable("friendsScreen") {
                 FriendsView(navController = navController)
