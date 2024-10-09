@@ -165,7 +165,7 @@ fun FriendItem(friend: String, onClick: () -> Unit) {
             .padding(8.dp)
             //.border(2.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
         ,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
 
     ){
 
@@ -184,7 +184,7 @@ fun FriendItem(friend: String, onClick: () -> Unit) {
                     text = friend,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    style = TextStyle(fontFamily = FontFamily.SansSerif, fontSize = 18.sp, color = Color.Black)
+                    style = TextStyle(fontFamily = FontFamily.SansSerif, fontSize = 18.sp, color = MaterialTheme.colorScheme.primary)
                 )
             }
     }
