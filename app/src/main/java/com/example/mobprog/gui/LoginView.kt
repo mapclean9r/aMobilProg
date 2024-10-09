@@ -1,11 +1,13 @@
 package com.example.mobprog.gui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -54,15 +56,19 @@ private fun login(navController: NavController, email: String, password: String)
         }
 
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Welcome to Arena", fontSize = 28.sp, fontWeight = FontWeight.Bold)
+            Text(text = "Welcome to Arena",
+                fontSize = 28.sp, fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary)
 
             Spacer(modifier = Modifier.height(28.dp))
 
-            Text(text = "Enter email and password", fontSize = 16.sp)
+            Text(text = "Enter email and password", fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.primary)
 
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -97,7 +103,8 @@ private fun login(navController: NavController, email: String, password: String)
                     navController.popBackStack()
                 }
             }) {
-                Text(text = "Don't have an account? Click to register")
+                Text(text = "Don't have an account? Click to register",
+                    color = MaterialTheme.colorScheme.primary)
             }
         }
 

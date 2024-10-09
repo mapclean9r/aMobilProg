@@ -131,7 +131,8 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                     fontWeight = FontWeight.W400,
                     modifier = Modifier
                         .padding(6.dp)
-                        .align(Alignment.Start)
+                        .align(Alignment.Start),
+                    color = MaterialTheme.colorScheme.primary
                 )
                 TextField(
                     value = name,
@@ -141,7 +142,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                     },
                     label = { Text("Enter Title") },
                     placeholder = { Text("title") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 )
                 Text(
                     text = "Location",
@@ -149,7 +150,8 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                     fontWeight = FontWeight.W400,
                     modifier = Modifier
                         .padding(6.dp)
-                        .align(Alignment.Start)
+                        .align(Alignment.Start),
+                    color = MaterialTheme.colorScheme.primary
                 )
                 TextField(
                     value = location,
@@ -167,7 +169,8 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                     fontWeight = FontWeight.W400,
                     modifier = Modifier
                         .padding(6.dp)
-                        .align(Alignment.Start)
+                        .align(Alignment.Start),
+                    color = MaterialTheme.colorScheme.primary
                 )
                 TextField(
                     value = price,
@@ -185,7 +188,8 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                     fontWeight = FontWeight.W400,
                     modifier = Modifier
                         .padding(6.dp)
-                        .align(Alignment.Start)
+                        .align(Alignment.Start),
+                    color = MaterialTheme.colorScheme.primary
                 )
                 TextField(
                     value = maxAttendanceString,
@@ -206,7 +210,8 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                     fontWeight = FontWeight.W400,
                     modifier = Modifier
                         .padding(6.dp)
-                        .align(Alignment.Start)
+                        .align(Alignment.Start),
+                    color = MaterialTheme.colorScheme.primary
                 )
                 TextField(
                     value = startDate,
@@ -223,7 +228,8 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                     fontWeight = FontWeight.W400,
                     modifier = Modifier
                         .padding(6.dp)
-                        .align(Alignment.Start)
+                        .align(Alignment.Start),
+                    color = MaterialTheme.colorScheme.primary
                 )
                 TextField(
                     value = description,
@@ -240,7 +246,8 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                     fontWeight = FontWeight.W400,
                     modifier = Modifier
                         .padding(6.dp)
-                        .align(Alignment.Start)
+                        .align(Alignment.Start),
+                    color = MaterialTheme.colorScheme.primary
                 )
                 Button(
                     onClick = {
@@ -249,11 +256,11 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                     },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Gray,
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = Color.White
                     )
                 ) {
-                    Text("Select Game")
+                    Text("Select Game", color = MaterialTheme.colorScheme.primary)
                 }
                 Spacer(modifier = Modifier.height(22.dp))
                 Button(
@@ -268,9 +275,13 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                             eventService = eventService
                         )
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.primary
+                    )
                 ) {
-                    Text("Create Event")
+                    Text("Create Event", color = MaterialTheme.colorScheme.secondary)
                 }
 
             }

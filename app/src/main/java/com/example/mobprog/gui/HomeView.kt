@@ -85,6 +85,7 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+
         topBar = {
             Row(
                 modifier = Modifier
@@ -121,6 +122,7 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
                     .fillMaxSize()
                     .padding(paddingValues)
                     .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .background(MaterialTheme.colorScheme.background)
             ) {
                 if(filteredEvents.isEmpty()){
                     items(events) { event ->
