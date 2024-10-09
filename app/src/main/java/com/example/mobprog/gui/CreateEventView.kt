@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -52,6 +53,8 @@ import com.example.mobprog.createEvent.EventData
 import com.example.mobprog.data.EventService
 import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
+import com.example.mobprog.gui.components.GameBox
+import com.example.mobprog.gui.guild.GuildBox
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -72,8 +75,17 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
 
     var showSearch by remember { mutableStateOf(false) }
     var searchGameText by remember { mutableStateOf("") }
-    val games by remember { mutableStateOf(emptyList<GameData>()) }
+    var games by remember { mutableStateOf(emptyList<GameData>()) }
     var filteredGames by remember { mutableStateOf(emptyList<GameData>()) }
+
+    GamingApi().fetchAllGames { gameList ->
+        gameList?.let {
+            games = gameList
+        } ?: run {
+            println("No games found")
+        }
+    }
+
 
     LaunchedEffect(searchGameText) {
         filteredGames = games.filter { game ->
@@ -269,16 +281,18 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
             BottomNavBar(navController = navController, userService = UserService())
         }
     )
+
     if (showSearch) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.5f))
+                .background(Color.White.copy(alpha = 1.0f))
                 .padding()
                 .clickable {
                     showSearch = false
                 }
         )
+
         TextField(
             value = searchGameText,
             onValueChange = { searchGameText = it },
@@ -290,15 +304,37 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
             singleLine = true
         )
         Button(onClick = {showSearch = false},
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(top = 80.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Gray,
-                contentColor = Color.White)
+                containerColor = Color.Transparent,
+                contentColor = Color.Gray)
 
         ) {
             Text("Cancel Search")
         }
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 8.dp, vertical = 8.dp)
+                .padding(top = 110.dp)
+        ) {
+            if (filteredGames.isEmpty()) {
+                items(games) { game ->
+                    Spacer(modifier = Modifier.height(8.dp))
+                    GameBox(gameData = game)
+
+                }
+            }
+            items(filteredGames) { game ->
+                Spacer(modifier = Modifier.height(8.dp))
+                GameBox(gameData = game)
+
+            }
+        }
+
 
     }
 }
@@ -306,6 +342,8 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
 fun onSubmit(name: String, maxAttendance: Int, price: String, location: String, startDate: String, description: String, eventService: EventService) {
     eventService.createEvent(EventData(name = name, maxAttendance = maxAttendance, location = location, description = description, startDate = startDate, price = price))
 }
+
+
 
 @Preview(showBackground = true)
 @Composable
