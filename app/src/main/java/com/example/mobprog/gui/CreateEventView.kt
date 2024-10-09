@@ -6,19 +6,25 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -55,7 +61,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
     val gamingApi = GamingApi()
 
     /* TODO - legge til alle felter som trengs og endre tekst felter til å benytte disse */
-    var name by remember { mutableStateOf("")}
+    var name by remember { mutableStateOf("") }
     var location by remember { mutableStateOf("") }
     var price by remember { mutableStateOf("") }
     var startDate by remember { mutableStateOf("") }
@@ -86,7 +92,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                     .background(MaterialTheme.colorScheme.primary),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Box(modifier = Modifier.fillMaxWidth()){
+                Box(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = "Create Event",
                         fontSize = 20.sp,
@@ -96,153 +102,172 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                     )
                 }
             }
-            },
-            content = { paddingValues ->
-                Column(
+        },
+        content = { paddingValues ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(scrollState)
+                    .padding(paddingValues)
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Title",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.W400,
                     modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(scrollState)
-                        .padding(paddingValues)
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                    verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ){
-                    Text(text = "Title",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.W400,
-                        modifier = Modifier
-                            .padding(6.dp)
-                            .align(Alignment.Start))
-                    TextField(
-                        value = name,
-                        onValueChange = { newText ->
-                            name = newText
-                            /* TODO behandle input her */
-                        },
-                        label = { Text("Enter Title") },
-                        placeholder = { Text("title") },
-                        modifier = Modifier.fillMaxWidth()
+                        .padding(6.dp)
+                        .align(Alignment.Start)
+                )
+                TextField(
+                    value = name,
+                    onValueChange = { newText ->
+                        name = newText
+                        /* TODO behandle input her */
+                    },
+                    label = { Text("Enter Title") },
+                    placeholder = { Text("title") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Text(
+                    text = "Location",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.W400,
+                    modifier = Modifier
+                        .padding(6.dp)
+                        .align(Alignment.Start)
+                )
+                TextField(
+                    value = location,
+                    onValueChange = { newText ->
+                        location = newText
+                        /* TODO behandle input her */
+                    },
+                    label = { Text("Enter Location") },
+                    placeholder = { Text("location") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Text(
+                    text = "Price",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.W400,
+                    modifier = Modifier
+                        .padding(6.dp)
+                        .align(Alignment.Start)
+                )
+                TextField(
+                    value = price,
+                    onValueChange = { newText ->
+                        price = newText
+                    },
+                    label = { Text("Enter Price") },
+                    placeholder = { Text("price") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Text(
+                    text = "Max Attendance",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.W400,
+                    modifier = Modifier
+                        .padding(6.dp)
+                        .align(Alignment.Start)
+                )
+                TextField(
+                    value = maxAttendanceString,
+                    onValueChange = { newText ->
+                        maxAttendanceString = newText
+                        maxAttendance = maxAttendanceString.toInt()
+                    },
+                    label = { Text("Enter Attendance") },
+                    placeholder = { Text("attendance") },
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+
+                )
+
+                Text(
+                    text = "Date",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.W400,
+                    modifier = Modifier
+                        .padding(6.dp)
+                        .align(Alignment.Start)
+                )
+                TextField(
+                    value = startDate,
+                    onValueChange = { newText ->
+                        startDate = newText
+                    },
+                    label = { Text("Enter Date") },
+                    placeholder = { Text("date") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Text(
+                    text = "Description",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.W400,
+                    modifier = Modifier
+                        .padding(6.dp)
+                        .align(Alignment.Start)
+                )
+                TextField(
+                    value = description,
+                    onValueChange = { newText ->
+                        description = newText
+                    },
+                    label = { Text("Enter Description") },
+                    placeholder = { Text("description") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Text(
+                    text = "Game",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.W400,
+                    modifier = Modifier
+                        .padding(6.dp)
+                        .align(Alignment.Start)
+                )
+                Button(
+                    onClick = {
+                        showSearch = true
+                        // TODO Make this button work
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Gray,
+                        contentColor = Color.White
                     )
-                    Text(text = "Location",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.W400,
-                        modifier = Modifier
-                            .padding(6.dp)
-                            .align(Alignment.Start))
-                    TextField(
-                        value = location,
-                        onValueChange = { newText ->
-                            location = newText
-                            /* TODO behandle input her */
-                        },
-                        label = { Text("Enter Location") },
-                        placeholder = { Text("location") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Text(text = "Price",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.W400,
-                        modifier = Modifier
-                            .padding(6.dp)
-                            .align(Alignment.Start))
-                    TextField(
-                        value = price,
-                        onValueChange = { newText ->
-                            price = newText
-                        },
-                        label = { Text("Enter Price") },
-                        placeholder = { Text("price") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    Text(text = "Max Attendance",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.W400,
-                        modifier = Modifier
-                            .padding(6.dp)
-                            .align(Alignment.Start))
-                    TextField(
-                        value = maxAttendanceString,
-                        onValueChange = { newText ->
-                            maxAttendanceString = newText
-                            maxAttendance = maxAttendanceString.toInt()
-                        },
-                        label = { Text("Enter Attendance") },
-                        placeholder = { Text("attendance") },
-                        modifier = Modifier.fillMaxWidth() ,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-
-                    )
-
-                    Text(text = "Date",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.W400,
-                        modifier = Modifier
-                            .padding(6.dp)
-                            .align(Alignment.Start))
-                    TextField(
-                        value = startDate,
-                        onValueChange = { newText ->
-                            startDate = newText
-                        },
-                        label = { Text("Enter Date") },
-                        placeholder = { Text("date") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Text(text = "Description",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.W400,
-                        modifier = Modifier
-                            .padding(6.dp)
-                            .align(Alignment.Start))
-                    TextField(
-                        value = description,
-                        onValueChange = { newText ->
-                            description = newText
-                        },
-                        label = { Text("Enter Description") },
-                        placeholder = { Text("description") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Text(text = "Game",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.W400,
-                        modifier = Modifier
-                            .padding(6.dp)
-                            .align(Alignment.Start))
-                    Button(
-                        onClick = {
-                            showSearch = true
-                            // TODO Make this button work
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Gray, // Bakgrunnsfarge på knappen
-                            contentColor = Color.White // Farge på teksten
-                        )
-
-
-
-                    ) {
-                        Text("Select Game")
-                    }
-                    Spacer(modifier = Modifier.height(22.dp))
-                    Button(
-                        onClick = {
-                            onSubmit(name, maxAttendance, price, location, startDate, description, eventService = eventService)
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("Create Event")
-                    }
-
+                ) {
+                    Text("Select Game")
                 }
-            },
-            bottomBar = {
-                // inspirert av link under for å lage navbar.
-                // https://www.youtube.com/watch?v=O9csfKW3dZ4
-                BottomNavBar(navController = navController, userService = UserService())
+                Spacer(modifier = Modifier.height(22.dp))
+                Button(
+                    onClick = {
+                        onSubmit(
+                            name,
+                            maxAttendance,
+                            price,
+                            location,
+                            startDate,
+                            description,
+                            eventService = eventService
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Create Event")
+                }
+
             }
+        },
+        bottomBar = {
+            // inspirert av link under for å lage navbar.
+            // https://www.youtube.com/watch?v=O9csfKW3dZ4
+            BottomNavBar(navController = navController, userService = UserService())
+        }
     )
     if (showSearch) {
         Box(
@@ -264,8 +289,18 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                 .padding(top = 24.dp),
             singleLine = true
         )
-    }
+        Button(onClick = {showSearch = false},
+            modifier = Modifier.fillMaxWidth()
+                .padding(top = 80.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Gray,
+                contentColor = Color.White)
 
+        ) {
+            Text("Cancel Search")
+        }
+
+    }
 }
 
 fun onSubmit(name: String, maxAttendance: Int, price: String, location: String, startDate: String, description: String, eventService: EventService) {
