@@ -28,7 +28,7 @@ import com.example.mobprog.R
 import com.example.mobprog.createEvent.EventData
 
 @Composable
-fun EventBox(eventData: EventData, navController: NavController) {
+fun EventBox(eventData: EventData) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
