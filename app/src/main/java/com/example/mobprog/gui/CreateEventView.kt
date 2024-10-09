@@ -243,7 +243,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                     modifier = Modifier.fillMaxWidth()
                 )
                 Text(
-                    text = "Game",
+                    text = "Game: " + (selectedGame?.title ?: "None"),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.W400,
                     modifier = Modifier
@@ -339,6 +339,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                     Spacer(modifier = Modifier.height(8.dp))
                     GameBox(gameData = game) {
                         selectedGame = game
+                        showSearch = false
                     }
 
                 }
@@ -348,6 +349,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                 Spacer(modifier = Modifier.height(8.dp))
                 GameBox(gameData = game) {
                     selectedGame = game
+                    showSearch = false
                 }
             }
             println(selectedGame)
