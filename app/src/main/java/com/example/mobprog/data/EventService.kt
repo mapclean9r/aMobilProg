@@ -84,11 +84,11 @@ class EventService {
                 description = data["description"] as? String ?: "",
                 price = data["price"] as? String ?: "Free",
                 location = data["location"] as? String ?: "N/A",
-                picture = data["picture"] as? String ?: "",
                 host = data["host"] as? String ?: "N/A",
                 comments = data["comments"] as? List<String> ?: emptyList(),
                 maxAttendance = data["attendance"] as? Int ?: 0,
-                attending = data["attending"] as? List<String> ?: emptyList()
+                attending = data["attending"] as? List<String> ?: emptyList(),
+                image = data["image"] as? String ?: "",
             )
         } catch (e: Exception) {
             e.printStackTrace()

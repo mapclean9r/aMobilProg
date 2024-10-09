@@ -6,26 +6,19 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -54,7 +47,6 @@ import com.example.mobprog.data.EventService
 import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.gui.components.GameBox
-import com.example.mobprog.gui.guild.GuildBox
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -69,6 +61,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
     var price by remember { mutableStateOf("") }
     var startDate by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
+    var gameCoverImage by remember { mutableStateOf("") }
 
     var maxAttendance by remember { mutableIntStateOf(0) }
     var maxAttendanceString by remember { mutableStateOf("") }
@@ -254,7 +247,6 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                 Button(
                     onClick = {
                         showSearch = true
-                        // TODO Make this button work
                     },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
@@ -274,6 +266,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                             location,
                             startDate,
                             description,
+                            gameCoverImage,
                             eventService = eventService
                         )
                     },
@@ -339,30 +332,45 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                     Spacer(modifier = Modifier.height(8.dp))
                     GameBox(gameData = game) {
                         selectedGame = game
+                        println("Game cover = " + game.thumbnail)
+                        gameCoverImage = game.thumbnail
                         showSearch = false
+
                     }
 
                 }
             }
-
             items(filteredGames) { game ->
                 Spacer(modifier = Modifier.height(8.dp))
                 GameBox(gameData = game) {
                     selectedGame = game
+                    println("Game cover = " + game.thumbnail)
+                    gameCoverImage = game.thumbnail
                     showSearch = false
                 }
             }
-            println(selectedGame)
+            println("Selected Game: $selectedGame")
             }
         }
 
 }
-
-fun onSubmit(name: String, maxAttendance: Int, price: String, location: String, startDate: String, description: String, eventService: EventService) {
-    eventService.createEvent(EventData(name = name, maxAttendance = maxAttendance, location = location, description = description, startDate = startDate, price = price))
+fun onSubmit(name: String,
+             maxAttendance: Int,
+             price: String,
+             location: String,
+             startDate: String,
+             description: String,
+             gameCoverImage: String,
+             eventService: EventService) {
+    eventService.createEvent(EventData(
+        name = name,
+        image = gameCoverImage,
+        maxAttendance = maxAttendance,
+        location = location,
+        description = description,
+        startDate = startDate,
+        price = price))
 }
-
-
 
 @Preview(showBackground = true)
 @Composable

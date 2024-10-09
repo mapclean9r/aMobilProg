@@ -82,4 +82,5 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.9.1")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("com.google.code.gson:gson:2.8.6")
+    implementation("io.coil-kt:coil-compose:2.4.0")
 }

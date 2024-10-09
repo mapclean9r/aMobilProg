@@ -1,21 +1,15 @@
 package com.example.mobprog.gui.components
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ripple.RippleAlpha
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -23,7 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.mobprog.R
 import com.example.mobprog.createEvent.EventData
 
@@ -35,7 +29,8 @@ fun EventBox(eventData: EventData) {
             .border(2.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
             .padding(12.dp)
     ) {
-        DynamicImageSelector(imageName = eventData.picture)
+        CoverImageAPI(eventData.image)
+        //DynamicImageSelector(imageName = eventData.image)
         /*Image(
             painter = painterResource(R.drawable.lol), /* TODO: Må få til henting fra API*/
             contentDescription = eventData.name,
@@ -95,5 +90,17 @@ fun DynamicImageSelector(imageName: String) {
         modifier = Modifier
             .fillMaxWidth()
             .height(200.dp)
+    )
+}
+
+@Composable
+fun CoverImageAPI(url: String) {
+    AsyncImage(
+        model = url,
+        contentDescription = "Cover Image",
+        contentScale = ContentScale.Crop,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(150.dp)
     )
 }
