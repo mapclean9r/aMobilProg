@@ -49,22 +49,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 fun HomeView(navController: NavController, eventService: EventService, modifier: Modifier = Modifier) {
 
     var events by remember { mutableStateOf(emptyList<EventData>()) }
-
     var showSearch by remember { mutableStateOf(false) }
     var searchText by remember { mutableStateOf("") }
-
     var filteredEvents by remember { mutableStateOf(emptyList<EventData>()) }
-
-    val currentUser = FirebaseAuth.getInstance().currentUser
-    if (currentUser != null) {
-        val uid = currentUser.uid
-        val db = FirebaseFirestore.getInstance()
-        val userRef = db.collection("users").document(uid)
-        println("uid: $uid")
-        println("db: $db")
-        println("userRef: $userRef")
-        println("currentUser: $currentUser")
-    }
 
     eventService.getAllEvents { eventsList ->
         eventsList?.let { documents ->
@@ -85,6 +72,7 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+
         topBar = {
             Row(
                 modifier = Modifier
@@ -121,15 +109,16 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
                     .fillMaxSize()
                     .padding(paddingValues)
                     .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .background(MaterialTheme.colorScheme.background)
             ) {
                 if(filteredEvents.isEmpty()){
                     items(events) { event ->
-                        EventBox(navController, eventData = event)
+                        EventBox(eventData = event, navController)
                         Spacer(modifier = Modifier.height(16.dp))
                     }   
                 }
                 items(filteredEvents) { event ->
-                    EventBox(navController, eventData = event)
+                    EventBox(eventData = event, navController)
                 }
             }
         },

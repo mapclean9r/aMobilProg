@@ -6,35 +6,30 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.mobprog.createEvent.EventData
 import com.example.mobprog.data.EventService
 import com.example.mobprog.data.GuildService
 import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.CreateEventView
-import com.example.mobprog.gui.FriendsView
+import com.example.mobprog.gui.friends.FriendsView
 import com.example.mobprog.gui.HomeView
 import com.example.mobprog.gui.LoginView
 import com.example.mobprog.gui.NotificationView
 import com.example.mobprog.gui.ProfileView
 import com.example.mobprog.gui.RegisterView
 import com.example.mobprog.gui.SettingsView
-import com.example.mobprog.gui.event.EventView
+import com.example.mobprog.gui.friends.AddFriendView
 import com.example.mobprog.gui.guild.CreateGuildView
 import com.example.mobprog.gui.guild.GuildView
 import com.example.mobprog.gui.guild.NoGuildView
 import com.example.mobprog.settings.SettingsManager
 import com.example.mobprog.ui.theme.MobProgTheme
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 
 @SuppressLint("StaticFieldLeak")
@@ -74,9 +69,6 @@ fun Arena(darkMODE: Boolean) {
             composable("createEventScreen") {
                 CreateEventView(navController = navController, eventService = EventService())
             }
-            composable("eventScreen") {
-                EventView(navController = navController, eventData = EventData())
-            }
             composable("friendsScreen") {
                 FriendsView(navController = navController)
             }
@@ -104,5 +96,8 @@ fun Arena(darkMODE: Boolean) {
                     },
                     currentSettingsDarkMode = isDarkMode)
         }
+            composable("addFriendScreen") {
+                AddFriendView(navController = navController)
+            }
     }
 }}

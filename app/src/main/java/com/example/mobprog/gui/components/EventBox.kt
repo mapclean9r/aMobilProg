@@ -1,16 +1,21 @@
 package com.example.mobprog.gui.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ripple.RippleAlpha
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -21,17 +26,14 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mobprog.R
 import com.example.mobprog.createEvent.EventData
-import com.example.mobprog.gui.event.EventView
-import com.google.gson.Gson
 
 @Composable
-fun EventBox(navController: NavController, eventData: EventData) {
+fun EventBox(eventData: EventData, navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .border(2.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
             .padding(12.dp)
-            .clickable { goToEventView(navController, eventData) }
     ) {
         DynamicImageSelector(imageName = eventData.picture)
         /*Image(
@@ -74,11 +76,6 @@ fun EventBox(navController: NavController, eventData: EventData) {
             fontWeight = FontWeight.W300
         )
     }
-}
-
-
-fun goToEventView(navController: NavController, eventData: EventData) {
-    navController.navigate("eventScreen")
 }
 
 @Composable
