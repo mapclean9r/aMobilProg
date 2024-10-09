@@ -339,6 +339,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                     Spacer(modifier = Modifier.height(8.dp))
                     GameBox(gameData = game) {
                         selectedGame = game
+                        showSearch = false
                     }
 
                 }
@@ -348,6 +349,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                 Spacer(modifier = Modifier.height(8.dp))
                 GameBox(gameData = game) {
                     selectedGame = game
+                    showSearch = false
                 }
             }
             println(selectedGame)
