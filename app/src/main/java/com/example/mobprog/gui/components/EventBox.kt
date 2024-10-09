@@ -22,26 +22,29 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.mobprog.R
 import com.example.mobprog.createEvent.EventData
+import com.google.gson.Gson
 
 @Composable
 fun EventBox(navController: NavController, eventData: EventData) {
+    val gson = Gson()
+    val eventJson = gson.toJson(eventData)
+    println("This is the backstack: $eventJson")
+    println()
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .border(2.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
             .padding(12.dp)
-            .clickable { navController.navigate(("eventScreen")) }
+            .clickable {
+                navController.currentBackStackEntry?.savedStateHandle?.set(
+                    key = "event",
+                    value = eventJson
+                )
+                navController.navigate("eventScreen")
+            }
     ) {
         CoverImageAPI(eventData.image)
-        //DynamicImageSelector(imageName = eventData.image)
-        /*Image(
-            painter = painterResource(R.drawable.lol), /* TODO: Må få til henting fra API*/
-            contentDescription = eventData.name,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-        )*/
+
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = eventData.name,

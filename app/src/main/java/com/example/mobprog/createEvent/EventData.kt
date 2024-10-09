@@ -12,5 +12,6 @@ data class EventData(
     val comments: List<String> = emptyList(),
     val maxAttendance: Int = 0,
     val attending: List<String> = emptyList(),
-    val image: String = ""
+    val image: String = "",
+    val id: String = ""
 )

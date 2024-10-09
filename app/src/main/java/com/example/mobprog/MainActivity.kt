@@ -32,6 +32,7 @@ import com.example.mobprog.gui.guild.GuildView
 import com.example.mobprog.gui.guild.NoGuildView
 import com.example.mobprog.settings.SettingsManager
 import com.example.mobprog.ui.theme.MobProgTheme
+import com.google.gson.Gson
 
 
 @SuppressLint("StaticFieldLeak")
@@ -53,6 +54,7 @@ class MainActivity : ComponentActivity() {
 fun Arena(darkMODE: Boolean) {
     var isDarkMode by remember { mutableStateOf(darkMODE) }
     val navController = rememberNavController()
+    val eventService = EventService()
 
 
 
