@@ -135,4 +135,144 @@ class UserService {
                 callback(false, exception)
             }
     }
+
+    // FRIENDS
+
+    fun getUserFriends(callback: (ArrayList<String>?) -> Unit) {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser == null) {
+            callback(null)
+            return
+        }
+
+
+        val uid = currentUser.uid
+        val db = FirebaseFirestore.getInstance()
+
+
+        val friendsRef = db.collection("friends")
+        val usersRef = db.collection("users")
+
+
+        friendsRef.whereEqualTo("u_id", uid).get()
+            .addOnSuccessListener { documents ->
+                val friendIds = ArrayList<String>()
+                for (document in documents) {
+                    val friendId = document.getString("f_id")
+                    if (friendId != null) {
+                        friendIds.add(friendId)
+                    }
+                }
+
+                if (friendIds.isEmpty()) {
+                    callback(null)
+                    return@addOnSuccessListener
+                }
+
+                val friendNames = ArrayList<String>()
+                for (friendId in friendIds) {
+                    usersRef.whereEqualTo("creatorId", friendId).get()
+                        .addOnSuccessListener { userDocument ->
+                            if (!userDocument.isEmpty) {
+                                val documentSnapshot = userDocument.documents[0]
+
+                                val friendName = documentSnapshot.getString("name")
+
+                                if (friendName != null) {
+                                    friendNames.add(friendName)
+                                }
+
+                                callback(friendNames)
+
+                            }
+                        }
+                        .addOnFailureListener {
+                            callback(null)
+                        }
+                }
+            }
+            .addOnFailureListener {
+                callback(null)
+            }
+    }
+
+    fun addFriend(friendId: String, callback: (Boolean) -> Unit) {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser == null) {
+            callback(false)
+            return
+        }
+        val uid = currentUser.uid
+        val db = FirebaseFirestore.getInstance()
+
+        val friendsRef = db.collection("friends")
+        val usersRef = db.collection("users")
+        var userExists = false
+        usersRef.whereEqualTo("creatorId", friendId).get()
+            .addOnSuccessListener { userDocument ->
+                if(userDocument.isEmpty) {
+                    userExists = true
+                }
+            }
+
+        if(userExists) {
+            friendsRef.whereEqualTo("u_id", uid).whereEqualTo("f_id", friendId).get()
+                .addOnSuccessListener { documents ->
+                    if (documents.isEmpty) {
+                        val friendData = hashMapOf(
+                            "u_id" to uid,
+                            "f_id" to friendId
+                        )
+                        friendsRef.add(friendData)
+                            .addOnSuccessListener {
+                                callback(true)
+                            }
+                            .addOnFailureListener {
+                                callback(false)
+                            }
+                    } else {
+                        callback(false)
+                    }
+                }
+                .addOnFailureListener {
+                    callback(false)
+                }
+        } else {
+            callback(false)
+        }
+    }
+
+    fun removeFriend(friendId: String, callback: (Boolean) -> Unit) {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser == null) {
+            callback(false)
+            return
+        }
+        val uid = currentUser.uid
+        val db = FirebaseFirestore.getInstance()
+
+        val friendsRef = db.collection("friends")
+
+        friendsRef.whereEqualTo("u_id", uid).whereEqualTo("f_id", friendId).get()
+            .addOnSuccessListener { documents ->
+                if (!documents.isEmpty) {
+                    for (document in documents) {
+                        friendsRef.document(document.id).delete()
+                            .addOnSuccessListener {
+                                callback(true)
+                            }
+                            .addOnFailureListener {
+                                callback(false)
+                            }
+                    }
+                } else {
+                    callback(false)
+                }
+            }
+            .addOnFailureListener {
+                callback(false)
+            }
+    }
+
+
 }
