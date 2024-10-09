@@ -2,6 +2,7 @@ package com.example.mobprog.gui.guild
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -22,7 +23,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,9 +43,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobprog.R
+import com.example.mobprog.createEvent.EventData
 import com.example.mobprog.data.GuildService
 import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
+import com.example.mobprog.gui.components.EventBox
 import com.example.mobprog.guild.GuildData
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -50,6 +55,12 @@ import com.example.mobprog.guild.GuildData
 fun NoGuildView(navController: NavController, guildService: GuildService, modifier: Modifier = Modifier) {
 
     var guilds by remember { mutableStateOf(emptyList<GuildData>()) }
+
+    var showSearch by remember { mutableStateOf(false) }
+    var searchText by remember { mutableStateOf("") }
+
+    var filteredGuildData by remember { mutableStateOf(emptyList<GuildData>()) }
+
 
     guildService.getAllGuilds { guildList ->
         guildList?.let { documents ->
@@ -60,6 +71,12 @@ fun NoGuildView(navController: NavController, guildService: GuildService, modifi
         } ?: run {
             println("No events found")
         }
+    }
+
+    LaunchedEffect(searchText) {
+        filteredGuildData = guilds.filter { event ->
+            event.name.contains(searchText, ignoreCase = true)
+        } ?: emptyList()
     }
 
 
@@ -76,7 +93,7 @@ fun NoGuildView(navController: NavController, guildService: GuildService, modifi
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Box(modifier = Modifier.fillMaxWidth()) {
-                    IconButton(onClick = {/*TODO: legge til funksjon her for søk i guilds*/})
+                    IconButton(onClick = { showSearch = true })
                     {
                         Icon(
                             imageVector = Icons.Default.Search,
@@ -115,9 +132,17 @@ fun NoGuildView(navController: NavController, guildService: GuildService, modifi
                     .padding(paddingValues)
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
-                items(guilds) { guild ->
-                    GuildBox(guildData = guild, userService = UserService(), navController)
+                if (filteredGuildData.isEmpty()) {
+                    items(guilds) { guild ->
+                        GuildBox(guildData = guild, userService = UserService(), navController)
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                    }
+                }
+                items(filteredGuildData) { guild ->
+                    GuildBox(guildData = guild, userService =  UserService(), navController)
                     Spacer(modifier = Modifier.height(16.dp))
+
                 }
             }
         },
@@ -127,6 +152,28 @@ fun NoGuildView(navController: NavController, guildService: GuildService, modifi
             BottomNavBar(navController = navController, userService = UserService())
         }
     )
+
+    if (showSearch) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.5f))
+                .padding()
+                .clickable {
+                    showSearch = false
+                }
+        )
+        TextField(
+            value = searchText,
+            onValueChange = { searchText = it },
+            placeholder = { Text("Search...") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxSize(fraction = 0.09f)
+                .padding(top = 24.dp),
+            singleLine = true
+        )
+    }
 
 
 }
