@@ -27,15 +27,10 @@ import com.example.mobprog.createEvent.EventData
 import com.google.gson.Gson
 
 @Composable
-fun EventView(navController: NavController, eventData: EventData?) {
-    val gson = Gson()
-    val eventJson = navController.currentBackStackEntry?.savedStateHandle?.get<String>("event")
-    println("callback: $eventData")
+fun EventView(navController: NavController, eventData: EventData?, currentEvent: EventData) {
 
-    if (eventJson != null) {
-        println("callback: $eventData")
-        val eventDataJson = gson.fromJson(eventJson, EventData::class.java)
-        println("Retrieved event: $eventDataJson")
+    println("callback: $currentEvent")
+
 
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -50,7 +45,7 @@ fun EventView(navController: NavController, eventData: EventData?) {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Box(modifier = Modifier.fillMaxWidth()) {
-                        CoverImageAPIEvent(eventJson)
+                        CoverImageAPIEvent(currentEvent.image)
                         Text(
                             text = "Event",
                             fontSize = 20.sp,
@@ -63,7 +58,7 @@ fun EventView(navController: NavController, eventData: EventData?) {
             },
             content = { paddingValues ->
                 Text(
-                    text = eventDataJson.name,
+                    text = currentEvent.name,
                     modifier = Modifier
                         .padding(paddingValues)
                         .fillMaxSize()
@@ -71,13 +66,8 @@ fun EventView(navController: NavController, eventData: EventData?) {
             }
         )
     }
-}
 
-@Preview
-@Composable
-fun PreviewBasicScaffoldExample() {
-    EventView(navController = rememberNavController(), eventData = EventData())
-}
+
 
 @Composable
 fun CoverImageAPIEvent(url: String) {

@@ -11,6 +11,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -21,25 +25,20 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.mobprog.R
+import com.example.mobprog.api.GameData
 import com.example.mobprog.createEvent.EventData
 import com.google.gson.Gson
 
 @Composable
-fun EventBox(navController: NavController, eventData: EventData) {
-    val gson = Gson()
-    val eventJson = gson.toJson(eventData)
-    println("This is the backstack: $eventJson")
-    println()
+fun EventBox(navController: NavController, eventData: EventData, eventClick: (EventData) -> Unit) {
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .border(2.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
             .padding(12.dp)
             .clickable {
-                navController.currentBackStackEntry?.savedStateHandle?.set(
-                    key = "event",
-                    value = eventJson
-                )
+                eventClick(eventData)
                 navController.navigate("eventScreen")
             }
     ) {

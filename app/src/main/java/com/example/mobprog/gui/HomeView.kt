@@ -46,7 +46,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomeView(navController: NavController, eventService: EventService, modifier: Modifier = Modifier) {
+fun HomeView(navController: NavController, eventService: EventService, modifier: Modifier = Modifier, onEventClick: (EventData) -> Unit) {
 
     var events by remember { mutableStateOf(emptyList<EventData>()) }
     var showSearch by remember { mutableStateOf(false) }
@@ -113,12 +113,16 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
             ) {
                 if(filteredEvents.isEmpty()){
                     items(events) { event ->
-                        EventBox(navController, eventData = event)
+                        EventBox(navController = navController, eventData = event, eventClick = { selectedEvent ->
+                            onEventClick(selectedEvent)
+                        })
                         Spacer(modifier = Modifier.height(16.dp))
                     }   
                 }
                 items(filteredEvents) { event ->
-                    EventBox(navController, eventData = event)
+                    EventBox(navController = navController, eventData = event, eventClick = { selectedEvent ->
+                        onEventClick(selectedEvent)
+                    })
                 }
             }
         },
@@ -149,10 +153,4 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
             singleLine = true
         )
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun HomeViewPreview() {
-    HomeView(navController = rememberNavController(), eventService = EventService())
 }

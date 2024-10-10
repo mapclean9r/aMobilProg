@@ -13,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.mobprog.api.GameData
 import com.example.mobprog.createEvent.EventData
 import com.example.mobprog.data.EventService
 import com.example.mobprog.data.GuildService
@@ -55,6 +56,7 @@ fun Arena(darkMODE: Boolean) {
     var isDarkMode by remember { mutableStateOf(darkMODE) }
     val navController = rememberNavController()
     val eventService = EventService()
+    var thisEvent by remember { mutableStateOf<EventData>(EventData()) }
 
 
 
@@ -68,13 +70,15 @@ fun Arena(darkMODE: Boolean) {
                 RegisterView(navController = navController)
             }
             composable("homeScreen") {
-                HomeView(navController = navController, eventService = EventService())
+                HomeView(navController = navController, eventService = EventService(), onEventClick = { selectedEvent ->
+                    thisEvent = selectedEvent
+                })
             }
             composable("createEventScreen") {
                 CreateEventView(navController = navController, eventService = EventService())
             }
             composable("eventScreen") {
-                EventView(navController = navController, eventData = EventData())
+                EventView(navController = navController, eventData = EventData(), currentEvent = thisEvent)
             }
             composable("friendsScreen") {
                 FriendsView(navController = navController)
