@@ -1,6 +1,7 @@
 package com.example.mobprog.gui.event
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -44,10 +46,10 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
+
                     Box(modifier = Modifier.fillMaxWidth()) {
-                        CoverImageAPIEvent(currentEvent.image)
                         Text(
-                            text = "Event",
+                            text = currentEvent.name,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White,
@@ -57,12 +59,35 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                 }
             },
             content = { paddingValues ->
-                Text(
-                    text = currentEvent.name,
-                    modifier = Modifier
+
+                Box(modifier = Modifier) {
+                    Modifier
+                        .width(100.dp)
                         .padding(paddingValues)
-                        .fillMaxSize()
-                )
+                        CoverImageAPIEvent(currentEvent.image)
+                }
+                Box(modifier = Modifier) {
+                    Modifier.align(alignment = Alignment.Center)
+                    Text(
+                        text = currentEvent.price,
+                        modifier = Modifier
+                            .padding(start = 28.dp, top = 320.dp)
+                            .fillMaxSize()
+                    )
+                    Text(
+                        text = currentEvent.description,
+                        modifier = Modifier
+                            .padding(start = 28.dp, top = 342.dp)
+                            .fillMaxSize()
+                    )
+                    Text(
+                        text = currentEvent.startDate,
+                        modifier = Modifier
+                            .padding(start = 28.dp, top = 364.dp)
+                            .fillMaxSize()
+                    )
+                }
+
             }
         )
     }
@@ -74,10 +99,12 @@ fun CoverImageAPIEvent(url: String) {
     AsyncImage(
         model = url,
         contentDescription = "Cover Image",
-        contentScale = ContentScale.Crop,
+        contentScale = ContentScale.Fit,
         modifier = Modifier
+            .padding(top = 100.dp)
             .fillMaxWidth()
-            .height(150.dp)
+            .height(200.dp)
+            .width(12.dp)
     )
 }
 
