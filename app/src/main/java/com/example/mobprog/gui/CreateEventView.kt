@@ -47,6 +47,7 @@ import com.example.mobprog.data.EventService
 import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.gui.components.GameBox
+import com.google.firebase.auth.FirebaseAuth
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -190,7 +191,8 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                     value = maxAttendanceString,
                     onValueChange = { newText ->
                         maxAttendanceString = newText
-                        maxAttendance = maxAttendanceString.toInt()
+                        val convertToInt = newText.toIntOrNull() ?: 0
+                        maxAttendance = convertToInt
                     },
                     label = { Text("Enter Attendance") },
                     placeholder = { Text("attendance") },
@@ -267,7 +269,8 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                             startDate,
                             description,
                             gameCoverImage,
-                            eventService = eventService
+                            eventService = eventService,
+                            host = FirebaseAuth.getInstance().currentUser?.uid.toString()
                         )
                         navController.navigate("homeScreen") {
                             while (navController.popBackStack()) {
@@ -366,7 +369,8 @@ fun onSubmit(name: String,
              startDate: String,
              description: String,
              gameCoverImage: String,
-             eventService: EventService) {
+             eventService: EventService,
+             host: String) {
     eventService.createEvent(EventData(
         name = name,
         image = gameCoverImage,
@@ -374,7 +378,8 @@ fun onSubmit(name: String,
         location = location,
         description = description,
         startDate = startDate,
-        price = price))
+        price = price,
+        host = host))
 }
 
 @Preview(showBackground = true)

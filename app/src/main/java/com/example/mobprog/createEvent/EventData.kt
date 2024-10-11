@@ -2,13 +2,13 @@ package com.example.mobprog.createEvent
 
 data class EventData(
     val name: String = "",
-    val startDate: String = "N/A",
-    val endDate: String = "N/A",
+    val startDate: String = "",
+    val endDate: String = "",
     val creatorId: String = "",
     val description: String = "",
     val price: String = "Free",
-    val location: String = "N/A",
-    val host: String = "N/A",
+    val location: String = "",
+    val host: String = "",
     val comments: List<String> = emptyList(),
     val maxAttendance: Int = 0,
     val attending: List<String> = emptyList(),

@@ -1,6 +1,7 @@
 package com.example.mobprog.data;
 
 import com.example.mobprog.createEvent.EventData
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -81,6 +82,7 @@ class EventService {
 
 
     fun parseToEventData(data: Map<String, Any>): EventData? {
+        val currentUserID = FirebaseAuth.getInstance().currentUser?.uid.toString()
         return try {
             EventData(
                 name = data["name"] as? String ?: "",
@@ -90,9 +92,9 @@ class EventService {
                 description = data["description"] as? String ?: "",
                 price = data["price"] as? String ?: "Free",
                 location = data["location"] as? String ?: "N/A",
-                host = data["host"] as? String ?: "N/A",
+                host = data["host"] as? String ?: currentUserID,
                 comments = data["comments"] as? List<String> ?: emptyList(),
-                maxAttendance = data["attendance"] as? Int ?: 0,
+                maxAttendance = data["maxAttendance"] as? Int ?: 0,
                 attending = data["attending"] as? List<String> ?: emptyList(),
                 image = data["image"] as? String ?: "",
                 id = data["id"] as? String ?: ""
