@@ -1,6 +1,7 @@
 package com.example.mobprog.data;
 
 import com.example.mobprog.createEvent.EventData
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 
 class EventService {
@@ -9,7 +10,12 @@ class EventService {
     //Fungerer 100% @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
     fun createEvent(event: EventData){
-        db.collection("events").add(event)
+        val newDocumentRef = db.collection("events").document()
+        newDocumentRef.set(event)
+            .addOnSuccessListener {
+                val documentId = newDocumentRef.id
+                newDocumentRef.update("id", documentId)
+            }
     }
 
     fun printAllEvents() {
@@ -89,6 +95,7 @@ class EventService {
                 maxAttendance = data["attendance"] as? Int ?: 0,
                 attending = data["attending"] as? List<String> ?: emptyList(),
                 image = data["image"] as? String ?: "",
+                id = data["id"] as? String ?: ""
             )
         } catch (e: Exception) {
             e.printStackTrace()
@@ -98,4 +105,10 @@ class EventService {
 
     //In Progress @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+    fun joinEvent(userID: String, eventID: String) {
+        print(userID)
+        print(eventID)
+        val allEventsRef = db.collection("events").document(eventID)
+        allEventsRef.update("attending", FieldValue.arrayUnion(userID))
+    }
 }

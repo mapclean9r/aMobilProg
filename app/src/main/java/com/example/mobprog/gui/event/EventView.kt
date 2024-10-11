@@ -29,12 +29,15 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.mobprog.createEvent.EventData
+import com.example.mobprog.data.EventService
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun EventView(navController: NavController, eventData: EventData?, currentEvent: EventData) {
+fun EventView(navController: NavController, eventData: EventData?, currentEvent: EventData?) {
+        val eventService = EventService()
+        val currentUserID = FirebaseAuth.getInstance().currentUser?.uid.toString()
 
-    println("callback: $currentEvent")
-
+        print("This it current EVent: ${currentEvent?.id}")
 
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -66,7 +69,10 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                         .fillMaxSize()
                         .padding(paddingValues)
                 ) {
-                    CoverImageAPIEvent(currentEvent.image)
+                    if (currentEvent != null) {
+                        CoverImageAPIEvent(currentEvent.image)
+                    }
+                    if (currentEvent != null) {
                         Text(
                             text = currentEvent.name,
                             fontWeight = FontWeight.Bold,
@@ -76,47 +82,71 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                                 .wrapContentHeight()
 
                         )
-                    Text(
-                        text = "Description: " + currentEvent.description,
-                        modifier = Modifier
-                            .padding(start = 28.dp, end = 28.dp, top = 8.dp, bottom = 20.dp)
-                            .wrapContentHeight()
-                    )
+                    }
+                    if (currentEvent != null) {
+                        Text(
+                            text = "Description: " + currentEvent.description,
+                            modifier = Modifier
+                                .padding(start = 28.dp, end = 28.dp, top = 8.dp, bottom = 20.dp)
+                                .wrapContentHeight()
+                        )
+                    }
                     Divider(color = Color.Gray, thickness = 1.dp)
+                    if (currentEvent != null) {
                         Text(
                             text = "Price: " + currentEvent.price,
                             modifier = Modifier
                                 .padding(start = 28.dp, end = 28.dp, top = 8.dp)
                                 .wrapContentHeight()
                         )
+                    }
+                    if (currentEvent != null) {
                         Text(
                             text = "Location: " + currentEvent.location,
                             modifier = Modifier
                                 .padding(start = 28.dp, end = 28.dp, top = 8.dp)
                                 .wrapContentHeight()
                         )
+                    }
+                    if (currentEvent != null) {
                         Text(
                             text = "Date: " + currentEvent.startDate,
                             modifier = Modifier
                                 .padding(start = 28.dp, end = 28.dp, top = 8.dp)
                                 .wrapContentHeight()
                         )
+                    }
+                    if (currentEvent != null) {
                         Text(
                             text = "Creator: " + currentEvent.host,
                             modifier = Modifier
                                 .padding(start = 28.dp, end = 28.dp, top = 8.dp)
                                 .wrapContentHeight()
                         )
+                    }
+                    if (currentEvent != null) {
                         Text(
-                            text = "Available slots: " + currentEvent.maxAttendance,
+                            text = "People attending: " + currentEvent.attending.size,
                             modifier = Modifier
                                 .padding(start = 28.dp, end = 28.dp, top = 8.dp)
                                 .wrapContentHeight()
                         )
-
+                    }
+                    if (currentEvent != null) {
+                        Text(
+                            text = "Maximum Party size: " + currentEvent.maxAttendance.toString(),
+                            modifier = Modifier
+                                .padding(start = 28.dp, end = 28.dp, top = 8.dp)
+                                .wrapContentHeight()
+                        )
+                    }
                     //Spacer(modifier = Modifier.height(500.dp).padding(paddingValues))
                     Button(
-                        onClick = { },
+                        onClick = {
+                            if (currentEvent != null) {
+                                eventService.joinEvent(currentUserID, currentEvent.id)
+                            }
+                        },
                         modifier = Modifier
                             .padding(16.dp)
 
