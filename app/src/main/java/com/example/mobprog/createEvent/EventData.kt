@@ -6,7 +6,6 @@ data class EventData(
     val endDate: String = "",
     val creatorId: String = "",
     val description: String = "",
-    val price: String = "Free",
     val location: String = "",
     val comments: List<String> = emptyList(),
     val maxAttendance: Number = 0,

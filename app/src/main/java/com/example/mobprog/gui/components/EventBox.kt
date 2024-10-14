@@ -25,11 +25,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.mobprog.R
-import com.example.mobprog.api.GameData
 import com.example.mobprog.createEvent.EventData
-import com.example.mobprog.data.EventService
 import com.example.mobprog.data.UserService
-import com.google.gson.Gson
+import java.util.Locale
 
 @Composable
 fun EventBox(navController: NavController, eventData: EventData, eventClick: (EventData) -> Unit) {
@@ -64,33 +62,13 @@ fun EventBox(navController: NavController, eventData: EventData, eventClick: (Ev
             fontWeight = FontWeight.SemiBold
         )
         Text(
-            text = "Beskrivelse: " + eventData.description,
+            text = eventData.startDate + " - " + eventData.endDate,
             fontSize = 13.sp,
             fontWeight = FontWeight.W300
         )
         Text(
-            text = eventData.price,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.W400
-        )
-        Text(
-            text = "Location: " + eventData.location,
+            text = eventData.location.toUpperCase(Locale.ROOT),
             fontSize = 12.sp,
-            fontWeight = FontWeight.W300
-        )
-        Text(
-            text = "Dato: " + eventData.startDate,
-            fontSize = 13.sp,
-            fontWeight = FontWeight.W300
-        )
-        Text(
-            text = "Arrangør: $username",
-            fontSize = 13.sp,
-            fontWeight = FontWeight.W300
-        )
-        Text(
-            text = "Max Party size: " + eventData.maxAttendance,
-            fontSize = 13.sp,
             fontWeight = FontWeight.W300
         )
     }
