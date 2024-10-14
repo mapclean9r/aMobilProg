@@ -89,7 +89,6 @@ class EventService {
                 startDate = data["startDate"] as? String ?: "N/A",
                 endDate = data["date"] as? String ?: "N/A",
                 description = data["description"] as? String ?: "",
-                price = data["price"] as? String ?: "Free",
                 location = data["location"] as? String ?: "N/A",
                 creatorId = data["host"] as? String ?: currentUserID,
                 comments = data["comments"] as? List<String> ?: emptyList(),

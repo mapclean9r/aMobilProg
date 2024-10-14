@@ -36,6 +36,7 @@ import com.example.mobprog.createEvent.EventData
 import com.example.mobprog.data.EventService
 import com.example.mobprog.data.UserService
 import com.google.firebase.auth.FirebaseAuth
+import java.util.Locale
 
 @Composable
 fun EventView(navController: NavController, eventData: EventData?, currentEvent: EventData?) {
@@ -129,7 +130,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                     Divider(color = Color.Gray, thickness = 1.dp)
                     if (currentEvent != null) {
                         Text(
-                            text = "Price: " + currentEvent.price,
+                            text = currentEvent.startDate + " - " + currentEvent.endDate,
                             modifier = Modifier
                                 .padding(start = 28.dp, end = 28.dp, top = 8.dp)
                                 .wrapContentHeight()
@@ -137,7 +138,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                     }
                     if (currentEvent != null) {
                         Text(
-                            text = "Location: " + currentEvent.location,
+                            text = currentEvent.location.toUpperCase(Locale.ROOT),
                             modifier = Modifier
                                 .padding(start = 28.dp, end = 28.dp, top = 8.dp)
                                 .wrapContentHeight()
@@ -145,15 +146,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                     }
                     if (currentEvent != null) {
                         Text(
-                            text = "Date: " + currentEvent.startDate,
-                            modifier = Modifier
-                                .padding(start = 28.dp, end = 28.dp, top = 8.dp)
-                                .wrapContentHeight()
-                        )
-                    }
-                    if (currentEvent != null) {
-                        Text(
-                            text = "Arrangør: " + username,
+                            text = "Host: $username",
                             modifier = Modifier
                                 .padding(start = 28.dp, end = 28.dp, top = 8.dp)
                                 .wrapContentHeight()
@@ -163,7 +156,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                         Text(
                             //text = "People attending: " + currentEvent.attending.size,
 
-                            text = "People attending: " + numberOfPeopleAttending,
+                            text = "People attending: $numberOfPeopleAttending",
                             modifier = Modifier
                                 .padding(start = 28.dp, end = 28.dp, top = 8.dp)
                                 .wrapContentHeight()
@@ -171,7 +164,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                     }
                     if (currentEvent != null) {
                         Text(
-                            text = "Maximum Party size: " + currentEvent.maxAttendance.toString(),
+                            text = "Max Party size: " + currentEvent.maxAttendance.toString(),
                             modifier = Modifier
                                 .padding(start = 28.dp, end = 28.dp, top = 8.dp)
                                 .wrapContentHeight()

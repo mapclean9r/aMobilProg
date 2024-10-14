@@ -58,7 +58,6 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
     /* TODO - legge til alle felter som trengs og endre tekst felter til å benytte disse */
     var name by remember { mutableStateOf("") }
     var location by remember { mutableStateOf("") }
-    var price by remember { mutableStateOf("") }
     var startDate by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var gameCoverImage by remember { mutableStateOf("") }
@@ -159,25 +158,6 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                     modifier = Modifier.fillMaxWidth()
                 )
                 Text(
-                    text = "Price",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.W400,
-                    modifier = Modifier
-                        .padding(6.dp)
-                        .align(Alignment.Start),
-                    color = MaterialTheme.colorScheme.primary
-                )
-                TextField(
-                    value = price,
-                    onValueChange = { newText ->
-                        price = newText
-                    },
-                    label = { Text("Enter Price") },
-                    placeholder = { Text("price") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Text(
                     text = "Max Attendance",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.W400,
@@ -263,7 +243,6 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                         onSubmit(
                             name,
                             maxAttendance,
-                            price,
                             location,
                             startDate,
                             description,
@@ -289,8 +268,6 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
             }
         },
         bottomBar = {
-            // inspirert av link under for å lage navbar.
-            // https://www.youtube.com/watch?v=O9csfKW3dZ4
             BottomNavBar(navController = navController, userService = UserService())
         }
     )
@@ -363,7 +340,6 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
 }
 fun onSubmit(name: String,
              maxAttendance: Int,
-             price: String,
              location: String,
              startDate: String,
              description: String,
@@ -377,7 +353,6 @@ fun onSubmit(name: String,
         location = location,
         description = description,
         startDate = startDate,
-        price = price,
         creatorId = creatorId))
 }
 
