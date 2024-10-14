@@ -19,6 +19,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -40,6 +41,22 @@ import com.google.firebase.auth.FirebaseAuth
 fun EventView(navController: NavController, eventData: EventData?, currentEvent: EventData?) {
         val eventService = EventService()
         val currentUserID = FirebaseAuth.getInstance().currentUser?.uid.toString()
+
+    fun attenderStarterValue(): Int {
+        if (currentEvent != null) {
+            return currentEvent.attending.size
+        }
+        return 0
+    }
+        var numberOfPeopleAttending by remember { mutableIntStateOf(attenderStarterValue()) }
+
+
+    fun updateAttendingPeople() {
+        if (currentEvent != null) {
+            numberOfPeopleAttending = currentEvent.attending.size
+        }
+    }
+
 
         val userService = UserService()
         var username by remember { mutableStateOf("") }
@@ -142,7 +159,9 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                     }
                     if (currentEvent != null) {
                         Text(
-                            text = "People attending: " + currentEvent.attending.size,
+                            //text = "People attending: " + currentEvent.attending.size,
+
+                            text = "People attending: " + numberOfPeopleAttending,
                             modifier = Modifier
                                 .padding(start = 28.dp, end = 28.dp, top = 8.dp)
                                 .wrapContentHeight()
@@ -161,6 +180,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                         onClick = {
                             if (currentEvent != null) {
                                 eventService.joinEvent(currentUserID, currentEvent.id)
+                                updateAttendingPeople()
                             }
                         },
                         modifier = Modifier
