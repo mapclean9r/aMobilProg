@@ -70,7 +70,7 @@ fun Arena(darkMODE: Boolean) {
             exitTransition = {
                 ExitTransition.None
             }
-            ) {
+        ) {
             composable("loginScreen") {
                 LoginView(navController = navController)
             }
@@ -78,15 +78,22 @@ fun Arena(darkMODE: Boolean) {
                 RegisterView(navController = navController)
             }
             composable("homeScreen") {
-                HomeView(navController = navController, eventService = EventService(), onEventClick = { selectedEvent ->
-                    thisEvent = selectedEvent
-                })
+                HomeView(
+                    navController = navController,
+                    eventService = EventService(),
+                    onEventClick = { selectedEvent ->
+                        thisEvent = selectedEvent
+                    })
             }
             composable("createEventScreen") {
                 CreateEventView(navController = navController, eventService = EventService())
             }
             composable("eventScreen") {
-                EventView(navController = navController, eventData = EventData(), currentEvent = thisEvent)
+                EventView(
+                    navController = navController,
+                    eventData = EventData(),
+                    currentEvent = thisEvent
+                )
             }
             composable("friendsScreen") {
                 FriendsView(navController = navController)
@@ -107,16 +114,18 @@ fun Arena(darkMODE: Boolean) {
                 NotificationView(navController = navController)
             }
             composable("settingsScreen") {
-                SettingsView(navController = navController,
+                SettingsView(
+                    navController = navController,
                     onDarkModeToggle = { darkMode ->
                         // Update the state and save the preference
                         isDarkMode = darkMode
                         settingsManager.saveDarkMode(darkMode)
                     },
-                    currentSettingsDarkMode = isDarkMode)
-        }
+                    currentSettingsDarkMode = isDarkMode
+                )
+            }
             composable("addFriendScreen") {
                 AddFriendView(navController = navController)
             }
-    }
-}}
+        }
+    }}

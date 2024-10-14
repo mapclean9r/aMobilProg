@@ -185,9 +185,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                             Text("Join")
                         }
                         if (currentEvent != null) {
-                            println("CurrentId 1 " +currentEvent.creatorId)
-                            println("CurrentId 2 "+currentUserID)
-                            ShowDeleteButton(currentEvent.creatorId, currentUserID, navController, eventService)
+                            ShowDeleteButton(currentEvent.creatorId, currentUserID, navController, eventService, currentEvent)
                         }
 
                     }
@@ -198,11 +196,13 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
     }
 
 @Composable
-fun ShowDeleteButton(userIFromDb: String, hostID: String, navController: NavController, eventService: EventService) {
+fun ShowDeleteButton(userIFromDb: String, hostID: String, navController: NavController, eventService: EventService, currentEvent: EventData?) {
     if (userIFromDb == hostID) {
         Button(
             onClick = {
-                eventService.deleteEvent(hostID)
+                if (currentEvent != null) {
+                    eventService.deleteEvent(currentEvent.id)
+                }
                 navController.navigate("homeScreen") {
                     navController.popBackStack()
                 }
