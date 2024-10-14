@@ -5,6 +5,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -59,7 +61,15 @@ fun Arena(darkMODE: Boolean) {
 
     MobProgTheme(darkTheme = isDarkMode) {
 
-        NavHost(navController = navController, startDestination = "loginScreen") {
+        NavHost(navController = navController,
+            startDestination = "loginScreen",
+            enterTransition = {
+                EnterTransition.None
+            },
+            exitTransition = {
+                ExitTransition.None
+            }
+            ) {
             composable("loginScreen") {
                 LoginView(navController = navController)
             }
