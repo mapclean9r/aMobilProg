@@ -37,7 +37,7 @@ fun EventBox(navController: NavController, eventData: EventData, eventClick: (Ev
     val userService = UserService()
     var username by remember { mutableStateOf("") }
 
-    userService.getUsernameWithDocID(eventData.host) { creatorId ->
+    userService.getUsernameWithDocID(eventData.creatorId) { creatorId ->
         if (creatorId != null) {
             username = creatorId
         } else {

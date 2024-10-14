@@ -45,7 +45,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
         var username by remember { mutableStateOf("") }
 
     if (currentEvent != null) {
-        userService.getUsernameWithDocID(currentEvent.host) { creatorId ->
+        userService.getUsernameWithDocID(currentEvent.creatorId) { creatorId ->
             if (creatorId != null) {
                 username = creatorId
             } else {

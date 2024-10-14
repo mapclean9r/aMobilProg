@@ -378,7 +378,7 @@ fun onSubmit(name: String,
         description = description,
         startDate = startDate,
         price = price,
-        host = creatorId))
+        creatorId = creatorId))
 }
 
 @Preview(showBackground = true)
