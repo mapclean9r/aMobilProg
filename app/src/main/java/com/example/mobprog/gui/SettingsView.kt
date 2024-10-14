@@ -10,12 +10,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -41,13 +45,29 @@ import com.example.mobprog.settingsManager
 import com.example.mobprog.ui.theme.MobProgTheme
 import kotlinx.coroutines.launch
 
+
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun SettingsView(navController: NavController, onDarkModeToggle: (Boolean) -> Unit, currentSettingsDarkMode: Boolean){
 
     var isDarkTheme by remember { mutableStateOf(false) }
-
     var isPreChecked by remember { mutableStateOf(isDarkTheme) }
+    var newName by remember { mutableStateOf("") }
+    var isUpdating by remember { mutableStateOf(false) }
+    var updateStatus by remember { mutableStateOf<String?>(null) }
+
+    fun updateUserName(newName: String, callback: (Boolean, String) -> Unit) {
+        isUpdating = true
+        val userService = UserService()
+        userService.updateUserProfile(name = newName, picture = "") { success, exception ->
+            if (success) {
+                callback(true, "Name updated successfully!")
+            } else {
+                val errorMessage = exception?.message ?: "An error occurred."
+                callback(false, errorMessage)
+            }
+        }
+    }
 
     LaunchedEffect(isDarkTheme) {
         isPreChecked = currentSettingsDarkMode
@@ -95,40 +115,83 @@ fun SettingsView(navController: NavController, onDarkModeToggle: (Boolean) -> Un
             }
         }
     }, content = { paddingValues ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(16.dp),
-                contentAlignment = Alignment.TopStart
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp),
+            contentAlignment = Alignment.TopStart
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
+                    Text("Dark Mode")
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Switch(
+                        checked = isPreChecked,
+                        onCheckedChange = { isChecked ->
+                            isDarkTheme = isChecked
+                            isPreChecked = isChecked
+                            onDarkModeToggle(isChecked)
+                        }
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = if (isPreChecked) "ON" else "OFF",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text("Dark Mode")
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Switch(
-                            checked = isPreChecked,
-                            onCheckedChange = { isChecked ->
-                                isDarkTheme = isChecked
-                                isPreChecked = isChecked
-                                onDarkModeToggle(isChecked)
+                OutlinedTextField(
+                    value = newName,
+                    onValueChange = { newName = it },
+                    label = { Text("New Name") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Button(
+                    onClick = {
+                        updateUserName(newName) { success, message ->
+                            isUpdating = false
+                            updateStatus = message
+                            if (success) {
+                                newName = ""
                             }
+                        }
+                    },
+                    enabled = newName.isNotBlank() && !isUpdating,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    if (isUpdating) {
+                        CircularProgressIndicator(
+                            color = Color.White,
+                            modifier = Modifier.size(24.dp)
                         )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = if (isPreChecked) "ON" else "OFF",
-                            style = MaterialTheme.typography.bodyLarge
-                        )
+                    } else {
+                        Text("Update Name")
                     }
                 }
+
+                updateStatus?.let { statusMessage ->
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = statusMessage,
+                        color = if (statusMessage.contains("success", true)) Color.Green else Color.Red,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
+        }
     }, bottomBar = {
         // inspirert av link under for å lage navbar.
         // https://www.youtube.com/watch?v=O9csfKW3dZ4
