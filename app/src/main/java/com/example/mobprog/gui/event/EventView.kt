@@ -53,7 +53,9 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
 
     fun updateAttendingPeople() {
         if (currentEvent != null) {
-            numberOfPeopleAttending = currentEvent.attending.size
+            if (!currentEvent.attending.contains(currentUserID)) {
+                numberOfPeopleAttending = currentEvent.attending.size + 1
+            }
         }
     }
 
