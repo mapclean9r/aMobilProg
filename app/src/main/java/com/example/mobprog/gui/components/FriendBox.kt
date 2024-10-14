@@ -43,7 +43,7 @@ fun FriendBox (friendData: FriendData, navController: NavController, onClick: (F
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .border(2.dp, Color.Blue, shape = RoundedCornerShape(10.dp))
+            .border(2.dp, Color.Black, shape = RoundedCornerShape(10.dp))
             .padding(12.dp)
     ) {
         Box(
@@ -72,12 +72,6 @@ fun FriendBox (friendData: FriendData, navController: NavController, onClick: (F
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold
                 , color = Color.Black
-            )
-            Text(
-                text = friendData.name,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.W400,
-                modifier = Modifier.align(Alignment.CenterEnd)
             )
         }
         updateStatus?.let { statusMessage ->
