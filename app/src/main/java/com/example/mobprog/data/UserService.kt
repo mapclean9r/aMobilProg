@@ -1,6 +1,8 @@
 package com.example.mobprog.data
 
 import android.util.Log
+import androidx.compose.runtime.Composable
+import com.example.mobprog.gui.friends.FriendData
 import com.example.mobprog.user.UserData
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -99,6 +101,36 @@ class UserService {
             callback(false, Exception("User not authenticated"))
         }
     }
+
+    fun getAllUsers(callback: (List<FriendData>?) -> Unit) {
+        val users = arrayListOf<FriendData>()
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
+
+        db.collection("users").get()
+            .addOnSuccessListener { doc ->
+                if (!doc.isEmpty) {
+                    for (document in doc) {
+                        val username = document.getString("name")
+                        val id = document.getString("id")
+                        if (username != null && id != null && id != uid) {
+                            val data = FriendData(id, username)
+                            users.add(data)
+                        }
+                    }
+                    // Pass the populated list to the callback
+                    callback(users)
+                } else {
+                    // Pass an empty list if no documents were found
+                    callback(null)
+                }
+            }
+            .addOnFailureListener { exception ->
+                // Handle the error and pass null to the callback
+                println("Error getting documents: $exception")
+                callback(null)
+            }
+    }
+
 
 
     fun getCurrentUserGuild(callback: (String?) -> Unit) {
@@ -219,7 +251,7 @@ class UserService {
 
                 val friendNames = ArrayList<String>()
                 for (friendId in friendIds) {
-                    usersRef.whereEqualTo("creatorId", friendId).get()
+                    usersRef.whereEqualTo("id", friendId).get()
                         .addOnSuccessListener { userDocument ->
                             if (!userDocument.isEmpty) {
                                 val documentSnapshot = userDocument.documents[0]
@@ -254,17 +286,9 @@ class UserService {
         val db = FirebaseFirestore.getInstance()
 
         val friendsRef = db.collection("friends")
-        val usersRef = db.collection("users")
-        var userExists = false
-        usersRef.whereEqualTo("creatorId", friendId).get()
-            .addOnSuccessListener { userDocument ->
-                if(userDocument.isEmpty) {
-                    userExists = true
-                }
-            }
 
-        if(userExists) {
-            friendsRef.whereEqualTo("u_id", uid).whereEqualTo("f_id", friendId).get()
+
+        friendsRef.whereEqualTo("u_id", uid).whereEqualTo("f_id", friendId).get()
                 .addOnSuccessListener { documents ->
                     if (documents.isEmpty) {
                         val friendData = hashMapOf(
@@ -285,9 +309,6 @@ class UserService {
                 .addOnFailureListener {
                     callback(false)
                 }
-        } else {
-            callback(false)
-        }
     }
 
     fun removeFriend(friendId: String, callback: (Boolean) -> Unit) {

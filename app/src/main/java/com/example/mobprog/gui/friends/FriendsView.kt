@@ -103,7 +103,7 @@ fun FriendsView(navController: NavController) {
         }
     }, content = {
         if(!isLoading.value) {
-            friends.value?.let { it1 -> FriendsList(it1) }
+            friends.value?.let { it1 -> FriendsList(navController, it1) }
         }
     }, bottomBar = {
             // inspirert av link under for å lage navbar.
@@ -126,18 +126,12 @@ fun FriendsView(navController: NavController) {
 }
 
 @Composable
-fun FriendsList(friends: ArrayList<String>) {
+fun FriendsList(navController: NavController, friends: ArrayList<String>) {
     Column(
         modifier = Modifier.fillMaxSize().padding(28.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        val selectedFriend = remember { mutableStateOf<String?>(null) }
-
-        BackHandler(selectedFriend.value != null) {
-            selectedFriend.value = null
-        }
 
         Spacer(modifier = Modifier.height(50.dp))
 
@@ -147,7 +141,6 @@ fun FriendsList(friends: ArrayList<String>) {
             LazyColumn {
                 items(friends) { friend ->
                     FriendItem(friend) {
-                        selectedFriend.value = friend
                     }
                 }
             }
@@ -155,6 +148,8 @@ fun FriendsList(friends: ArrayList<String>) {
 
     }
 }
+
+
 
 @Composable
 fun FriendItem(friend: String, onClick: () -> Unit) {
