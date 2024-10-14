@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Divider
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -199,6 +200,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
 fun ShowDeleteButton(userIFromDb: String, hostID: String, navController: NavController, eventService: EventService, currentEvent: EventData?) {
     if (userIFromDb == hostID) {
         Button(
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
             onClick = {
                 if (currentEvent != null) {
                     eventService.deleteEvent(currentEvent.id)
