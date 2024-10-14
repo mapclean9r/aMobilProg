@@ -62,7 +62,6 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
     var startDate by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var gameCoverImage by remember { mutableStateOf("") }
-    var creatorId by remember { mutableStateOf("") }
 
     var maxAttendance by remember { mutableIntStateOf(0) }
     var maxAttendanceString by remember { mutableStateOf("") }

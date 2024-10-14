@@ -27,10 +27,23 @@ import coil.compose.AsyncImage
 import com.example.mobprog.R
 import com.example.mobprog.api.GameData
 import com.example.mobprog.createEvent.EventData
+import com.example.mobprog.data.EventService
+import com.example.mobprog.data.UserService
 import com.google.gson.Gson
 
 @Composable
 fun EventBox(navController: NavController, eventData: EventData, eventClick: (EventData) -> Unit) {
+
+    val userService = UserService()
+    var username by remember { mutableStateOf("") }
+
+    userService.getUsernameWithDocID(eventData.host) { creatorId ->
+        if (creatorId != null) {
+            username = creatorId
+        } else {
+            println("username not found...")
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -71,7 +84,7 @@ fun EventBox(navController: NavController, eventData: EventData, eventClick: (Ev
             fontWeight = FontWeight.W300
         )
         Text(
-            text = "Arrangør: " + eventData.host,
+            text = "Arrangør: $username",
             fontSize = 13.sp,
             fontWeight = FontWeight.W300
         )

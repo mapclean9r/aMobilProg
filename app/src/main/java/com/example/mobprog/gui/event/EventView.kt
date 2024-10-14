@@ -18,6 +18,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,6 +33,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.mobprog.createEvent.EventData
 import com.example.mobprog.data.EventService
+import com.example.mobprog.data.UserService
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -36,7 +41,18 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
         val eventService = EventService()
         val currentUserID = FirebaseAuth.getInstance().currentUser?.uid.toString()
 
+        val userService = UserService()
+        var username by remember { mutableStateOf("") }
 
+    if (currentEvent != null) {
+        userService.getUsernameWithDocID(currentEvent.host) { creatorId ->
+            if (creatorId != null) {
+                username = creatorId
+            } else {
+                println("username not found...")
+            }
+        }
+    }
 
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -118,7 +134,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                     }
                     if (currentEvent != null) {
                         Text(
-                            text = "Creator: " + currentEvent.host,
+                            text = "Arrangør: " + username,
                             modifier = Modifier
                                 .padding(start = 28.dp, end = 28.dp, top = 8.dp)
                                 .wrapContentHeight()
