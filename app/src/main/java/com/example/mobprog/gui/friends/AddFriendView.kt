@@ -208,10 +208,13 @@ fun AddFriendView(navController: NavController) {
 
             items(friends) { friend ->
                 Spacer(modifier = Modifier.height(8.dp))
-                FriendBox(friendData = friend, navController) {
-                    selectedFriend = friend
-                    showSearch = false
 
+                if(friend.id != uid) {
+                    FriendBox(friendData = friend, navController) {
+                        selectedFriend = friend
+                        showSearch = false
+
+                    }
                 }
 
             }
