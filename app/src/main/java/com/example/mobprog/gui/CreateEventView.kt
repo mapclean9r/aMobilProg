@@ -54,7 +54,6 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun CreateEventView(navController: NavController, eventService: EventService) {
     val scrollState = rememberScrollState()
-    val gamingApi = GamingApi()
 
     /* TODO - legge til alle felter som trengs og endre tekst felter til å benytte disse */
     var name by remember { mutableStateOf("") }
@@ -63,6 +62,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
     var startDate by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var gameCoverImage by remember { mutableStateOf("") }
+    var creatorId by remember { mutableStateOf("") }
 
     var maxAttendance by remember { mutableIntStateOf(0) }
     var maxAttendanceString by remember { mutableStateOf("") }
@@ -270,7 +270,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                             description,
                             gameCoverImage,
                             eventService = eventService,
-                            host = FirebaseAuth.getInstance().currentUser?.uid.toString()
+                            creatorId = FirebaseAuth.getInstance().currentUser?.uid.toString()
                         )
                         navController.navigate("homeScreen") {
                             while (navController.popBackStack()) {
@@ -370,7 +370,7 @@ fun onSubmit(name: String,
              description: String,
              gameCoverImage: String,
              eventService: EventService,
-             host: String) {
+             creatorId: String) {
     eventService.createEvent(EventData(
         name = name,
         image = gameCoverImage,
@@ -379,7 +379,7 @@ fun onSubmit(name: String,
         description = description,
         startDate = startDate,
         price = price,
-        host = host))
+        creatorId = creatorId))
 }
 
 @Preview(showBackground = true)
