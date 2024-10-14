@@ -41,7 +41,10 @@ import java.util.Locale
 @Composable
 fun EventView(navController: NavController, eventData: EventData?, currentEvent: EventData?) {
         val eventService = EventService()
+        val userService = UserService()
         val currentUserID = FirebaseAuth.getInstance().currentUser?.uid.toString()
+
+        var username by remember { mutableStateOf("") }
 
     fun attenderStarterValue(): Int {
         if (currentEvent != null) {
@@ -59,10 +62,6 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
             }
         }
     }
-
-
-        val userService = UserService()
-        var username by remember { mutableStateOf("") }
 
     if (currentEvent != null) {
         userService.getUsernameWithDocID(currentEvent.creatorId) { creatorId ->
@@ -171,23 +170,51 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                         )
                     }
                     //Spacer(modifier = Modifier.height(500.dp).padding(paddingValues))
-                    Button(
-                        onClick = {
-                            if (currentEvent != null) {
-                                eventService.joinEvent(currentUserID, currentEvent.id)
-                                updateAttendingPeople()
-                            }
-                        },
-                        modifier = Modifier
-                            .padding(16.dp)
+                    Row {
+                        Button(
+                            onClick = {
+                                if (currentEvent != null) {
+                                    eventService.joinEvent(currentUserID, currentEvent.id)
+                                    updateAttendingPeople()
+                                }
+                            },
+                            modifier = Modifier
+                                .padding(16.dp)
 
-                    ) {
-                        Text("Join")
+                        ) {
+                            Text("Join")
+                        }
+                        if (currentEvent != null) {
+                            println("CurrentId 1 " +currentEvent.creatorId)
+                            println("CurrentId 2 "+currentUserID)
+                            ShowDeleteButton(currentEvent.creatorId, currentUserID, navController, eventService)
+                        }
+
                     }
+
                 }
             }
         )
     }
+
+@Composable
+fun ShowDeleteButton(userIFromDb: String, hostID: String, navController: NavController, eventService: EventService) {
+    if (userIFromDb == hostID) {
+        Button(
+            onClick = {
+                eventService.deleteEvent(hostID)
+                navController.navigate("homeScreen") {
+                    navController.popBackStack()
+                }
+            },
+            modifier = Modifier
+                .padding(16.dp)
+
+        ) {
+            Text("Delete")
+        }
+    }
+}
 
 
 

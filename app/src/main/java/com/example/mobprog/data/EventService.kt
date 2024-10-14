@@ -80,6 +80,11 @@ class EventService {
             }
     }
 
+    fun deleteEvent(documentId: String) {
+        val docRef = db.collection("events").document(documentId)
+        docRef.delete()
+    }
+
 
     fun parseToEventData(data: Map<String, Any>): EventData? {
         val currentUserID = FirebaseAuth.getInstance().currentUser?.uid.toString()
@@ -90,7 +95,7 @@ class EventService {
                 endDate = data["date"] as? String ?: "N/A",
                 description = data["description"] as? String ?: "",
                 location = data["location"] as? String ?: "N/A",
-                creatorId = data["host"] as? String ?: currentUserID,
+                creatorId = data["creatorId"] as? String ?: currentUserID,
                 comments = data["comments"] as? List<String> ?: emptyList(),
                 maxAttendance = data["maxAttendance"] as? Number ?: 0,
                 attending = data["attending"] as? List<String> ?: emptyList(),
