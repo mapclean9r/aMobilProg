@@ -13,7 +13,6 @@ import androidx.compose.runtime.setValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.mobprog.api.GameData
 import com.example.mobprog.createEvent.EventData
 import com.example.mobprog.data.EventService
 import com.example.mobprog.data.GuildService
@@ -33,7 +32,6 @@ import com.example.mobprog.gui.guild.GuildView
 import com.example.mobprog.gui.guild.NoGuildView
 import com.example.mobprog.settings.SettingsManager
 import com.example.mobprog.ui.theme.MobProgTheme
-import com.google.gson.Gson
 
 
 @SuppressLint("StaticFieldLeak")
@@ -55,8 +53,7 @@ class MainActivity : ComponentActivity() {
 fun Arena(darkMODE: Boolean) {
     var isDarkMode by remember { mutableStateOf(darkMODE) }
     val navController = rememberNavController()
-    val eventService = EventService()
-    var thisEvent by remember { mutableStateOf<EventData>(EventData()) }
+    var thisEvent by remember { mutableStateOf(EventData()) }
 
 
 

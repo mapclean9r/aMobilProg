@@ -94,7 +94,7 @@ class EventService {
                 location = data["location"] as? String ?: "N/A",
                 host = data["host"] as? String ?: currentUserID,
                 comments = data["comments"] as? List<String> ?: emptyList(),
-                maxAttendance = data["maxAttendance"] as? Int ?: 0,
+                maxAttendance = data["maxAttendance"] as? Number ?: 0,
                 attending = data["attending"] as? List<String> ?: emptyList(),
                 image = data["image"] as? String ?: "",
                 id = data["id"] as? String ?: ""

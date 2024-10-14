@@ -10,7 +10,7 @@ data class EventData(
     val location: String = "",
     val host: String = "",
     val comments: List<String> = emptyList(),
-    val maxAttendance: Int = 0,
+    val maxAttendance: Number = 0,
     val attending: List<String> = emptyList(),
     val image: String = "",
     val id: String = ""

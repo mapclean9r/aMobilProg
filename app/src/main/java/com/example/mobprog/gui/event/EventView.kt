@@ -36,7 +36,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
         val eventService = EventService()
         val currentUserID = FirebaseAuth.getInstance().currentUser?.uid.toString()
 
-        print("This it current EVent: ${currentEvent?.id}")
+
 
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -72,6 +72,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                         CoverImageAPIEvent(currentEvent.image)
                     }
                     if (currentEvent != null) {
+                        println("This it current EVent: ${currentEvent}")
                         Text(
                             text = currentEvent.name,
                             fontWeight = FontWeight.Bold,
