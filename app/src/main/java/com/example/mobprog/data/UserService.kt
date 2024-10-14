@@ -102,6 +102,23 @@ class UserService {
         }
     }
 
+    fun updatePassword(newPassword: String, callback: (Boolean, String) -> Unit) {
+        val user = FirebaseAuth.getInstance().currentUser
+
+        if (user != null) {
+            user.updatePassword(newPassword)
+                .addOnSuccessListener {
+                    callback(true, "Password updated successfully!")
+                }
+                .addOnFailureListener { exception ->
+                    val errorMessage = exception.message ?: "Failed to update password."
+                    callback(false, errorMessage)
+                }
+        } else {
+            callback(false, "User not authenticated.")
+        }
+    }
+
     fun getAllUsers(callback: (List<FriendData>?) -> Unit) {
         val users = arrayListOf<FriendData>()
         val uid = FirebaseAuth.getInstance().currentUser?.uid

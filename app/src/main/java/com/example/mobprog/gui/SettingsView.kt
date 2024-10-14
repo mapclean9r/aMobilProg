@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -52,9 +53,15 @@ fun SettingsView(navController: NavController, onDarkModeToggle: (Boolean) -> Un
 
     var isDarkTheme by remember { mutableStateOf(false) }
     var isPreChecked by remember { mutableStateOf(isDarkTheme) }
+
     var newName by remember { mutableStateOf("") }
     var isUpdating by remember { mutableStateOf(false) }
     var updateStatus by remember { mutableStateOf<String?>(null) }
+
+    var newPassword by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+    var isPasswordUpdating by remember { mutableStateOf(false) }
+    var passwordUpdateStatus by remember { mutableStateOf<String?>(null) }
 
     fun updateUserName(newName: String, callback: (Boolean, String) -> Unit) {
         isUpdating = true
@@ -183,6 +190,63 @@ fun SettingsView(navController: NavController, onDarkModeToggle: (Boolean) -> Un
                 }
 
                 updateStatus?.let { statusMessage ->
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = statusMessage,
+                        color = if (statusMessage.contains("success", true)) Color.Green else Color.Red,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // New Password Input
+                OutlinedTextField(
+                    value = newPassword,
+                    onValueChange = { newPassword = it },
+                    label = { Text("New Password") },
+                    visualTransformation = PasswordVisualTransformation(),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedTextField(
+                    value = confirmPassword,
+                    onValueChange = { confirmPassword = it },
+                    label = { Text("Confirm Password") },
+                    visualTransformation = PasswordVisualTransformation(),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Button(
+                    onClick = {
+                        if (newPassword == confirmPassword) {
+                            isPasswordUpdating = true
+                            UserService().updatePassword(newPassword) { success, message ->
+                                isPasswordUpdating = false
+                                passwordUpdateStatus = message
+                            }
+                        } else {
+                            passwordUpdateStatus = "Passwords do not match."
+                        }
+                    },
+                    enabled = newPassword.isNotBlank() && confirmPassword.isNotBlank() && !isPasswordUpdating,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    if (isPasswordUpdating) {
+                        CircularProgressIndicator(
+                            color = Color.White,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    } else {
+                        Text("Update Password")
+                    }
+                }
+
+                passwordUpdateStatus?.let { statusMessage ->
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = statusMessage,
