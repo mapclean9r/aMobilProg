@@ -1,5 +1,8 @@
 package com.example.mobprog.gui.components
 
+import android.content.Intent
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -13,6 +16,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,6 +34,12 @@ import com.example.mobprog.util.titleLengthCheck
 
 @Composable
 fun FriendBox (friendData: FriendData, navController: NavController, onClick: (FriendData) -> Unit) {
+
+
+    var isUpdating by remember { mutableStateOf(false) }
+    var updateStatus by remember { mutableStateOf<String?>(null) }
+
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -40,10 +53,14 @@ fun FriendBox (friendData: FriendData, navController: NavController, onClick: (F
                 .clickable {
                     UserService().addFriend(friendData.id) { callback ->
                         if (callback) {
-                            Log.w("UserData", "Succesfully added friend")
-                            navController.navigate("friendsScreen")
+                            isUpdating = false
+                            updateStatus = "Succesfully added " + friendData.name
+
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                navController.navigate("friendsScreen")
+                            }, 2000)
                         } else {
-                            Log.w("UserData", "User Not Found")
+                            updateStatus = "User not found: " + friendData.name
 
                         }
                     }
@@ -61,6 +78,14 @@ fun FriendBox (friendData: FriendData, navController: NavController, onClick: (F
                 fontSize = 16.sp,
                 fontWeight = FontWeight.W400,
                 modifier = Modifier.align(Alignment.CenterEnd)
+            )
+        }
+        updateStatus?.let { statusMessage ->
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = statusMessage,
+                color = if (statusMessage.contains("Succesfully", true)) Color.Green else Color.Red,
+                fontWeight = FontWeight.Bold
             )
         }
     }
