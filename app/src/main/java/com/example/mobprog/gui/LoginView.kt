@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,19 +45,31 @@ private fun login(navController: NavController, email: String, password: String)
         }
 }
 
+private fun sendPasswordResetEmail(email: String, onResult: (Boolean, String?) -> Unit) {
+    val auth = Firebase.auth
+    auth.sendPasswordResetEmail(email)
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                onResult(true, "Password reset email sent.")
+            } else {
+                onResult(false, task.exception?.message ?: "Failed to send password reset email.")
+            }
+        }
+}
+
     @Composable
     fun LoginView(navController: NavController) {
 
-        var emailTextController by remember {
-            mutableStateOf("")
-        }
+        var emailTextController by remember { mutableStateOf("") }
+        var passwordTextController by remember { mutableStateOf("") }
 
-        var passwordTextController by remember {
-            mutableStateOf("")
-        }
+        var showPasswordResetField by remember { mutableStateOf(false) }
+        var resetEmailText by remember { mutableStateOf("") }
+        var resetMessage by remember { mutableStateOf<String?>(null) }
 
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -106,8 +119,49 @@ private fun login(navController: NavController, email: String, password: String)
                 Text(text = "Don't have an account? Click to register",
                     color = MaterialTheme.colorScheme.primary)
             }
+            TextButton(onClick = {
+                showPasswordResetField = !showPasswordResetField
+            }) {
+                Text(
+                    text = "Forgot your password? Click to reset",
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
         }
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally) {
+            if (showPasswordResetField) {
+                Spacer(modifier = Modifier.height(670.dp))
 
+                OutlinedTextField(
+                    value = resetEmailText,
+                    onValueChange = { resetEmailText = it },
+                    label = { Text(text = "Enter your email") }
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Button(onClick = {
+                    if (resetEmailText.isNotEmpty()) {
+                        sendPasswordResetEmail(resetEmailText) { success, message ->
+                            resetMessage = message
+                        }
+                    }
+                }) {
+                    Text(text = "Send Reset Email")
+                }
+
+                if (!resetMessage.isNullOrEmpty()) {
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = resetMessage ?: "",
+                        color = if (resetMessage!!.contains("success", true)) Color.Green else Color.Red
+                    )
+                }
+            }
+        }
     }
 
     @Preview(showBackground = true)
