@@ -1,10 +1,9 @@
 package com.example.mobprog.gui.friends
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,9 +13,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,8 +37,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.mobprog.api.GameData
+import com.example.mobprog.api.GamingApi
 import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
+import com.example.mobprog.gui.components.FriendBox
+import com.example.mobprog.gui.components.GameBox
 import com.google.firebase.auth.FirebaseAuth
 
 
@@ -45,6 +51,19 @@ import com.google.firebase.auth.FirebaseAuth
 fun AddFriendView(navController: NavController) {
 
     var uid by remember { mutableStateOf("") }
+    var showSearch by remember { mutableStateOf(false) }
+    var searchFriendText by remember { mutableStateOf("") }
+    var selectedFriend by remember { mutableStateOf<FriendData?>(null) }
+    var friends by remember { mutableStateOf(emptyList<FriendData>()) }
+
+
+    UserService().getAllUsers { userList ->
+        userList?.let {
+            friends = userList
+        } ?: run {
+            println("No Users found")
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -90,8 +109,6 @@ fun AddFriendView(navController: NavController) {
 
             val currentUser = FirebaseAuth.getInstance().currentUser ?: return@Scaffold
 
-            val uidUser = currentUser.uid
-
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -130,11 +147,76 @@ fun AddFriendView(navController: NavController) {
                 ) {
                     Text("Add Friend")
                 }
+                Spacer(modifier = Modifier.height(22.dp))
 
+                Button(
+                    onClick = {
+                        showSearch = true
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text("Add Friend From User List", color = MaterialTheme.colorScheme.primary)
+                }
             }
         },
 
         )
+
+    if (showSearch) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White.copy(alpha = 1.0f))
+                .padding()
+                .clickable {
+                    showSearch = false
+                }
+        )
+
+        TextField(
+            value = searchFriendText,
+            onValueChange = { searchFriendText = it },
+            placeholder = { Text("Search...") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxSize(fraction = 0.09f)
+                .padding(top = 24.dp),
+            singleLine = true
+        )
+        Button(onClick = {showSearch = false},
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 80.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Transparent,
+                contentColor = Color.Gray)
+
+        ) {
+            Text("Cancel Search")
+        }
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 8.dp, vertical = 8.dp)
+                .padding(top = 110.dp)
+        ) {
+
+            items(friends) { friend ->
+                Spacer(modifier = Modifier.height(8.dp))
+                FriendBox(friendData = friend, navController) {
+                    selectedFriend = friend
+                    showSearch = false
+
+                }
+
+            }
+        }
+    }
 }
 
 fun onAddFriend(uid: String) {
