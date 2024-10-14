@@ -56,7 +56,18 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
 
 
     if (isLoading.value) {
-        CircularProgressIndicator()
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
+            contentAlignment = Alignment.Center
+
+        ) {
+            CircularProgressIndicator(
+                strokeWidth = 15.dp,
+                modifier = Modifier.size(60.dp)
+            )
+        }
     } else {
         val guildData = guildDataState.value
         if (guildData != null) {

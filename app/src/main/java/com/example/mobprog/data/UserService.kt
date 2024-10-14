@@ -47,6 +47,24 @@ class UserService {
             }
     }
 
+    fun getUsernameWithDocID(documentId: String, callback: (String?) -> Unit) {
+        val docRef = db.collection("users").document(documentId)
+
+        docRef.get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    val username = document.getString("name")
+                    callback(username)
+                } else {
+                    callback(null)
+                }
+            }
+            .addOnFailureListener { exception ->
+                callback(null)
+            }
+    }
+
+
     fun getCurrentUserData(callback:  (Map<String, Any>?) -> Unit){
         val uid = FirebaseAuth.getInstance().currentUser?.uid
         if (uid != null) {

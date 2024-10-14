@@ -8,7 +8,6 @@ data class EventData(
     val description: String = "",
     val price: String = "Free",
     val location: String = "",
-    val host: String = "",
     val comments: List<String> = emptyList(),
     val maxAttendance: Number = 0,
     val attending: List<String> = emptyList(),
