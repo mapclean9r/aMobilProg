@@ -51,6 +51,11 @@ fun EventBox(navController: NavController, eventData: EventData, eventClick: (Ev
             fontWeight = FontWeight.SemiBold
         )
         Text(
+            text = "Beskrivelse: " + eventData.description,
+            fontSize = 13.sp,
+            fontWeight = FontWeight.W300
+        )
+        Text(
             text = eventData.price,
             fontSize = 16.sp,
             fontWeight = FontWeight.W400
@@ -71,7 +76,7 @@ fun EventBox(navController: NavController, eventData: EventData, eventClick: (Ev
             fontWeight = FontWeight.W300
         )
         Text(
-            text = "Beskrivelse: " + eventData.description,
+            text = "Max Party size: " + eventData.maxAttendance,
             fontSize = 13.sp,
             fontWeight = FontWeight.W300
         )

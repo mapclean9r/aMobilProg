@@ -191,7 +191,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                     value = maxAttendanceString,
                     onValueChange = { newText ->
                         maxAttendanceString = newText
-                        val convertToInt = newText.toIntOrNull() ?: 0
+                        val convertToInt = maxAttendanceString.toIntOrNull() ?: 0
                         maxAttendance = convertToInt
                     },
                     label = { Text("Enter Attendance") },
