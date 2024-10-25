@@ -1,6 +1,7 @@
 package com.example.mobprog.user
 
 import android.annotation.SuppressLint
+import com.example.mobprog.data.FriendService
 import com.example.mobprog.data.UserService
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -22,9 +23,9 @@ data class UserData(
 )
 
 fun getFriends(): List<String> {
-    UserService().getUserFriends { success ->
+    FriendService().getAllFriends { success ->
         if(success != null) {
-            return@getUserFriends
+            return@getAllFriends
         }
     }
     return emptyList()
