@@ -70,8 +70,8 @@ fun FriendBox (friendData: FriendData, navController: NavController, onClick: (F
             Text(
                 text = titleLengthCheck(friendData.name),
                 fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold
-                , color = Color.Black
+                fontWeight = FontWeight.SemiBold,
+                color = Color.Black
             )
         }
         updateStatus?.let { statusMessage ->
