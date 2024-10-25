@@ -16,7 +16,7 @@ private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
     secondary = PurpleGrey80,
     tertiary = Pink80,
-    background = BackgroundTheme80,
+    background =  Color.Transparent,
     primaryContainer = Button80
 )
 
@@ -24,7 +24,7 @@ private val LightColorScheme = lightColorScheme(
     primary = Purple40,
     secondary = PurpleGrey40,
     tertiary = Pink40,
-    background = BackgroundTheme40,
+    background =  Color.Transparent,
     primaryContainer = Button40
 
 
