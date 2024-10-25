@@ -2,5 +2,6 @@ package com.example.mobprog.gui.friends
 
 data class FriendData(
     val id: String,
-    val name: String
+    val name: String,
+    val accepted: Boolean
 )

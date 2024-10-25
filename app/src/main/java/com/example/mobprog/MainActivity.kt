@@ -30,6 +30,7 @@ import com.example.mobprog.gui.SettingsView
 import com.example.mobprog.gui.event.EventView
 import com.example.mobprog.gui.friends.AddFriendView
 import com.example.mobprog.gui.friends.FriendInfoView
+import com.example.mobprog.gui.friends.FriendRequestView
 import com.example.mobprog.gui.guild.CreateGuildView
 import com.example.mobprog.gui.guild.GuildView
 import com.example.mobprog.gui.guild.NoGuildView
@@ -97,6 +98,9 @@ fun Arena(darkMODE: Boolean) {
             }
             composable("friendsScreen") {
                 FriendsView(navController = navController)
+            }
+            composable("friendRequestScreen") {
+                FriendRequestView(navController = navController)
             }
             composable("guildScreen") {
                 GuildView(navController = navController, userService = UserService())

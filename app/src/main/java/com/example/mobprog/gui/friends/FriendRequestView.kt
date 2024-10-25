@@ -1,7 +1,6 @@
 package com.example.mobprog.gui.friends
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,11 +9,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,8 +20,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,12 +32,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -59,20 +53,15 @@ import com.example.mobprog.gui.components.BottomNavBar
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "MutableCollectionMutableState")
 @Composable
-fun FriendsView(navController: NavController) {
+fun FriendRequestView(navController: NavController) {
 
-    val friends = remember { mutableStateOf<ArrayList<FriendData>?>(ArrayList()) }
+    val friendRequests = remember { mutableStateOf<ArrayList<FriendData>?>(null) }
     val isLoading = remember { mutableStateOf(true) }
-    val hasRequests = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         UserService().getUserFriends { friendData ->
             if(friendData != null) {
-                friends.value = friendData
-
-                if(friendData.stream().filter(FriendData::accepted).count() >= 1) {
-                    hasRequests.value = true;
-                }
+                friendRequests.value = friendData
             }
             isLoading.value = false
         }
@@ -91,28 +80,18 @@ fun FriendsView(navController: NavController) {
             Box(modifier = Modifier.fillMaxWidth()) {
 
                 IconButton(onClick = {
-                    navController.navigate("friendRequestScreen")
+                    navController.navigate("friendsScreen")
                 },
+                    modifier = Modifier.align(Alignment.CenterStart)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Notifications,
-                        contentDescription = "Notifications",
-                        tint = Color.White,
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Color.White
                     )
-                    if(hasRequests.value) {
-                        Box(
-                            modifier = Modifier
-                                .size(12.dp) // Size of the red dot
-                                .background(Color.Red, shape = CircleShape) // Red circle shape
-                                //.align(Alignment.TopEnd) // Aligns to the top right of the notification icon
-                                .absoluteOffset(x = 40.dp, y = 20.dp)
-                                .align(BiasAlignment(0.3f, -0.7f))
-
-                        )
-                    }
                 }
                 Text(
-                    text = "Friends",
+                    text = "Friend Requests",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
@@ -121,57 +100,14 @@ fun FriendsView(navController: NavController) {
             }
         }
     }, content = {
-        if (!isLoading.value) {
-            if (friends.value?.isEmpty() == true) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                    verticalArrangement = Arrangement.Center, // Center content vertically
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    // Text when there are no friends
-                    Text(
-                        text = "No Friends Yet",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = TextStyle(
-                            fontFamily = FontFamily.SansSerif,
-                            fontSize = 18.sp,
-                            color = MaterialTheme.colorScheme.primary // Text color
-                        )
-                    )
-                }
-            } else {
-
-                friends.value?.let { FriendsList(navController, it) }
-            }
-        } else {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.Center, // Center content vertically
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                // Text when there are no friends
-                Text(
-                    text = "Loading...",
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    style = TextStyle(
-                        fontFamily = FontFamily.SansSerif,
-                        fontSize = 18.sp,
-                        color = MaterialTheme.colorScheme.primary // Text color
-                    )
-                )
-            }
+        if(!isLoading.value) {
+            friendRequests.value?.let { it1 -> FriendRequestList(navController, it1) }
         }
     }, bottomBar = {
-            // inspirert av link under for å lage navbar.
-            // https://www.youtube.com/watch?v=O9csfKW3dZ4
-            BottomNavBar(navController = navController, userService = UserService())
-        },
+        // inspirert av link under for å lage navbar.
+        // https://www.youtube.com/watch?v=O9csfKW3dZ4
+        BottomNavBar(navController = navController, userService = UserService())
+    },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { navController.navigate("addFriendScreen") },
@@ -188,7 +124,7 @@ fun FriendsView(navController: NavController) {
 }
 
 @Composable
-fun FriendsList(navController: NavController, friends: ArrayList<FriendData>) {
+fun FriendRequestList(navController: NavController, friends: ArrayList<FriendData>) {
     Column(
         modifier = Modifier.fillMaxSize().padding(28.dp),
         verticalArrangement = Arrangement.Top,
@@ -202,7 +138,7 @@ fun FriendsList(navController: NavController, friends: ArrayList<FriendData>) {
         ) {
             LazyColumn {
                 items(friends) { friend ->
-                    FriendItem(friend) {
+                    FriendRequestItem(friend) {
                     }
                 }
             }
@@ -214,41 +150,41 @@ fun FriendsList(navController: NavController, friends: ArrayList<FriendData>) {
 
 
 @Composable
-fun FriendItem(friend: FriendData, onClick: () -> Unit) {
+fun FriendRequestItem(friend: FriendData, onClick: () -> Unit) {
     Row (
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
             .padding(8.dp)
-            //.border(2.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
+        //.border(2.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
         ,
         verticalAlignment = Alignment.CenterVertically,
 
-    ){
+        ){
 
-            Image(
-                modifier = Modifier
-                    .clip(shape = CircleShape)
-                    .size(56.dp),
-                painter = painterResource(id = R.drawable.profile),
-                contentDescription = null,
-                contentScale = ContentScale.Crop
+        Image(
+            modifier = Modifier
+                .clip(shape = CircleShape)
+                .size(56.dp),
+            painter = painterResource(id = R.drawable.profile),
+            contentDescription = null,
+            contentScale = ContentScale.Crop
+        )
+        Column(
+            modifier = Modifier.padding(start = 16.dp)
+        ) {
+            Text(
+                text = friend.name,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = TextStyle(fontFamily = FontFamily.SansSerif, fontSize = 18.sp, color = MaterialTheme.colorScheme.primary)
             )
-            Column(
-                modifier = Modifier.padding(start = 16.dp)
-            ) {
-                Text(
-                    text = friend.name,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    style = TextStyle(fontFamily = FontFamily.SansSerif, fontSize = 18.sp, color = MaterialTheme.colorScheme.primary)
-                )
-            }
+        }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun FriendsViewPreview() {
-    FriendsView(navController = rememberNavController())
+fun FriendRequestViewPreview() {
+    FriendRequestView(navController = rememberNavController())
 }

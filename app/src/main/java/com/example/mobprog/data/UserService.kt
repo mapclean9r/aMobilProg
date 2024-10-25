@@ -129,8 +129,9 @@ class UserService {
                     for (document in doc) {
                         val username = document.getString("name")
                         val id = document.getString("id")
-                        if (username != null && id != null && id != uid) {
-                            val data = FriendData(id, username)
+                        val accepted = document.getBoolean("accepted")
+                        if (username != null && id != null && id != uid && accepted != null) {
+                            val data = FriendData(id, username, accepted)
                             users.add(data)
                         }
                     }
@@ -235,7 +236,7 @@ class UserService {
 
     // FRIENDS
 
-    fun getUserFriends(callback: (ArrayList<String>?) -> Unit) {
+    fun getUserFriends(callback: (ArrayList<FriendData>?) -> Unit) {
         val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser == null) {
             callback(null)
@@ -253,32 +254,33 @@ class UserService {
 
         friendsRef.whereEqualTo("u_id", uid).get()
             .addOnSuccessListener { documents ->
-                val friendIds = ArrayList<String>()
+                val friendIds = mutableMapOf<String, Boolean>()
                 for (document in documents) {
                     val friendId = document.getString("f_id")
-                    if (friendId != null) {
-                        friendIds.add(friendId)
+                    val friendAccepted = document.getBoolean("accepted")
+                    if (friendId != null && friendAccepted == true) {
+                        friendIds[friendId] = friendAccepted
                     }
                 }
 
                 if (friendIds.isEmpty()) {
-                    callback(null)
+                    callback(ArrayList())
                     return@addOnSuccessListener
                 }
 
-                val friendNames = ArrayList<String>()
+                val friendNames = ArrayList<FriendData>()
                 for (friendId in friendIds) {
-                    usersRef.whereEqualTo("id", friendId).get()
+                    usersRef.whereEqualTo("id", friendId.key).get()
                         .addOnSuccessListener { userDocument ->
                             if (!userDocument.isEmpty) {
                                 val documentSnapshot = userDocument.documents[0]
 
                                 val friendName = documentSnapshot.getString("name")
+                                val id = documentSnapshot.getString("id")
 
-                                if (friendName != null) {
-                                    friendNames.add(friendName)
+                                if (friendName != null && id != null) {
+                                    friendNames.add(FriendData(id, friendName, friendId.value))
                                 }
-
                                 callback(friendNames)
 
                             }
@@ -310,7 +312,8 @@ class UserService {
                     if (documents.isEmpty) {
                         val friendData = hashMapOf(
                             "u_id" to uid,
-                            "f_id" to friendId
+                            "f_id" to friendId,
+                            "accepted" to false
                         )
                         friendsRef.add(friendData)
                             .addOnSuccessListener {
