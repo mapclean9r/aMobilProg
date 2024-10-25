@@ -1,5 +1,6 @@
 package com.example.mobprog.gui.components
 
+import android.widget.ImageView
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Add
@@ -16,8 +17,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.mobprog.R
 import com.example.mobprog.data.UserService
 
 @Composable
@@ -32,18 +37,17 @@ fun BottomNavBar(navController: NavController, userService: UserService) {
         }
     }
 
+
     val navigationBarItemsList = listOf(
-        NavBarItem("Home", Icons.Default.Home, "homeScreen"),
-        NavBarItem("Event", Icons.Default.Add, "createEventScreen"),
-        NavBarItem("Friends", Icons.Default.AccountBox, "friendsScreen"),
-        NavBarItem(
-            "Guild",
-            Icons.Default.Share,
-            "guildScreenTemp",
+        NavBarItem("Home", R.drawable.baseline_home_24, "homeScreen"),
+        NavBarItem("Event", R.drawable.baseline_add_24, "createEventScreen"),
+        NavBarItem("Friends", R.drawable.baseline_contacts_24, "friendsScreen"),
+        NavBarItem("Guild", R.drawable.baseline_hive_24, "guildScreenTemp",
             routeAlternatives = listOf("guildScreen", "noGuildScreen")
         ),
-        NavBarItem("Profile", Icons.Default.Person, "profileScreen")
+        NavBarItem("Profile", R.drawable.baseline_person_24, "profileScreen")
     )
+
 
     NavigationBar {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -93,7 +97,7 @@ fun BottomNavBar(navController: NavController, userService: UserService) {
                 },
                 icon = {
                     Icon(
-                        imageVector = navigationBarItem.icon,
+                        painter = painterResource(id = navigationBarItem.icon),
                         contentDescription = navigationBarItem.label
                     )
                 },
