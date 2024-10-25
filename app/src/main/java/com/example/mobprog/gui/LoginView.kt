@@ -77,9 +77,8 @@ fun LoginView(navController: NavController) {
     var resetMessage by remember { mutableStateOf<String?>(null) }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // Bakgrunnsbilde
         Image(
-            painter = painterResource(id = R.drawable.lettgoooo),
+            painter = painterResource(id = R.drawable.letsgoo4),
             contentDescription = "Bakgrunnsbilde",
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
@@ -113,6 +112,7 @@ fun LoginView(navController: NavController) {
                 onValueChange = { emailTextController = it },
                 label = { Text(text = "Email", color = Color.Magenta) },
                 textStyle = TextStyle(color = Color.Cyan),
+
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -175,7 +175,8 @@ fun LoginView(navController: NavController) {
                 OutlinedTextField(
                     value = resetEmailText,
                     onValueChange = { resetEmailText = it },
-                    label = { Text(text = "Enter your email") }
+                    label = { Text(text = "Enter your email", color = Color.Magenta) },
+                    textStyle = TextStyle(color = Color.Cyan),
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -186,7 +187,11 @@ fun LoginView(navController: NavController) {
                             resetMessage = message
                         }
                     }
-                }) {
+                },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF6200EA),
+                        contentColor = Color.White
+                    )) {
                     Text(text = "Send Reset Email")
                 }
 
