@@ -1,6 +1,10 @@
 package com.example.mobprog.gui
 
 import android.annotation.SuppressLint
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,19 +36,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
+import com.example.mobprog.MainActivity
 import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
-import com.example.mobprog.settingsManager
 import com.example.mobprog.ui.theme.MobProgTheme
-import kotlinx.coroutines.launch
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -62,6 +67,15 @@ fun SettingsView(navController: NavController, onDarkModeToggle: (Boolean) -> Un
     var confirmPassword by remember { mutableStateOf("") }
     var isPasswordUpdating by remember { mutableStateOf(false) }
     var passwordUpdateStatus by remember { mutableStateOf<String?>(null) }
+
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+
+    // Launcher for image picking
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        selectedImageUri = uri
+    }
 
     fun updateUserName(newName: String, callback: (Boolean, String) -> Unit) {
         isUpdating = true
@@ -245,6 +259,24 @@ fun SettingsView(navController: NavController, onDarkModeToggle: (Boolean) -> Un
                         Text("Update Password")
                     }
                 }
+
+
+                    Button(
+                        onClick = { launcher.launch("image/*") }
+                    ) {
+                        Text("Select image")
+                    }
+
+                selectedImageUri?.let { uri ->
+                    Image(
+                        painter = rememberAsyncImagePainter(uri),
+                        contentDescription = null,
+                        modifier = Modifier.size(128.dp)
+                    )
+                } ?: run {
+                    Text("No image selected", color = Color.Gray)
+                }
+
 
                 passwordUpdateStatus?.let { statusMessage ->
                     Spacer(modifier = Modifier.height(16.dp))
