@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -48,8 +50,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobprog.R
+import com.example.mobprog.data.FriendService
 import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
+import com.google.firebase.auth.FirebaseAuth
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "MutableCollectionMutableState")
 @Composable
@@ -59,7 +63,7 @@ fun FriendRequestView(navController: NavController) {
     val isLoading = remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
-        UserService().getUserFriends { friendData ->
+        FriendService().getUserFriends { friendData ->
             if(friendData != null) {
                 friendRequests.value = friendData
             }
@@ -125,6 +129,7 @@ fun FriendRequestView(navController: NavController) {
 
 @Composable
 fun FriendRequestList(navController: NavController, friends: ArrayList<FriendData>) {
+
     Column(
         modifier = Modifier.fillMaxSize().padding(28.dp),
         verticalArrangement = Arrangement.Top,
@@ -138,7 +143,9 @@ fun FriendRequestList(navController: NavController, friends: ArrayList<FriendDat
         ) {
             LazyColumn {
                 items(friends) { friend ->
-                    FriendRequestItem(friend) {
+                    if(!friend.accepted) {
+                        FriendRequestItem(navController, friend) {
+                        }
                     }
                 }
             }
@@ -150,7 +157,7 @@ fun FriendRequestList(navController: NavController, friends: ArrayList<FriendDat
 
 
 @Composable
-fun FriendRequestItem(friend: FriendData, onClick: () -> Unit) {
+fun FriendRequestItem(navController: NavController, friend: FriendData, onClick: () -> Unit) {
     Row (
         modifier = Modifier
             .fillMaxWidth()
@@ -179,7 +186,33 @@ fun FriendRequestItem(friend: FriendData, onClick: () -> Unit) {
                 overflow = TextOverflow.Ellipsis,
                 style = TextStyle(fontFamily = FontFamily.SansSerif, fontSize = 18.sp, color = MaterialTheme.colorScheme.primary)
             )
+
+            Row(
+                modifier = Modifier.padding(top = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp) // Space between buttons
+            ) {
+                Button(
+                    onClick = { FriendService().acceptFriendRequest(friend.id, callback = {
+                        navController.navigate("friendRequestScreen")
+                    }) },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Green),
+                    shape = CircleShape
+                ) {
+                    Text(text = "Accept", color = Color.White)
+                }
+
+                Button(
+                    onClick = { FriendService().removeFriend(friend.id, callback = {
+                        navController.navigate("friendRequestScreen")
+                    }) },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red),
+                    shape = CircleShape
+                ) {
+                    Text(text = "Deny", color = Color.White)
+                }
+            }
         }
+
     }
 }
 

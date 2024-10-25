@@ -20,6 +20,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -51,9 +53,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.datastore.dataStore
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobprog.R
+import com.example.mobprog.data.FriendService
 import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
 
@@ -66,11 +70,13 @@ fun FriendsView(navController: NavController) {
     val hasRequests = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        UserService().getUserFriends { friendData ->
+        FriendService().getAllFriends { friendData ->
             if(friendData != null) {
                 friends.value = friendData
 
-                if(friendData.stream().filter(FriendData::accepted).count() >= 1) {
+                val notifs = friendData.stream().filter{!it.accepted}.count().toString();
+                Log.w("UserData", notifs)
+                if(friendData.stream().filter{!it.accepted}.count() >= 1) {
                     hasRequests.value = true;
                 }
             }
@@ -122,29 +128,31 @@ fun FriendsView(navController: NavController) {
         }
     }, content = {
         if (!isLoading.value) {
-            if (friends.value?.isEmpty() == true) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                    verticalArrangement = Arrangement.Center, // Center content vertically
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    // Text when there are no friends
-                    Text(
-                        text = "No Friends Yet",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = TextStyle(
-                            fontFamily = FontFamily.SansSerif,
-                            fontSize = 18.sp,
-                            color = MaterialTheme.colorScheme.primary // Text color
-                        )
-                    )
+            if (friends.value?.isEmpty() != true) {
+                if(friends.value?.stream()?.filter{it.accepted}?.count()!! >= 1) {
+                    friends.value?.let { FriendsList(navController, it) }
+                    return@Scaffold
                 }
-            } else {
+            }
 
-                friends.value?.let { FriendsList(navController, it) }
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.Center, // Center content vertically
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Text when there are no friends
+                Text(
+                    text = "No Friends Yet",
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = TextStyle(
+                        fontFamily = FontFamily.SansSerif,
+                        fontSize = 18.sp,
+                        color = MaterialTheme.colorScheme.primary // Text color
+                    )
+                )
             }
         } else {
             Column(
@@ -202,7 +210,7 @@ fun FriendsList(navController: NavController, friends: ArrayList<FriendData>) {
         ) {
             LazyColumn {
                 items(friends) { friend ->
-                    FriendItem(friend) {
+                    FriendItem(navController, friend) {
                     }
                 }
             }
@@ -214,7 +222,7 @@ fun FriendsList(navController: NavController, friends: ArrayList<FriendData>) {
 
 
 @Composable
-fun FriendItem(friend: FriendData, onClick: () -> Unit) {
+fun FriendItem(navController: NavController, friend: FriendData, onClick: () -> Unit) {
     Row (
         modifier = Modifier
             .fillMaxWidth()
@@ -243,6 +251,28 @@ fun FriendItem(friend: FriendData, onClick: () -> Unit) {
                     overflow = TextOverflow.Ellipsis,
                     style = TextStyle(fontFamily = FontFamily.SansSerif, fontSize = 18.sp, color = MaterialTheme.colorScheme.primary)
                 )
+                Row(
+                    modifier = Modifier.padding(top = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp) // Space between buttons
+                ) {
+                    Button(
+                        onClick = { FriendService().removeFriend(friend.id, callback = {
+                            navController.navigate("friendsScreen")
+                        })},
+                        colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red),
+                        shape = CircleShape
+                    ) {
+                        Text(text = "Remove Friend", color = Color.White)
+                    }
+
+                    Button(
+                        onClick = { },
+                        colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue),
+                        shape = CircleShape
+                    ) {
+                        Text(text = "Message", color = Color.White)
+                    }
+                }
             }
     }
 }
