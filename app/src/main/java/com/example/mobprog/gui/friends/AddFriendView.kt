@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mobprog.api.GameData
 import com.example.mobprog.api.GamingApi
+import com.example.mobprog.data.FriendService
 import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.gui.components.FriendBox
@@ -223,7 +224,7 @@ fun AddFriendView(navController: NavController) {
 }
 
 fun onAddFriend(uid: String) {
-    UserService().addFriend(uid) { callback ->
+    FriendService().addFriend(uid) { callback ->
         if(callback) {
             Log.w("UserData", "Succesfully added friend")
         } else {

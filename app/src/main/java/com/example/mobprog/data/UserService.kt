@@ -11,6 +11,10 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class UserService {
     private val db = Firebase.firestore
@@ -129,10 +133,10 @@ class UserService {
                     for (document in doc) {
                         val username = document.getString("name")
                         val id = document.getString("id")
-                        val accepted = document.getBoolean("accepted")
-                        if (username != null && id != null && id != uid && accepted != null) {
-                            val data = FriendData(id, username, accepted)
+                        if (username != null && id != null && id != uid) {
+                            val data = FriendData(id, username, false)
                             users.add(data)
+                            Log.w("UserData", "wwww")
                         }
                     }
                     // Pass the populated list to the callback
@@ -232,135 +236,6 @@ class UserService {
             exception.printStackTrace()
             callback(false, exception)
         }
-    }
-
-    // FRIENDS
-
-    fun getUserFriends(callback: (ArrayList<FriendData>?) -> Unit) {
-        val currentUser = FirebaseAuth.getInstance().currentUser
-        if (currentUser == null) {
-            callback(null)
-            return
-        }
-
-
-        val uid = currentUser.uid
-        val db = FirebaseFirestore.getInstance()
-
-
-        val friendsRef = db.collection("friends")
-        val usersRef = db.collection("users")
-
-
-        friendsRef.whereEqualTo("u_id", uid).get()
-            .addOnSuccessListener { documents ->
-                val friendIds = mutableMapOf<String, Boolean>()
-                for (document in documents) {
-                    val friendId = document.getString("f_id")
-                    val friendAccepted = document.getBoolean("accepted")
-                    if (friendId != null && friendAccepted == true) {
-                        friendIds[friendId] = friendAccepted
-                    }
-                }
-
-                if (friendIds.isEmpty()) {
-                    callback(ArrayList())
-                    return@addOnSuccessListener
-                }
-
-                val friendNames = ArrayList<FriendData>()
-                for (friendId in friendIds) {
-                    usersRef.whereEqualTo("id", friendId.key).get()
-                        .addOnSuccessListener { userDocument ->
-                            if (!userDocument.isEmpty) {
-                                val documentSnapshot = userDocument.documents[0]
-
-                                val friendName = documentSnapshot.getString("name")
-                                val id = documentSnapshot.getString("id")
-
-                                if (friendName != null && id != null) {
-                                    friendNames.add(FriendData(id, friendName, friendId.value))
-                                }
-                                callback(friendNames)
-
-                            }
-                        }
-                        .addOnFailureListener {
-                            callback(null)
-                        }
-                }
-            }
-            .addOnFailureListener {
-                callback(null)
-            }
-    }
-
-    fun addFriend(friendId: String, callback: (Boolean) -> Unit) {
-        val currentUser = FirebaseAuth.getInstance().currentUser
-        if (currentUser == null) {
-            callback(false)
-            return
-        }
-        val uid = currentUser.uid
-        val db = FirebaseFirestore.getInstance()
-
-        val friendsRef = db.collection("friends")
-
-
-        friendsRef.whereEqualTo("u_id", uid).whereEqualTo("f_id", friendId).get()
-                .addOnSuccessListener { documents ->
-                    if (documents.isEmpty) {
-                        val friendData = hashMapOf(
-                            "u_id" to uid,
-                            "f_id" to friendId,
-                            "accepted" to false
-                        )
-                        friendsRef.add(friendData)
-                            .addOnSuccessListener {
-                                callback(true)
-                            }
-                            .addOnFailureListener {
-                                callback(false)
-                            }
-                    } else {
-                        callback(false)
-                    }
-                }
-                .addOnFailureListener {
-                    callback(false)
-                }
-    }
-
-    fun removeFriend(friendId: String, callback: (Boolean) -> Unit) {
-        val currentUser = FirebaseAuth.getInstance().currentUser
-        if (currentUser == null) {
-            callback(false)
-            return
-        }
-        val uid = currentUser.uid
-        val db = FirebaseFirestore.getInstance()
-
-        val friendsRef = db.collection("friends")
-
-        friendsRef.whereEqualTo("u_id", uid).whereEqualTo("f_id", friendId).get()
-            .addOnSuccessListener { documents ->
-                if (!documents.isEmpty) {
-                    for (document in documents) {
-                        friendsRef.document(document.id).delete()
-                            .addOnSuccessListener {
-                                callback(true)
-                            }
-                            .addOnFailureListener {
-                                callback(false)
-                            }
-                    }
-                } else {
-                    callback(false)
-                }
-            }
-            .addOnFailureListener {
-                callback(false)
-            }
     }
 
 
