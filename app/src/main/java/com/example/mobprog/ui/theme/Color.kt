@@ -16,3 +16,6 @@ val BackgroundTheme80 = Color(0xFF6b7d5c)
 
 val Button80 = Color(0xFF455b33)
 val Button40 = Color(0xFF717171)
+
+val Icon80 = Color(0xFFCCC2DC)
+val Icon40 = Color.Red

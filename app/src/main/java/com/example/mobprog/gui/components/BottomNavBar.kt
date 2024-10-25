@@ -1,13 +1,7 @@
 package com.example.mobprog.gui.components
 
-import android.widget.ImageView
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
@@ -17,9 +11,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.mobprog.R
@@ -38,14 +31,15 @@ fun BottomNavBar(navController: NavController, userService: UserService) {
     }
 
 
+    val iconColor = MaterialTheme.colorScheme.secondary
     val navigationBarItemsList = listOf(
-        NavBarItem("Home", R.drawable.baseline_home_24, "homeScreen"),
-        NavBarItem("Event", R.drawable.baseline_add_24, "createEventScreen"),
-        NavBarItem("Friends", R.drawable.baseline_contacts_24, "friendsScreen"),
-        NavBarItem("Guild", R.drawable.baseline_hive_24, "guildScreenTemp",
+        NavBarItem("Home", R.drawable.baseline_home_24, "homeScreen", iconColor),
+        NavBarItem("Event", R.drawable.baseline_add_24, "createEventScreen", iconColor),
+        NavBarItem("Friends", R.drawable.baseline_contacts_24, "friendsScreen", iconColor),
+        NavBarItem("Guild", R.drawable.baseline_shield_24, "guildScreenTemp", iconColor,
             routeAlternatives = listOf("guildScreen", "noGuildScreen")
         ),
-        NavBarItem("Profile", R.drawable.baseline_person_24, "profileScreen")
+        NavBarItem("Profile", R.drawable.baseline_person_24, "profileScreen", iconColor)
     )
 
 
@@ -98,7 +92,8 @@ fun BottomNavBar(navController: NavController, userService: UserService) {
                 icon = {
                     Icon(
                         painter = painterResource(id = navigationBarItem.icon),
-                        contentDescription = navigationBarItem.label
+                        contentDescription = navigationBarItem.label,
+                        tint = navigationBarItem.color
                     )
                 },
                 label = { Text(navigationBarItem.label) }

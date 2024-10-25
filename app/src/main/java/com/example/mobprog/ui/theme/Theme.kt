@@ -17,7 +17,9 @@ private val DarkColorScheme = darkColorScheme(
     secondary = PurpleGrey80,
     tertiary = Pink80,
     background = BackgroundTheme80,
-    primaryContainer = Button80
+    primaryContainer = Button80,
+    surface = Icon80
+
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -25,7 +27,8 @@ private val LightColorScheme = lightColorScheme(
     secondary = PurpleGrey40,
     tertiary = Pink40,
     background = BackgroundTheme40,
-    primaryContainer = Button40
+    primaryContainer = Button40,
+    surface = Icon40
 
 
     /* Other default colors to override
