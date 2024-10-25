@@ -57,7 +57,11 @@ fun FriendBox (friendData: FriendData, navController: NavController, onClick: (F
                             updateStatus = "Succesfully added " + friendData.name
 
                             Handler(Looper.getMainLooper()).postDelayed({
-                                navController.navigate("friendsScreen")
+                                navController.navigate("friendsScreen") {
+                                    while (navController.popBackStack() == true) {
+                                         navController.popBackStack()
+                                    }
+                                }
                             }, 2000)
                         } else {
                             updateStatus = "User not found: " + friendData.name
