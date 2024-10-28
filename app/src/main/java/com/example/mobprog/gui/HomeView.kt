@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,7 +13,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
@@ -30,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -47,6 +53,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeView(navController: NavController, eventService: EventService, modifier: Modifier = Modifier, onEventClick: (EventData) -> Unit) {
+    val scrollState = rememberScrollState()
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
 
     var events by remember { mutableStateOf(emptyList<EventData>()) }
     var showSearch by remember { mutableStateOf(false) }
@@ -70,23 +79,90 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
         } ?: emptyList()
     }
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
+    if (!isLandscape) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
 
+            topBar = {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(88.dp)
+                        .padding(bottom = 10.dp, top = 24.dp)
+                        .background(MaterialTheme.colorScheme.primary),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        IconButton(onClick = { showSearch = true })
+
+                        {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = "Search Icon",
+                                tint = Color.White
+                            )
+                        }
+                        Text(
+                            text = "Homepage",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+                }
+            },
+            content = { paddingValues ->
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .background(MaterialTheme.colorScheme.background)
+                ) {
+                    if (filteredEvents.isEmpty()) {
+                        items(events) { event ->
+                            EventBox(
+                                navController = navController,
+                                eventData = event,
+                                eventClick = { selectedEvent ->
+                                    onEventClick(selectedEvent)
+                                })
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
+                    }
+                    items(filteredEvents) { event ->
+                        EventBox(
+                            navController = navController,
+                            eventData = event,
+                            eventClick = { selectedEvent ->
+                                onEventClick(selectedEvent)
+                            })
+                    }
+                }
+            },
+            bottomBar = {
+                // inspirert av link under for å lage navbar.
+                // https://www.youtube.com/watch?v=O9csfKW3dZ4
+                BottomNavBar(navController = navController, userService = UserService())
+            }
+        )
+    }
+    else {Scaffold(
+        modifier = Modifier.fillMaxSize(),
         topBar = {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(88.dp)
+                    .height(64.dp)
                     .padding(bottom = 10.dp, top = 24.dp)
                     .background(MaterialTheme.colorScheme.primary),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Box(modifier = Modifier.fillMaxWidth()) {
-                    IconButton(onClick = { showSearch = true })
-
-                    {
+                    IconButton(onClick = { showSearch = true }) {
                         Icon(
                             imageVector = Icons.Default.Search,
                             contentDescription = "Search Icon",
@@ -104,34 +180,44 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
             }
         },
         content = { paddingValues ->
-            LazyColumn(
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(minSize = 160.dp),
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
                     .padding(horizontal = 16.dp, vertical = 8.dp)
                     .background(MaterialTheme.colorScheme.background)
             ) {
-                if(filteredEvents.isEmpty()){
+                if (filteredEvents.isEmpty()) {
                     items(events) { event ->
-                        EventBox(navController = navController, eventData = event, eventClick = { selectedEvent ->
-                            onEventClick(selectedEvent)
-                        })
+                        EventBox(
+                            navController = navController,
+                            eventData = event,
+                            eventClick = { selectedEvent ->
+                                onEventClick(selectedEvent)
+                            }
+                        )
+
                         Spacer(modifier = Modifier.height(16.dp))
-                    }   
-                }
-                items(filteredEvents) { event ->
-                    EventBox(navController = navController, eventData = event, eventClick = { selectedEvent ->
-                        onEventClick(selectedEvent)
-                    })
+                    }
+                } else {
+                    items(filteredEvents) { event ->
+                        EventBox(
+                            navController = navController,
+                            eventData = event,
+                            eventClick = { selectedEvent ->
+                                onEventClick(selectedEvent)
+                            }
+                        )
+                    }
                 }
             }
         },
         bottomBar = {
-            // inspirert av link under for å lage navbar.
-            // https://www.youtube.com/watch?v=O9csfKW3dZ4
             BottomNavBar(navController = navController, userService = UserService())
         }
     )
+    }
     if (showSearch) {
         Box(
             modifier = Modifier

@@ -62,7 +62,6 @@ import java.util.Calendar
 @Composable
 fun CreateEventView(navController: NavController, eventService: EventService) {
     val scrollState = rememberScrollState()
-
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
 
