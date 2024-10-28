@@ -41,20 +41,17 @@ import java.util.Locale
 
 @Composable
 fun EventView(navController: NavController, eventData: EventData?, currentEvent: EventData?) {
-        val eventService = EventService()
-        val userService = UserService()
-        val currentUserID = FirebaseAuth.getInstance().currentUser?.uid.toString()
+    val eventService = EventService()
+    val userService = UserService()
+    val currentUserID = FirebaseAuth.getInstance().currentUser?.uid.toString()
 
-        var username by remember { mutableStateOf("") }
+    var username by remember { mutableStateOf("") }
 
     fun attenderStarterValue(): Int {
-        if (currentEvent != null) {
-            return currentEvent.attending.size
-        }
-        return 0
+        return currentEvent?.attending?.size ?: 0
     }
-        var numberOfPeopleAttending by remember { mutableIntStateOf(attenderStarterValue()) }
 
+    var numberOfPeopleAttending by remember { mutableIntStateOf(attenderStarterValue()) }
 
     fun updateAttendingPeople() {
         if (currentEvent != null) {
@@ -66,159 +63,129 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
 
     if (currentEvent != null) {
         userService.getUsernameWithDocID(currentEvent.creatorId) { creatorId ->
-            if (creatorId != null) {
-                username = creatorId
-            } else {
-                println("username not found...")
-            }
+            username = creatorId ?: "username not found..."
         }
     }
 
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-            topBar = {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(88.dp)
-                        .padding(bottom = 10.dp, top = 24.dp)
-                        .background(MaterialTheme.colorScheme.primary),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-
-                    Box(modifier = Modifier.fillMaxWidth()) {
-                        Text(
-                            text = "Event",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                    }
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(88.dp)
+                    .padding(bottom = 10.dp, top = 24.dp)
+                    .background(MaterialTheme.colorScheme.primary),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        text = "Event",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
                 }
-            },
-            content = { paddingValues ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                ) {
-                    if (currentEvent != null) {
-                        CoverImageAPIEvent(currentEvent.image)
-                    }
-                    if (currentEvent != null) {
-                        println("This it current EVent: ${currentEvent}")
-                        Text(
-                            text = currentEvent.name,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp,
-                            modifier = Modifier
-                                .padding(start = 28.dp, top = 12.dp, end = 28.dp)
-                                .wrapContentHeight()
-
-                        )
-                    }
-                    if (currentEvent != null) {
-                        Text(
-                            text = "Description: " + currentEvent.description,
-                            modifier = Modifier
-                                .padding(start = 28.dp, end = 28.dp, top = 8.dp, bottom = 20.dp)
-                                .wrapContentHeight()
-                        )
-                    }
+            }
+        },
+        content = { paddingValues ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
+                currentEvent?.let {
+                    CoverImageAPIEvent(it.image)
+                    Text(
+                        text = it.name,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        modifier = Modifier
+                            .padding(start = 28.dp, top = 12.dp, end = 28.dp)
+                            .wrapContentHeight()
+                    )
+                    Text(
+                        text = "Description: " + it.description,
+                        modifier = Modifier
+                            .padding(start = 28.dp, end = 28.dp, top = 8.dp, bottom = 20.dp)
+                            .wrapContentHeight()
+                    )
                     Divider(color = Color.Gray, thickness = 1.dp)
-                    if (currentEvent != null) {
-                        Text(
-                            text = currentEvent.startDate + " - " + currentEvent.endDate,
-                            modifier = Modifier
-                                .padding(start = 28.dp, end = 28.dp, top = 8.dp)
-                                .wrapContentHeight()
-                        )
-                    }
-                    if (currentEvent != null) {
-                        Text(
-                            text = currentEvent.location.toUpperCase(Locale.ROOT),
-                            modifier = Modifier
-                                .padding(start = 28.dp, end = 28.dp, top = 8.dp)
-                                .wrapContentHeight()
-                        )
-                    }
-                    if (currentEvent != null) {
-                        Text(
-                            text = "Host: $username",
-                            modifier = Modifier
-                                .padding(start = 28.dp, end = 28.dp, top = 8.dp)
-                                .wrapContentHeight()
-                        )
-                    }
-                    if (currentEvent != null) {
-                        Text(
-                            //text = "People attending: " + currentEvent.attending.size,
-
-                            text = "People attending: $numberOfPeopleAttending",
-                            modifier = Modifier
-                                .padding(start = 28.dp, end = 28.dp, top = 8.dp)
-                                .wrapContentHeight()
-                        )
-                    }
-                    if (currentEvent != null) {
-                        Text(
-                            text = "Max Party size: " + currentEvent.maxAttendance.toString(),
-                            modifier = Modifier
-                                .padding(start = 28.dp, end = 28.dp, top = 8.dp)
-                                .wrapContentHeight()
-                        )
-                    }
-                    //Spacer(modifier = Modifier.height(500.dp).padding(paddingValues))
+                    Text(
+                        text = it.startDate + " - " + it.endDate,
+                        modifier = Modifier
+                            .padding(start = 28.dp, end = 28.dp, top = 8.dp)
+                            .wrapContentHeight()
+                    )
+                    Text(
+                        text = it.location.toUpperCase(Locale.ROOT),
+                        modifier = Modifier
+                            .padding(start = 28.dp, end = 28.dp, top = 8.dp)
+                            .wrapContentHeight()
+                    )
+                    Text(
+                        text = "Host: $username",
+                        modifier = Modifier
+                            .padding(start = 28.dp, end = 28.dp, top = 8.dp)
+                            .wrapContentHeight()
+                    )
+                    Text(
+                        text = "People attending: $numberOfPeopleAttending",
+                        modifier = Modifier
+                            .padding(start = 28.dp, end = 28.dp, top = 8.dp)
+                            .wrapContentHeight()
+                    )
+                    Text(
+                        text = "Max Party size: " + it.maxAttendance.toString(),
+                        modifier = Modifier
+                            .padding(start = 28.dp, end = 28.dp, top = 8.dp)
+                            .wrapContentHeight()
+                    )
                     Row {
                         Button(
                             onClick = {
-                                if (currentEvent != null) {
-                                    eventService.joinEvent(currentUserID, currentEvent.id)
-                                    updateAttendingPeople()
-                                }
+                                eventService.joinEvent(currentUserID, it.id)
+                                updateAttendingPeople()
                             },
-                            modifier = Modifier
-                                .padding(16.dp)
-
+                            modifier = Modifier.padding(16.dp)
                         ) {
                             Text("Join")
                         }
-                        if (currentEvent != null) {
-                            ShowDeleteButton(currentEvent.creatorId, currentUserID, navController, eventService, currentEvent)
-                        }
-
+                        ShowDeleteButton(it.creatorId, currentUserID, navController, eventService, it)
                     }
-
                 }
             }
-        )
-    }
+        }
+    )
+}
 
 @Composable
-fun ShowDeleteButton(userIFromDb: String, hostID: String, navController: NavController, eventService: EventService, currentEvent: EventData?) {
+fun ShowDeleteButton(
+    userIFromDb: String,
+    hostID: String,
+    navController: NavController,
+    eventService: EventService,
+    currentEvent: EventData?
+) {
     if (userIFromDb == hostID) {
         Button(
             colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
             onClick = {
-                if (currentEvent != null) {
-                    eventService.deleteEvent(currentEvent.id)
-                }
-                navController.navigate("homeScreen") {
-                    navController.popBackStack()
+                currentEvent?.let {
+                    eventService.deleteEvent(it.id)
+                    navController.navigate("homeScreen") {
+                        navController.popBackStack()
+                    }
                 }
             },
-            modifier = Modifier
-                .padding(16.dp)
-
+            modifier = Modifier.padding(16.dp)
         ) {
             Text("Delete")
         }
     }
 }
-
-
 
 @Composable
 fun CoverImageAPIEvent(url: String) {
@@ -230,11 +197,5 @@ fun CoverImageAPIEvent(url: String) {
             .padding(top = 25.dp)
             .fillMaxWidth()
             .height(200.dp)
-            .width(12.dp)
     )
 }
-
-
-
-
-

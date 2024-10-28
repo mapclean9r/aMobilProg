@@ -51,7 +51,12 @@ class UserService {
             }
     }
 
-    fun getUsernameWithDocID(documentId: String, callback: (String?) -> Unit) {
+    fun getUsernameWithDocID(documentId: String?, callback: (String?) -> Unit) {
+        if (documentId.isNullOrEmpty()) {
+            callback(null)
+            return
+        }
+
         val docRef = db.collection("users").document(documentId)
 
         docRef.get()
