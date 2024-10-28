@@ -182,6 +182,7 @@ fun FriendsView(navController: NavController) {
         },
         floatingActionButton = {
             FloatingActionButton(
+                containerColor = Color.Magenta,
                 onClick = { navController.navigate("addFriendScreen") },
                 modifier = Modifier.padding(16.dp),  // Padding from the bottom and right
                 content = {

@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -168,6 +169,9 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
                                 }
                             }
                             Button(
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color.Red // Bare endrer bakgrunnsfargen til mørkegrønn
+                                ),
                                 onClick = { userService.updateUserGuild("") { success, exception ->
                                     if (success) {
                                         /* TODO: Lage notification for left guild */
@@ -181,7 +185,6 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
                                         exception?.printStackTrace()
                                     }
                                 } },
-                                colors = ButtonColors(Color.Red, Color.White, Color.Gray, Color.White),
                                 modifier = Modifier
                                     .padding(16.dp)
                                     .align(Alignment.End)){

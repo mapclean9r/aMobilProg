@@ -73,7 +73,7 @@ fun AddFriendView(navController: NavController) {
                     .fillMaxWidth()
                     .height(88.dp)
                     .padding(bottom = 10.dp, top = 24.dp)
-                    .background(MaterialTheme.colorScheme.primary),
+                 ,
                 verticalAlignment = Alignment.CenterVertically,
                 //horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -155,12 +155,8 @@ fun AddFriendView(navController: NavController) {
                         showSearch = true
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = Color.White
-                    )
                 ) {
-                    Text("Add Friend From User List", color = MaterialTheme.colorScheme.primary)
+                    Text("Add Friend From User List")
                 }
             }
         },

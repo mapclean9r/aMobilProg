@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -158,7 +159,11 @@ fun ProfileView(navController: NavController, userService: UserService) {
                     Spacer(
                         modifier = Modifier.height(20.dp)
                     )
-                        Button(onClick = {
+                        Button(
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Red // Bare endrer bakgrunnsfargen til mørkegrønn
+                            ),
+                            onClick = {
                            logout(navController) }, ) {
                             Text(text = "Logout")
                         }

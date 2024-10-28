@@ -1,8 +1,11 @@
 package com.example.mobprog.gui
 
 import android.annotation.SuppressLint
+import android.app.DatePickerDialog
+import android.widget.DatePicker
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -33,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,6 +53,7 @@ import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.gui.components.GameBox
 import com.google.firebase.auth.FirebaseAuth
+import java.util.Calendar
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -71,6 +77,18 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
     var filteredGames by remember { mutableStateOf(emptyList<GameData>()) }
 
     var selectedGame by remember { mutableStateOf<GameData?>(null) }
+
+    val calendar = Calendar.getInstance()
+    val year = calendar.get(Calendar.YEAR)
+    val month = calendar.get(Calendar.MONTH)
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
+    val context = LocalContext.current
+    val datePickerDialog = DatePickerDialog(
+        context,
+        { _: DatePicker, pickedYear: Int, pickedMonth: Int, pickedDay: Int ->
+            startDate = "$pickedDay/${pickedMonth + 1}/$pickedYear"
+        }, year, month, day
+    )
 
     GamingApi().fetchAllGames { gameList ->
         gameList?.let {
@@ -157,47 +175,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                     placeholder = { Text("location") },
                     modifier = Modifier.fillMaxWidth()
                 )
-                Text(
-                    text = "Max Attendance",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.W400,
-                    modifier = Modifier
-                        .padding(6.dp)
-                        .align(Alignment.Start),
-                    color = MaterialTheme.colorScheme.primary
-                )
-                TextField(
-                    value = maxAttendanceString,
-                    onValueChange = { newText ->
-                        maxAttendanceString = newText
-                        val convertToInt = maxAttendanceString.toIntOrNull() ?: 0
-                        maxAttendance = convertToInt
-                    },
-                    label = { Text("Enter Attendance") },
-                    placeholder = { Text("attendance") },
-                    modifier = Modifier.fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
 
-                )
-
-                Text(
-                    text = "Date",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.W400,
-                    modifier = Modifier
-                        .padding(6.dp)
-                        .align(Alignment.Start),
-                    color = MaterialTheme.colorScheme.primary
-                )
-                TextField(
-                    value = startDate,
-                    onValueChange = { newText ->
-                        startDate = newText
-                    },
-                    label = { Text("Enter Date") },
-                    placeholder = { Text("date") },
-                    modifier = Modifier.fillMaxWidth()
-                )
                 Text(
                     text = "Description",
                     fontSize = 16.sp,
@@ -214,8 +192,65 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                     },
                     label = { Text("Enter Description") },
                     placeholder = { Text("description") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 6.dp)
                 )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Column(
+                        modifier = Modifier.padding(end = 12.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Button(
+                            onClick = { datePickerDialog.show() },
+                            modifier = Modifier
+                                .width(120.dp)
+                                .padding(bottom = 8.dp)
+                        ) {
+                            Text(text = "Velg dato")
+                        }
+                        Text(
+                            text = "Valgt dato: $startDate",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium,
+                            modifier = Modifier.padding(4.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Max Attendance",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.W400,
+                            modifier = Modifier.padding(bottom = 6.dp),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        TextField(
+                            value = maxAttendanceString,
+                            onValueChange = { newText ->
+                                maxAttendanceString = newText
+                                val convertToInt = maxAttendanceString.toIntOrNull() ?: 0
+                                maxAttendance = convertToInt
+                            },
+                            label = { Text("Enter Attendance", fontSize = 12.sp) },
+                            placeholder = { Text("attendance") },
+                            modifier = Modifier
+                                .width(140.dp).padding(top = 8.dp).height(50.dp),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            singleLine = true
+                        )
+                    }
+                }
+
                 Text(
                     text = "Game: " + (selectedGame?.title ?: "None"),
                     fontSize = 16.sp,
@@ -230,12 +265,8 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                         showSearch = true
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = Color.White
-                    )
                 ) {
-                    Text("Select Game", color = MaterialTheme.colorScheme.primary)
+                    Text("Select Game")
                 }
                 Spacer(modifier = Modifier.height(22.dp))
                 Button(
@@ -257,12 +288,8 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.primary
-                    )
                 ) {
-                    Text("Create Event", color = MaterialTheme.colorScheme.secondary)
+                    Text("Create Event")
                 }
 
             }
