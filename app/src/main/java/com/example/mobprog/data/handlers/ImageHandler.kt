@@ -13,7 +13,7 @@ class ImageHandler {
         val uid = user?.uid
 
         if (uid == null) {
-            onFailure(Exception("User not logged in"))
+            onFailure(Exception("User not logged in || user does not exist"))
             return
         }
 
@@ -23,6 +23,27 @@ class ImageHandler {
         storageRef.putFile(userImageUri)
             .addOnSuccessListener {
                 onSuccess()
+            }
+            .addOnFailureListener { exception ->
+                onFailure(exception)
+            }
+    }
+
+    fun getUserProfileImageUrl(onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit) {
+        val user = FirebaseAuth.getInstance().currentUser
+        val uid = user?.uid
+
+        if (uid == null) {
+            onFailure(Exception("User not logged in || user does not exist"))
+            return
+        }
+
+        val storageRef = FirebaseStorage.getInstance().reference
+            .child("users/$uid/profile.jpg")
+
+        storageRef.downloadUrl
+            .addOnSuccessListener { uri ->
+                onSuccess(uri.toString())
             }
             .addOnFailureListener { exception ->
                 onFailure(exception)

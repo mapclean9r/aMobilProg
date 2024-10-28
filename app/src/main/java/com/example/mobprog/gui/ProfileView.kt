@@ -40,6 +40,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
+import com.example.mobprog.gui.components.getProfileImage
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -118,19 +119,14 @@ fun ProfileView(navController: NavController, userService: UserService) {
             ){
                 Box(
                     modifier = Modifier
-                        .size(62.dp)
+                        .size(162.dp)
                         .background(
                             Color.LightGray,
                             shape = CircleShape
                         )
                         .padding(10.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = "Profile icon",
-                        tint = Color.Black,
-                        modifier = Modifier.size(50.dp)
-                    )
+                    getProfileImage()
                 }
                 Column (modifier = Modifier
                     .fillMaxSize()
