@@ -8,8 +8,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -29,6 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,33 +41,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.mobprog.R
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-
-private fun login(navController: NavController, email: String, password: String) {
-
-    val auth = Firebase.auth
-    auth.signInWithEmailAndPassword(email, password)
-        .addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                navController.navigate("homeScreen") {
-                    popUpTo("loginScreen") {
-                        inclusive = true
-                    }
-                }
-            }
-        }
-}
-
-private fun sendPasswordResetEmail(email: String, onResult: (Boolean, String?) -> Unit) {
-    val auth = Firebase.auth
-    auth.sendPasswordResetEmail(email)
-        .addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                onResult(true, "Password reset email sent.")
-            } else {
-                onResult(false, task.exception?.message ?: "Failed to send password reset email.")
-            }
-        }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,17 +52,21 @@ fun LoginView(navController: NavController) {
     var showPasswordResetField by remember { mutableStateOf(false) }
     var resetEmailText by remember { mutableStateOf("") }
     var resetMessage by remember { mutableStateOf<String?>(null) }
+    var isLoading by remember { mutableStateOf(false) }
+    var loginError by remember { mutableStateOf<String?>(null) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = R.drawable.letsgoo4),
-            contentDescription = "Bakgrunnsbilde",
+            contentDescription = "Background Image",
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
 
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0x66000000)),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -112,7 +93,7 @@ fun LoginView(navController: NavController) {
                 onValueChange = { emailTextController = it },
                 label = { Text(text = "Email", color = Color.Magenta) },
                 textStyle = TextStyle(color = Color.Cyan),
-
+                isError = loginError != null
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -121,24 +102,44 @@ fun LoginView(navController: NavController) {
                 value = passwordTextController,
                 onValueChange = { passwordTextController = it },
                 label = { Text(text = "Password", color = Color.Magenta) },
-                textStyle = TextStyle(color = Color.Cyan), // Endrer fargen på teksten som skrives inn
-                visualTransformation = PasswordVisualTransformation()
-                )
-
-
+                textStyle = TextStyle(color = Color.Cyan),
+                visualTransformation = PasswordVisualTransformation(),
+                isError = loginError != null
+            )
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            Button(onClick = {
-                if (emailTextController.isNotEmpty() && passwordTextController.isNotEmpty()) {
-                    login(navController, emailTextController, passwordTextController)
-                }
-            },
+            if (loginError != null) {
+                Text(text = loginError!!, color = Color.Red, textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = 10.dp))
+                Spacer(modifier = Modifier.height(10.dp))
+            }
+
+            Button(
+                onClick = {
+                    if (emailTextController.isNotEmpty() && passwordTextController.isNotEmpty()) {
+                        isLoading = true
+                        loginError = null
+                        login(navController, emailTextController, passwordTextController) { success, message ->
+                            isLoading = false
+                            if (!success) {
+                                loginError = message
+                            }
+                        }
+                    } else {
+                        loginError = "Please fill in both email and password."
+                    }
+                },
+                enabled = !isLoading,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF6200EA),
                     contentColor = Color.White
-                )) {
-                Text(text = "Login")
+                )
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(color = Color.White, modifier = Modifier.size(18.dp))
+                } else {
+                    Text(text = "Login")
+                }
             }
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -153,6 +154,7 @@ fun LoginView(navController: NavController) {
                     color = Color.Green
                 )
             }
+
             TextButton(onClick = {
                 showPasswordResetField = !showPasswordResetField
             }) {
@@ -161,16 +163,9 @@ fun LoginView(navController: NavController) {
                     color = Color.Green
                 )
             }
-        }
 
-        // Reset Email Column
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
             if (showPasswordResetField) {
-                Spacer(modifier = Modifier.height(670.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
                 OutlinedTextField(
                     value = resetEmailText,
@@ -181,18 +176,29 @@ fun LoginView(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                Button(onClick = {
-                    if (resetEmailText.isNotEmpty()) {
-                        sendPasswordResetEmail(resetEmailText) { success, message ->
-                            resetMessage = message
+                Button(
+                    onClick = {
+                        if (resetEmailText.isNotEmpty()) {
+                            isLoading = true
+                            sendPasswordResetEmail(resetEmailText) { success, message ->
+                                isLoading = false
+                                resetMessage = "Password reset e-mail sent to $resetEmailText"
+                            }
+                        } else {
+                            resetMessage = "Please enter your email."
                         }
-                    }
-                },
+                    },
+                    enabled = !isLoading,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF6200EA),
                         contentColor = Color.White
-                    )) {
-                    Text(text = "Send Reset Email")
+                    )
+                ) {
+                    if (isLoading) {
+                        CircularProgressIndicator(color = Color.White, modifier = Modifier.size(18.dp))
+                    } else {
+                        Text(text = "Send Reset Email")
+                    }
                 }
 
                 if (!resetMessage.isNullOrEmpty()) {
@@ -205,6 +211,33 @@ fun LoginView(navController: NavController) {
             }
         }
     }
+}
+
+private fun login(navController: NavController, email: String, password: String, onResult: (Boolean, String?) -> Unit) {
+    val auth = Firebase.auth
+    auth.signInWithEmailAndPassword(email, password)
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                navController.navigate("homeScreen") {
+                    popUpTo("loginScreen") { inclusive = true }
+                }
+                onResult(true, null)
+            } else {
+                onResult(false, task.exception?.message ?: "Login failed.")
+            }
+        }
+}
+
+private fun sendPasswordResetEmail(email: String, onResult: (Boolean, String?) -> Unit) {
+    val auth = Firebase.auth
+    auth.sendPasswordResetEmail(email)
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                onResult(true, "Password reset email sent.")
+            } else {
+                onResult(false, task.exception?.message ?: "Failed to send password reset email.")
+            }
+        }
 }
 
 
