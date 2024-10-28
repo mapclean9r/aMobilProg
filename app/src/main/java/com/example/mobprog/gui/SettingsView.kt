@@ -45,9 +45,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
-import com.example.mobprog.MainActivity
+import com.example.mobprog.data.UserController
 import com.example.mobprog.data.UserService
+import com.example.mobprog.data.handlers.ImageHandler
 import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.ui.theme.MobProgTheme
 
@@ -70,11 +70,23 @@ fun SettingsView(navController: NavController, onDarkModeToggle: (Boolean) -> Un
 
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
 
-    // Launcher for image picking
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         selectedImageUri = uri
+
+        if (uri != null) {
+            selectedImageUri?.let {
+                ImageHandler().uploadImageToFirebase(uri,
+                    onSuccess = {
+                        println("Image uploaded and URL saved to Firestore successfully!")
+                    },
+                    onFailure = { exception ->
+                        println("Failed to upload image or save URL to Firestore: ${exception.message}")
+                    }
+                )
+            }
+        }
     }
 
     fun updateUserName(newName: String, callback: (Boolean, String) -> Unit) {
@@ -294,6 +306,8 @@ fun SettingsView(navController: NavController, onDarkModeToggle: (Boolean) -> Un
         BottomNavBar(navController = navController, userService = UserService())
     })
 }
+
+
 
 
 @Preview(showBackground = true)

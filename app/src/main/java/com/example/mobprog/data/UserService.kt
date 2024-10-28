@@ -111,6 +111,22 @@ class UserService {
         }
     }
 
+    fun updateUserPicture(picture: String, callback: (Boolean, Exception?) -> Unit) {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
+        if (uid != null) {
+            val userRef = db.collection("users").document(uid)
+            userRef.update(mapOf(
+                "picture" to picture
+            )).addOnSuccessListener {
+                callback(true, null)
+            }.addOnFailureListener { exception ->
+                callback(false, exception)
+            }
+        } else {
+            callback(false, Exception("User not authenticated"))
+        }
+    }
+
     fun updatePassword(newPassword: String, callback: (Boolean, String) -> Unit) {
         val user = FirebaseAuth.getInstance().currentUser
 
