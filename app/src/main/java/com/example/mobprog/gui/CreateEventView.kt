@@ -230,12 +230,8 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                         showSearch = true
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = Color.White
-                    )
                 ) {
-                    Text("Select Game", color = MaterialTheme.colorScheme.primary)
+                    Text("Select Game")
                 }
                 Spacer(modifier = Modifier.height(22.dp))
                 Button(
@@ -257,12 +253,8 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.primary
-                    )
                 ) {
-                    Text("Create Event", color = MaterialTheme.colorScheme.secondary)
+                    Text("Create Event")
                 }
 
             }
