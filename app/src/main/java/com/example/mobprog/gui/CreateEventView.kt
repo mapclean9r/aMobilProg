@@ -6,6 +6,7 @@ import android.widget.DatePicker
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.SnapPosition
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -60,6 +62,8 @@ import java.util.Calendar
 @Composable
 fun CreateEventView(navController: NavController, eventService: EventService) {
     val scrollState = rememberScrollState()
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
 
     /* TODO - legge til alle felter som trengs og endre tekst felter til å benytte disse */
     var name by remember { mutableStateOf("") }
@@ -104,106 +108,294 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
             game.title.contains(searchGameText, ignoreCase = true)
         } ?: emptyList()
     }
-
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(88.dp)
-                    .padding(bottom = 10.dp, top = 24.dp)
-                    .background(MaterialTheme.colorScheme.primary),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Box(modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        text = "Create Event",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-            }
-        },
-        content = { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(scrollState)
-                    .padding(paddingValues)
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "Title",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.W400,
-                    modifier = Modifier
-                        .padding(6.dp)
-                        .align(Alignment.Start),
-                    color = MaterialTheme.colorScheme.primary
-                )
-                TextField(
-                    value = name,
-                    onValueChange = { newText ->
-                        name = newText
-                        /* TODO behandle input her */
-                    },
-                    label = { Text("Enter Title") },
-                    placeholder = { Text("title") },
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                Text(
-                    text = "Location",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.W400,
-                    modifier = Modifier
-                        .padding(6.dp)
-                        .align(Alignment.Start),
-                    color = MaterialTheme.colorScheme.primary
-                )
-                TextField(
-                    value = location,
-                    onValueChange = { newText ->
-                        location = newText
-                        /* TODO behandle input her */
-                    },
-                    label = { Text("Enter Location") },
-                    placeholder = { Text("location") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Text(
-                    text = "Description",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.W400,
-                    modifier = Modifier
-                        .padding(6.dp)
-                        .align(Alignment.Start),
-                    color = MaterialTheme.colorScheme.primary
-                )
-                TextField(
-                    value = description,
-                    onValueChange = { newText ->
-                        description = newText
-                    },
-                    label = { Text("Enter Description") },
-                    placeholder = { Text("description") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 6.dp)
-                )
+    if (!isLandscape) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.Center
+                        .height(88.dp)
+                        .padding(bottom = 10.dp, top = 24.dp)
+                        .background(MaterialTheme.colorScheme.primary),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = "Create Event",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+                }
+            },
+            content = { paddingValues ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(scrollState)
+                        .padding(paddingValues)
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Title",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.W400,
+                        modifier = Modifier
+                            .padding(6.dp)
+                            .align(Alignment.Start),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    TextField(
+                        value = name,
+                        onValueChange = { newText ->
+                            name = newText
+                            /* TODO behandle input her */
+                        },
+                        label = { Text("Enter Title") },
+                        placeholder = { Text("title") },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    Text(
+                        text = "Location",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.W400,
+                        modifier = Modifier
+                            .padding(6.dp)
+                            .align(Alignment.Start),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    TextField(
+                        value = location,
+                        onValueChange = { newText ->
+                            location = newText
+                            /* TODO behandle input her */
+                        },
+                        label = { Text("Enter Location") },
+                        placeholder = { Text("location") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Text(
+                        text = "Description",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.W400,
+                        modifier = Modifier
+                            .padding(6.dp)
+                            .align(Alignment.Start),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    TextField(
+                        value = description,
+                        onValueChange = { newText ->
+                            description = newText
+                        },
+                        label = { Text("Enter Description") },
+                        placeholder = { Text("description") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 6.dp)
+                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(end = 12.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Button(
+                                onClick = { datePickerDialog.show() },
+                                modifier = Modifier
+                                    .width(120.dp)
+                                    .padding(bottom = 8.dp)
+                            ) {
+                                Text(text = "Velg dato")
+                            }
+                            Text(
+                                text = "Valgt dato: $startDate",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Medium,
+                                modifier = Modifier.padding(4.dp)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(16.dp))
+
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "Max Attendance",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.W400,
+                                modifier = Modifier.padding(bottom = 6.dp),
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            TextField(
+                                value = maxAttendanceString,
+                                onValueChange = { newText ->
+                                    maxAttendanceString = newText
+                                    val convertToInt = maxAttendanceString.toIntOrNull() ?: 0
+                                    maxAttendance = convertToInt
+                                },
+                                label = { Text("Enter Attendance", fontSize = 12.sp) },
+                                placeholder = { Text("attendance") },
+                                modifier = Modifier
+                                    .width(140.dp)
+                                    .padding(top = 8.dp)
+                                    .height(50.dp),
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                singleLine = true
+                            )
+                        }
+                    }
+
+                    Text(
+                        text = "Game: " + (selectedGame?.title ?: "None"),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.W400,
+                        modifier = Modifier
+                            .padding(6.dp)
+                            .align(Alignment.Start),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Button(
+                        onClick = {
+                            showSearch = true
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text("Select Game")
+                    }
+                    Spacer(modifier = Modifier.height(22.dp))
+                    Button(
+                        onClick = {
+                            onSubmit(
+                                name,
+                                maxAttendance,
+                                location,
+                                startDate,
+                                description,
+                                gameCoverImage,
+                                eventService = eventService,
+                                creatorId = FirebaseAuth.getInstance().currentUser?.uid.toString()
+                            )
+                            navController.navigate("homeScreen") {
+                                while (navController.popBackStack()) {
+                                    navController.popBackStack()
+                                }
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text("Create Event")
+                    }
+
+                }
+            },
+            bottomBar = {
+                BottomNavBar(navController = navController, userService = UserService())
+            }
+        )
+    } else {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp)
+                        .padding(bottom = 10.dp, top = 24.dp)
+                        .background(MaterialTheme.colorScheme.primary),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = "Create Event",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+                }
+            },
+            content = { paddingValues ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .verticalScroll(scrollState),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Top
                 ) {
                     Column(
-                        modifier = Modifier.padding(end = 12.dp),
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = "Title",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.W400,
+                            modifier = Modifier.align(Alignment.Start),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        TextField(
+                            value = name,
+                            onValueChange = { newText -> name = newText },
+                            label = { Text("Enter Title") },
+                            placeholder = { Text("title") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        Text(
+                            text = "Location",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.W400,
+                            modifier = Modifier.align(Alignment.Start),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        TextField(
+                            value = location,
+                            onValueChange = { newText -> location = newText },
+                            label = { Text("Enter Location") },
+                            placeholder = { Text("location") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        Text(
+                            text = "Description",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.W400,
+                            modifier = Modifier.align(Alignment.Start),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        TextField(
+                            value = description,
+                            onValueChange = { newText -> description = newText },
+                            label = { Text("Enter Description") },
+                            placeholder = { Text("description") },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 6.dp)
+                        )
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(start = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Button(
@@ -220,18 +412,11 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                             fontWeight = FontWeight.Medium,
                             modifier = Modifier.padding(4.dp)
                         )
-                    }
 
-                    Spacer(modifier = Modifier.width(16.dp))
-
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
                         Text(
                             text = "Max Attendance",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.W400,
-                            modifier = Modifier.padding(bottom = 6.dp),
                             color = MaterialTheme.colorScheme.primary
                         )
                         TextField(
@@ -244,60 +429,57 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                             label = { Text("Enter Attendance", fontSize = 12.sp) },
                             placeholder = { Text("attendance") },
                             modifier = Modifier
-                                .width(140.dp).padding(top = 8.dp).height(50.dp),
+                                .width(140.dp)
+                                .padding(top = 8.dp)
+                                .height(50.dp),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             singleLine = true
                         )
+
+                        Text(
+                            text = "Game: " + (selectedGame?.title ?: "None"),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.W400,
+                            modifier = Modifier.padding(6.dp),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Button(
+                            onClick = { showSearch = true },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Select Game")
+                        }
+                        Spacer(modifier = Modifier.height(22.dp))
+                        Button(
+                            onClick = {
+                                onSubmit(
+                                    name,
+                                    maxAttendance,
+                                    location,
+                                    startDate,
+                                    description,
+                                    gameCoverImage,
+                                    eventService = eventService,
+                                    creatorId = FirebaseAuth.getInstance().currentUser?.uid.toString()
+                                )
+                                navController.navigate("homeScreen") {
+                                    while (navController.popBackStack()) {
+                                        navController.popBackStack()
+                                    }
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Create Event")
+                        }
                     }
                 }
-
-                Text(
-                    text = "Game: " + (selectedGame?.title ?: "None"),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.W400,
-                    modifier = Modifier
-                        .padding(6.dp)
-                        .align(Alignment.Start),
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Button(
-                    onClick = {
-                        showSearch = true
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text("Select Game")
-                }
-                Spacer(modifier = Modifier.height(22.dp))
-                Button(
-                    onClick = {
-                        onSubmit(
-                            name,
-                            maxAttendance,
-                            location,
-                            startDate,
-                            description,
-                            gameCoverImage,
-                            eventService = eventService,
-                            creatorId = FirebaseAuth.getInstance().currentUser?.uid.toString()
-                        )
-                        navController.navigate("homeScreen") {
-                            while (navController.popBackStack()) {
-                                navController.popBackStack()
-                            }
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text("Create Event")
-                }
-
+            },
+            bottomBar = {
+                BottomNavBar(navController = navController, userService = UserService())
             }
-        },
-        bottomBar = {
-            BottomNavBar(navController = navController, userService = UserService())
-        }
-    )
+        )
+    }
 
     if (showSearch) {
         Box(
