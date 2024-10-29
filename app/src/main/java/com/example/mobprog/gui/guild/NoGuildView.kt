@@ -113,8 +113,9 @@ fun NoGuildView(navController: NavController, guildService: GuildService, modifi
         },
         floatingActionButton = {
             FloatingActionButton(
+                containerColor = Color(0xFFb57bb5),
                 onClick = { navController.navigate("createGuildScreen") },
-                modifier = Modifier.padding(16.dp),  // Padding from the bottom and right
+                modifier = Modifier.padding(16.dp),
                 content = {
                     Icon(
                         imageVector = Icons.Default.Add,

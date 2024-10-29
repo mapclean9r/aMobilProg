@@ -1,5 +1,7 @@
 package com.example.mobprog.gui.components
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -11,7 +13,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -32,6 +36,7 @@ fun BottomNavBar(navController: NavController, userService: UserService) {
 
 
     val iconColor = MaterialTheme.colorScheme.secondary
+    val selectedColor = MaterialTheme.colorScheme.primary
     val navigationBarItemsList = listOf(
         NavBarItem("Home", R.drawable.baseline_home_24, "homeScreen", iconColor),
         NavBarItem("Event", R.drawable.baseline_add_24, "createEventScreen", iconColor),
@@ -41,7 +46,6 @@ fun BottomNavBar(navController: NavController, userService: UserService) {
         ),
         NavBarItem("Profile", R.drawable.baseline_person_24, "profileScreen", iconColor)
     )
-
 
     NavigationBar {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -53,6 +57,16 @@ fun BottomNavBar(navController: NavController, userService: UserService) {
             } else {
                 currentDestination?.route == navigationBarItem.route
             }
+
+            val animatedIconColor by animateColorAsState(
+                targetValue = if (isSelected) selectedColor else navigationBarItem.color
+            )
+            val animatedTextColor by animateColorAsState(
+                targetValue = if (isSelected) selectedColor else Color.Gray
+            )
+
+            val scale by animateFloatAsState(targetValue = if (isSelected) 1.2f else 1.0f)
+
             NavigationBarItem(
                 selected = isSelected,
                 onClick = {
@@ -93,10 +107,19 @@ fun BottomNavBar(navController: NavController, userService: UserService) {
                     Icon(
                         painter = painterResource(id = navigationBarItem.icon),
                         contentDescription = navigationBarItem.label,
-                        tint = navigationBarItem.color
+                        tint = animatedIconColor,
+                        modifier = Modifier.graphicsLayer(
+                            scaleX = scale,
+                            scaleY = scale,
+                        )
                     )
                 },
-                label = { Text(navigationBarItem.label) }
+                label = {
+                    Text(
+                        text = navigationBarItem.label,
+                        color = animatedTextColor
+                    )
+                }
             )
         }
     }
