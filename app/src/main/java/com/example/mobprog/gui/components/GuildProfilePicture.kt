@@ -90,7 +90,7 @@ fun GetGuildProfileImageView(guildID: String, size: Int) {
             onFailure = { exception -> error = exception.message }
         )
     }
-    var widthSize = size/2
+    val widthSize = size/2
     if (imageUrl != null) {
         Image(
             painter = rememberAsyncImagePainter(imageUrl),
@@ -102,7 +102,7 @@ fun GetGuildProfileImageView(guildID: String, size: Int) {
             contentScale = ContentScale.FillWidth
         )
     } else if (error != null) {
-        Text(text = "Error loading image: $error")
+        DynamicImageSelector(imageName = "guild")
     } else {
         Text("Loading...")
     }

@@ -55,9 +55,15 @@ fun GuildBox(guildData: GuildData, userService: UserService, navController: NavC
         GetGuildProfileImageView(guildID = guildData.guildId, size = 500)
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Guild name: ${guildData.name}",
+            text = guildData.name,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold
+        )
+        Text(
+            modifier = Modifier.padding( top = 5.dp),
+            text = guildData.description,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.W400
         )
         Text(
             text = "Guildleader: ${guildData.leader}",
