@@ -65,7 +65,14 @@ fun GetSelfProfileImageCircle(size: Int) {
             contentScale = ContentScale.Crop
         )
     } else if (error != null) {
-        Text(text = "Error loading image: $error")
+        Image(
+            modifier = Modifier
+                .clip(shape = CircleShape)
+                .size(size.dp),
+            painter = painterResource(id = R.drawable.profile),
+            contentDescription = null,
+            contentScale = ContentScale.Crop
+        )
     } else {
         Text("Loading...")
     }
