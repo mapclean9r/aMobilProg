@@ -60,6 +60,7 @@ import com.example.mobprog.R
 import com.example.mobprog.data.FriendService
 import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
+import com.example.mobprog.gui.components.GetUserProfileImageCircle
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "MutableCollectionMutableState")
 @Composable
@@ -235,14 +236,7 @@ fun FriendItem(navController: NavController, friend: FriendData, onClick: () -> 
 
     ){
 
-            Image(
-                modifier = Modifier
-                    .clip(shape = CircleShape)
-                    .size(56.dp),
-                painter = painterResource(id = R.drawable.profile),
-                contentDescription = null,
-                contentScale = ContentScale.Crop
-            )
+        GetUserProfileImageCircle(userID = friend.id, size = 60)
             Column(
                 modifier = Modifier.padding(start = 16.dp)
             ) {

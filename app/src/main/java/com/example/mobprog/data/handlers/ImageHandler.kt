@@ -49,6 +49,24 @@ class ImageHandler {
             }
     }
 
+    fun getAnyUserProfileImageUrl(
+        userID: String,
+        onSuccess: (String) -> Unit,
+        onFailure: (Exception) -> Unit)
+    {
+
+        val storageRef = FirebaseStorage.getInstance().reference
+            .child("users/$userID/profile.jpg")
+
+        storageRef.downloadUrl
+            .addOnSuccessListener { uri ->
+                onSuccess(uri.toString())
+            }
+            .addOnFailureListener { exception ->
+                onFailure(exception)
+            }
+    }
+
     fun uploadGuildImageToFirebase(userImageUri: Uri, guildID: String,
                                    onSuccess: () -> Unit,
                                    onFailure: (Exception) -> Unit)
