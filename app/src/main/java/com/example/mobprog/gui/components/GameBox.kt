@@ -32,20 +32,20 @@ fun GameBox(gameData: GameData, onClick: (GameData) -> Unit) {
         elevation = CardDefaults.cardElevation(8.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(2.dp)
             .clickable { onClick(gameData) }
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(10.dp)
         ) {
             AsyncImage(
                 model = gameData.thumbnail,
                 contentDescription = "${gameData.title} image",
-                contentScale = ContentScale.Crop,
+                contentScale = ContentScale.Fit,
                 modifier = Modifier
-                    .size(80.dp)
+                    .size(150.dp)
                     .align(Alignment.CenterVertically)
                     .padding(end = 16.dp)
                     .aspectRatio(1f)
@@ -71,14 +71,21 @@ fun GameBox(gameData: GameData, onClick: (GameData) -> Unit) {
                     fontWeight = FontWeight.Medium
                 )
 
+                Text(
+                    text = gameData.platform ?: "Unknown Platform",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontWeight = FontWeight.Medium
+                )
+
+
                 Spacer(modifier = Modifier.height(8.dp))
                 if (!gameData.description.isNullOrEmpty()) {
                     Text(
                         text = gameData.description,
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
                         maxLines = 2,
-                        modifier = Modifier.padding(top = 4.dp)
                     )
                 }
             }
