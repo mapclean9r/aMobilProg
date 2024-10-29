@@ -134,4 +134,21 @@ class GuildService {
         db.collection("events").add(event)
     }
 
+    fun getAllMemberIdsFromGuild(guildId: String, callback: (List<String>?) -> Unit) {
+        db.collection("guilds").document(guildId).get()
+            .addOnSuccessListener { documentSnapshot ->
+                try {
+                    val members = documentSnapshot.get("members") as? List<String>
+                    callback(members)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    callback(null)
+                }
+            }
+            .addOnFailureListener { exception ->
+                exception.printStackTrace()
+                callback(null)
+            }
+    }
+
 }
