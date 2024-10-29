@@ -36,6 +36,7 @@ import coil.compose.AsyncImage
 import com.example.mobprog.createEvent.EventData
 import com.example.mobprog.data.EventService
 import com.example.mobprog.data.UserService
+import com.example.mobprog.maps.EventLocationMapView
 import com.google.firebase.auth.FirebaseAuth
 import java.util.Locale
 
@@ -136,6 +137,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                                 .wrapContentHeight()
                         )
                     }
+                    /*
                     if (currentEvent != null) {
                         Text(
                             text = currentEvent.location.toUpperCase(Locale.ROOT),
@@ -144,6 +146,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                                 .wrapContentHeight()
                         )
                     }
+                    */
                     if (currentEvent != null) {
                         Text(
                             text = "Host: $username",
@@ -170,6 +173,42 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                                 .wrapContentHeight()
                         )
                     }
+                    // Location START
+                    if (currentEvent != null) {
+                        val locationParts = currentEvent.location.split(",")
+                        if (locationParts.size == 2) {
+                            val latitude = locationParts[0].toDoubleOrNull()
+                            val longitude = locationParts[1].toDoubleOrNull()
+
+                            if (latitude != null && longitude != null) {
+                                // Display the map with the selected location
+                                Text(
+                                    text = "Location:",
+                                    modifier = Modifier
+                                        .padding(start = 28.dp, end = 28.dp, top = 8.dp)
+                                        .wrapContentHeight()
+                                )
+                                EventLocationMapView(latitude, longitude)
+                            } else {
+                                // If the coordinates are not valid, just display the location text
+                                Text(
+                                    text = currentEvent.location.uppercase(Locale.ROOT),
+                                    modifier = Modifier
+                                        .padding(start = 28.dp, end = 28.dp, top = 8.dp)
+                                        .wrapContentHeight()
+                                )
+                            }
+                        } else {
+                            // If the location is not in coordinates, display it as text
+                            Text(
+                                text = currentEvent.location.toUpperCase(Locale.ROOT),
+                                modifier = Modifier
+                                    .padding(start = 28.dp, end = 28.dp, top = 8.dp)
+                                    .wrapContentHeight()
+                            )
+                        }
+                    }
+                    // Location END
                     //Spacer(modifier = Modifier.height(500.dp).padding(paddingValues))
                     Row {
                         Button(

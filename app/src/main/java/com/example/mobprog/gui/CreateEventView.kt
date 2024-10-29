@@ -38,6 +38,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobprog.api.GameData
@@ -71,6 +72,12 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
     var filteredGames by remember { mutableStateOf(emptyList<GameData>()) }
 
     var selectedGame by remember { mutableStateOf<GameData?>(null) }
+
+    val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
+    val selectedLocation = savedStateHandle?.getLiveData<Pair<Double, Double>>("selected_location")
+    selectedLocation?.observe(LocalLifecycleOwner.current) { locationPair ->
+        location = "Lat: ${locationPair.first}, Lng: ${locationPair.second}"
+    }
 
     GamingApi().fetchAllGames { gameList ->
         gameList?.let {
@@ -138,6 +145,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                     placeholder = { Text("title") },
                     modifier = Modifier.fillMaxWidth(),
                 )
+                // Location START
                 Text(
                     text = "Location",
                     fontSize = 16.sp,
@@ -151,12 +159,26 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                     value = location,
                     onValueChange = { newText ->
                         location = newText
-                        /* TODO behandle input her */
                     },
-                    label = { Text("Enter Location") },
+                    label = { Text("Enter Location or use Map") },
                     placeholder = { Text("location") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    readOnly = true // Make it read-only since we want to use the map for selection
                 )
+                Button(
+                    onClick = {
+                        // Navigate to LocationPickerView to select a location
+                        navController.navigate("locationPickerScreen")
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text("Select Location on Map", color = MaterialTheme.colorScheme.primary)
+                }
+                // Location END
                 Text(
                     text = "Max Attendance",
                     fontSize = 16.sp,
