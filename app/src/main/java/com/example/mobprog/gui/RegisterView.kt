@@ -43,7 +43,13 @@ import com.google.firebase.auth.auth
 
 
 @Composable
-fun RegisterView(navController: NavController) {
+fun RegisterView(navController: NavController, isDarkMode: Boolean) {
+    val background = if (isDarkMode) {
+        painterResource(id = R.drawable.letsgoo4)
+    } else {
+        painterResource(id = R.drawable.light)
+    }
+
     val userService = UserService()
     val context = LocalContext.current
 
@@ -51,120 +57,240 @@ fun RegisterView(navController: NavController) {
     var usernameTextController by remember { mutableStateOf("") }
     var passwordTextController by remember { mutableStateOf("") }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Image(
-            painter = painterResource(id = R.drawable.letsgoo4),
-            contentDescription = "Bakgrunnsbilde",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp), // Optional padding for better UI
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "Register User",
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Green
+    if (isDarkMode) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Image(
+                painter = background,
+                contentDescription = "Bakgrunnsbilde",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
             )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp), // Optional padding for better UI
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Register User",
+                    fontSize = 28.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Green
+                )
 
-            Spacer(modifier = Modifier.height(28.dp))
+                Spacer(modifier = Modifier.height(28.dp))
 
-            Text(
-                text = "Enter email, username, and password",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Green
-            )
+                Text(
+                    text = "Enter email, username, and password",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Green
+                )
 
-            Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
-            OutlinedTextField(
-                value = emailTextController,
-                onValueChange = { emailTextController = it },
-                label = { Text(text = "Email", color = Color.Magenta) },
-                textStyle = TextStyle(color = Color.Cyan),
-                modifier = Modifier.fillMaxWidth()
-            )
+                OutlinedTextField(
+                    value = emailTextController,
+                    onValueChange = { emailTextController = it },
+                    label = { Text(text = "Email", color = Color.Magenta) },
+                    textStyle = TextStyle(color = Color.Cyan),
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-            Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
-            OutlinedTextField(
-                value = usernameTextController,
-                onValueChange = { usernameTextController = it },
-                label = { Text(text = "Username", color = Color.Magenta) },
-                textStyle = TextStyle(color = Color.Cyan),
-                modifier = Modifier.fillMaxWidth()
-            )
+                OutlinedTextField(
+                    value = usernameTextController,
+                    onValueChange = { usernameTextController = it },
+                    label = { Text(text = "Username", color = Color.Magenta) },
+                    textStyle = TextStyle(color = Color.Cyan),
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-            Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
-            OutlinedTextField(
-                value = passwordTextController,
-                onValueChange = { passwordTextController = it },
-                label = { Text(text = "Password", color = Color.Magenta) },
-                textStyle = TextStyle(color = Color.Cyan),
-                visualTransformation = PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth()
-            )
+                OutlinedTextField(
+                    value = passwordTextController,
+                    onValueChange = { passwordTextController = it },
+                    label = { Text(text = "Password", color = Color.Magenta) },
+                    textStyle = TextStyle(color = Color.Cyan),
+                    visualTransformation = PasswordVisualTransformation(),
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-            Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
-            Button(
-                onClick = {
-                    if (emailTextController.isBlank() || usernameTextController.isBlank() || passwordTextController.isBlank()) {
-                        Toast.makeText(context, "Please fill in all fields", Toast.LENGTH_SHORT)
-                            .show()
-                    } else {
-                        userService.createUser(
-                            emailTextController,
-                            usernameTextController,
-                            passwordTextController
-                        ) { success, exception ->
-                            if (success) {
-                                Toast.makeText(
-                                    context,
-                                    "Registration successful",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                emailTextController = ""
-                                usernameTextController = ""
-                                passwordTextController = ""
-                                navController.navigate("loginScreen") {
-                                    popUpTo("registerScreen") { inclusive = true }
+                Button(
+                    onClick = {
+                        if (emailTextController.isBlank() || usernameTextController.isBlank() || passwordTextController.isBlank()) {
+                            Toast.makeText(context, "Please fill in all fields", Toast.LENGTH_SHORT)
+                                .show()
+                        } else {
+                            userService.createUser(
+                                emailTextController,
+                                usernameTextController,
+                                passwordTextController
+                            ) { success, exception ->
+                                if (success) {
+                                    Toast.makeText(
+                                        context,
+                                        "Registration successful",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    emailTextController = ""
+                                    usernameTextController = ""
+                                    passwordTextController = ""
+                                    navController.navigate("loginScreen") {
+                                        popUpTo("registerScreen") { inclusive = true }
+                                    }
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "Registration failed: ${exception?.message}",
+                                        Toast.LENGTH_LONG
+                                    ).show()
                                 }
-                            } else {
-                                Toast.makeText(
-                                    context,
-                                    "Registration failed: ${exception?.message}",
-                                    Toast.LENGTH_LONG
-                                ).show()
                             }
                         }
-                    }
 
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF6200EA),
-                    contentColor = Color.White
-                ),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "Register")
-            }
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            TextButton(onClick = {
-                navController.navigate("loginScreen") {
-                    popUpTo("registerScreen") { inclusive = true }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF6200EA),
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = "Register")
                 }
-            }) {
-                Text(text = "Go to login page", color = Color.Green)
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                TextButton(onClick = {
+                    navController.navigate("loginScreen") {
+                        popUpTo("registerScreen") { inclusive = true }
+                    }
+                }) {
+                    Text(text = "Go to login page", color = Color.Green)
+                }
+            }
+        }
+    } else {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Image(
+                painter = background,
+                contentDescription = "Bakgrunnsbilde",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp), // Optional padding for better UI
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Register User",
+                    fontSize = 28.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+
+                Spacer(modifier = Modifier.height(28.dp))
+
+                Text(
+                    text = "Enter email, username, and password",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                OutlinedTextField(
+                    value = emailTextController,
+                    onValueChange = { emailTextController = it },
+                    label = { Text(text = "Email", color = Color.Gray) },
+                    textStyle = TextStyle(color = Color.Black),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                OutlinedTextField(
+                    value = usernameTextController,
+                    onValueChange = { usernameTextController = it },
+                    label = { Text(text = "Username", color = Color.Gray) },
+                    textStyle = TextStyle(color = Color.Black),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                OutlinedTextField(
+                    value = passwordTextController,
+                    onValueChange = { passwordTextController = it },
+                    label = { Text(text = "Password", color = Color.Gray) },
+                    textStyle = TextStyle(color = Color.Black),
+                    visualTransformation = PasswordVisualTransformation(),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Button(
+                    onClick = {
+                        if (emailTextController.isBlank() || usernameTextController.isBlank() || passwordTextController.isBlank()) {
+                            Toast.makeText(context, "Please fill in all fields", Toast.LENGTH_SHORT)
+                                .show()
+                        } else {
+                            userService.createUser(
+                                emailTextController,
+                                usernameTextController,
+                                passwordTextController
+                            ) { success, exception ->
+                                if (success) {
+                                    Toast.makeText(
+                                        context,
+                                        "Registration successful",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    emailTextController = ""
+                                    usernameTextController = ""
+                                    passwordTextController = ""
+                                    navController.navigate("loginScreen") {
+                                        popUpTo("registerScreen") { inclusive = true }
+                                    }
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "Registration failed: ${exception?.message}",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            }
+                        }
+
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF6200EA),
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = "Register")
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                TextButton(onClick = {
+                    navController.navigate("loginScreen") {
+                        popUpTo("registerScreen") { inclusive = true }
+                    }
+                }) {
+                    Text(text = "Go to login page", color = Color.Blue)
+                }
             }
         }
     }
@@ -172,9 +298,10 @@ fun RegisterView(navController: NavController) {
 
 
 
-
+/*
 @Preview(showBackground = true)
 @Composable
 fun RegisterViewPreview() {
     RegisterView(navController = rememberNavController())
 }
+*/
