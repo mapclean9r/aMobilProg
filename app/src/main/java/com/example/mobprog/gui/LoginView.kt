@@ -81,6 +81,8 @@ if (isDarkMode){
                 text = "Welcome to Arena",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
+                color = Color.Green,
+                modifier = Modifier.padding(top = 20.dp)
             )
 
             Spacer(modifier = Modifier.height(28.dp))
@@ -236,7 +238,8 @@ if (isDarkMode){
                 text = "Welcome to Arena",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.Black
+                color = Color.Black,
+                modifier = Modifier.padding(top = 20.dp)
             )
 
             Spacer(modifier = Modifier.height(28.dp))
