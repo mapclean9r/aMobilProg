@@ -16,11 +16,10 @@ import com.example.mobprog.data.handlers.ImageHandler
 val imgHandler = ImageHandler()
 
 @Composable
-fun GetProfileImage() {
+fun GetSelfProfileImage() {
     var imageUrl by remember { mutableStateOf<String?>(null) }
     var error by remember { mutableStateOf<String?>(null) }
 
-    // Hent bilde-URL når komposisjonen lastes
     LaunchedEffect(Unit) {
         imgHandler.getUserProfileImageUrl(
             onSuccess = { url -> imageUrl = url },
@@ -43,7 +42,7 @@ fun GetProfileImage() {
 }
 
 @Composable
-fun GetProfileImageCircle() {
+fun GetSelfProfileImageCircle(size: Int) {
     var imageUrl by remember { mutableStateOf<String?>(null) }
     var error by remember { mutableStateOf<String?>(null) }
 
@@ -59,7 +58,7 @@ fun GetProfileImageCircle() {
             painter = rememberAsyncImagePainter(imageUrl),
             contentDescription = "User Profile Image",
             modifier = Modifier
-                .size(200.dp)
+                .size(size.dp)
                 .clip(CircleShape),
             contentScale = ContentScale.Crop
         )
