@@ -86,6 +86,8 @@ dependencies {
     implementation("com.google.code.gson:gson:2.8.6")
     implementation("io.coil-kt:coil-compose:2.4.0")
     implementation ("com.google.maps.android:maps-compose:2.8.0")
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
 }
 
 secrets {

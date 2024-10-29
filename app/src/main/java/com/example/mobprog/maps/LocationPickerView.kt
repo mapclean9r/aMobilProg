@@ -1,20 +1,25 @@
-
 package com.example.mobprog.maps
 
-import android.widget.Toast
+import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.*
-import androidx.compose.foundation.background
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.*
+import retrofit2.*
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Query
 
 @Composable
 fun LocationPickerView(
@@ -25,34 +30,102 @@ fun LocationPickerView(
 ) {
     val context = LocalContext.current
 
+    // Default location: Oslo, Norway
+    val defaultLocation = LatLng(59.9139, 10.7522)
+    val defaultZoom = 10f
+
+    // Camera position state to set default location and zoom
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(defaultLocation, defaultZoom)
+    }
+
     // State to remember the selected LatLng position
     var selectedLatLng by remember { mutableStateOf<LatLng?>(null) }
+    var searchText by remember { mutableStateOf("") }
+
+    val geocodingApiKey = "AIzaSyBxZif_OnF3EoynMVcZfwXTZrauOBrfScU" // Replace with your actual API key
+
+    // Create Retrofit instance
+    val retrofit = Retrofit.Builder()
+        .baseUrl("https://maps.googleapis.com/maps/api/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+    val geocodingApiService = retrofit.create(GeocodingApiService::class.java)
 
     if (isFineLocationGranted || isCoarseLocationGranted) {
-        // Display Google Map if permissions are granted
-        GoogleMap(
-            modifier = Modifier.fillMaxSize(),
-            onMapClick = { latLng ->
-                // Update the state with the selected position
-                selectedLatLng = latLng
-
-                // When the map is clicked, call the callback with the selected location
-                onLocationSelected(latLng.latitude, latLng.longitude)
-                Toast.makeText(
-                    context,
-                    "Location selected: (${latLng.latitude}, ${latLng.longitude})",
-                    Toast.LENGTH_SHORT
-                ).show()
-            },
-            properties = MapProperties(isMyLocationEnabled = isFineLocationGranted),
-            uiSettings = MapUiSettings(zoomControlsEnabled = true)
+        Column(
+            modifier = Modifier.fillMaxSize()
         ) {
-            // Place a marker if a position has been selected
-            selectedLatLng?.let {
-                Marker(
-                    state = MarkerState(position = it),
-                    title = "Selected Location"
-                )
+            // Search bar
+            TextField(
+                value = searchText,
+                onValueChange = { searchText = it },
+                label = { Text("Search Location") },
+                placeholder = { Text("Enter a location") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
+                singleLine = true
+            )
+
+            Button(
+                onClick = {
+                    // Make a geocoding request to search for the location
+                    if (searchText.isNotBlank()) {
+                        val call = geocodingApiService.getCoordinates(searchText, geocodingApiKey)
+                        call.enqueue(object : Callback<GeocodingResponse> {
+                            override fun onResponse(
+                                call: Call<GeocodingResponse>,
+                                response: Response<GeocodingResponse>
+                            ) {
+                                if (response.isSuccessful) {
+                                    val location = response.body()?.results?.firstOrNull()?.geometry?.location
+                                    if (location != null) {
+                                        val newLatLng = LatLng(location.lat, location.lng)
+                                        cameraPositionState.position = CameraPosition.fromLatLngZoom(newLatLng, 12f)
+                                    }
+                                } else {
+                                    Log.e("LocationPickerView", "Error fetching location: ${response.errorBody()?.string()}")
+                                }
+                            }
+
+                            override fun onFailure(call: Call<GeocodingResponse>, t: Throwable) {
+                                Log.e("LocationPickerView", "Error: ${t.message}")
+                            }
+                        })
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
+            ) {
+                Text("Search")
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Google Map
+            GoogleMap(
+                modifier = Modifier.weight(1f),
+                cameraPositionState = cameraPositionState,
+                onMapClick = { latLng ->
+                    // Update the state with the selected position
+                    selectedLatLng = latLng
+
+                    // When the map is clicked, call the callback with the selected location
+                    onLocationSelected(latLng.latitude, latLng.longitude)
+                },
+                properties = MapProperties(isMyLocationEnabled = isFineLocationGranted),
+                uiSettings = MapUiSettings(zoomControlsEnabled = true)
+            ) {
+                // Place a marker if a position has been selected
+                selectedLatLng?.let {
+                    Marker(
+                        state = MarkerState(position = it),
+                        title = "Selected Location"
+                    )
+                }
             }
         }
     } else {
