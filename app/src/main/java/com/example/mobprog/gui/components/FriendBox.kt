@@ -82,14 +82,8 @@ fun FriendBox (friendData: FriendData, navController: NavController, onClick: (F
 
         ) {
 
-        Image(
-            modifier = Modifier
-                .clip(shape = CircleShape)
-                .size(56.dp),
-            painter = painterResource(id = R.drawable.profile),
-            contentDescription = null,
-            contentScale = ContentScale.Crop
-        )
+        GetUserProfileImageCircle(userID = friendData.id, size = 56)
+
         Column(
             modifier = Modifier.padding(start = 16.dp)
         ) {
