@@ -49,13 +49,13 @@ class ImageHandler {
             }
     }
 
-    fun uploadGuildImageToFirebase(userImageUri: Uri, guildID: Guild,
+    fun uploadGuildImageToFirebase(userImageUri: Uri, guildID: String,
                                    onSuccess: () -> Unit,
                                    onFailure: (Exception) -> Unit)
     {
 
         val storageRef = FirebaseStorage.getInstance().reference
-            .child("users/$guildID/guildProfile.jpg")
+            .child("guilds/$guildID/guildProfile.jpg")
 
         storageRef.putFile(userImageUri)
             .addOnSuccessListener {
@@ -71,7 +71,7 @@ class ImageHandler {
         onFailure: (Exception) -> Unit)
     {
         val storageRef = FirebaseStorage.getInstance().reference
-            .child("users/$guildID/guildProfile.jpg")
+            .child("guilds/$guildID/guildProfile.jpg")
 
         storageRef.downloadUrl
             .addOnSuccessListener { uri ->

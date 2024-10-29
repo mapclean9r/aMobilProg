@@ -1,6 +1,9 @@
 package com.example.mobprog.gui.guild
 
+import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,6 +36,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobprog.data.GuildService
 import com.example.mobprog.data.UserService
+import com.example.mobprog.data.handlers.ImageHandler
 import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.guild.GuildData
 
@@ -45,6 +49,10 @@ fun CreateGuildView(navController: NavController, modifier: Modifier = Modifier,
     var picture by remember { mutableStateOf("") }
     var members by remember { mutableStateOf("") }
 
+    var GID by remember { mutableStateOf("") }
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+
+
     LaunchedEffect(Unit) {
         userService.getCurrentUserData { userData ->
             println(userData)
@@ -54,6 +62,14 @@ fun CreateGuildView(navController: NavController, modifier: Modifier = Modifier,
             } else {
                 Log.w("UserData", "No user data found for current user")
             }
+        }
+    }
+
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            imageUri = uri
         }
     }
 
@@ -154,7 +170,8 @@ fun CreateGuildView(navController: NavController, modifier: Modifier = Modifier,
                             guildService = GuildService(),
                             leader = username,
                             userService = userService,
-                            navController = navController
+                            navController = navController,
+                            guildURI = imageUri
                         )
                         name = ""
                         description = ""
@@ -163,6 +180,10 @@ fun CreateGuildView(navController: NavController, modifier: Modifier = Modifier,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Create Guild")
+                }
+
+                Button(onClick = { imagePickerLauncher.launch("image/*") }) {
+                    Text("Select Guild Image")
                 }
 
             }
@@ -181,7 +202,8 @@ fun onSubmit(
     guildService: GuildService,
     leader: String,
     userService: UserService,
-    navController: NavController
+    navController: NavController,
+    guildURI: Uri?
 ) {
     val guildData = GuildData(name = name, description = description, leader = leader, picture = picture)
     guildService.createGuild(guildData) { guildId, exception ->
@@ -190,6 +212,20 @@ fun onSubmit(
         } else if (guildId != null) {
             userService.updateUserGuild(guildId) { success, error ->
                 if (success) {
+
+                    if (guildURI != null) {
+                        ImageHandler().uploadGuildImageToFirebase(
+                            userImageUri = guildURI,
+                            guildID = guildData.guildId,
+                            onSuccess = {
+                                println("Image uploaded successfully!")
+                            },
+                            onFailure = { exception ->
+                                println("Failed to upload image: ${exception.message}")
+                            }
+                        )
+                    }
+
                     navController.navigate("guildScreen")  {
                         while (navController.popBackStack() == true) {
                             navController.popBackStack()
@@ -201,6 +237,9 @@ fun onSubmit(
             }
         }
     }
+
+
+
 }
 
 @Preview(showBackground = true)
