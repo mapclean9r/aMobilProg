@@ -27,7 +27,7 @@ import coil.compose.AsyncImage
 @Composable
 fun GameBox(gameData: GameData, onClick: (GameData) -> Unit) {
     Card(
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
         elevation = CardDefaults.cardElevation(8.dp),
         modifier = Modifier
@@ -38,7 +38,7 @@ fun GameBox(gameData: GameData, onClick: (GameData) -> Unit) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp)
+                .padding(6.dp)
         ) {
             AsyncImage(
                 model = gameData.thumbnail,
@@ -49,7 +49,7 @@ fun GameBox(gameData: GameData, onClick: (GameData) -> Unit) {
                     .align(Alignment.CenterVertically)
                     .padding(end = 16.dp)
                     .aspectRatio(1f)
-                    .clip(RoundedCornerShape(8.dp))
+                    .clip(RoundedCornerShape(16.dp))
             )
             Column(
                 modifier = Modifier
