@@ -44,7 +44,13 @@ import com.google.firebase.ktx.Firebase
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginView(navController: NavController) {
+fun LoginView(navController: NavController, isDarkMode: Boolean) {
+
+    val background = if (isDarkMode) {
+        painterResource(id = R.drawable.letsgoo4)
+    } else {
+        painterResource(id = R.drawable.light)
+    }
 
     var emailTextController by remember { mutableStateOf("") }
     var passwordTextController by remember { mutableStateOf("") }
@@ -55,9 +61,11 @@ fun LoginView(navController: NavController) {
     var isLoading by remember { mutableStateOf(false) }
     var loginError by remember { mutableStateOf<String?>(null) }
 
+
+if (isDarkMode){
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
-            painter = painterResource(id = R.drawable.letsgoo4),
+            painter = background,
             contentDescription = "Background Image",
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
@@ -65,8 +73,7 @@ fun LoginView(navController: NavController) {
 
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .background(Color(0x66000000)),
+                .fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -74,7 +81,6 @@ fun LoginView(navController: NavController) {
                 text = "Welcome to Arena",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.Green
             )
 
             Spacer(modifier = Modifier.height(28.dp))
@@ -211,6 +217,179 @@ fun LoginView(navController: NavController) {
             }
         }
     }
+    } else {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Image(
+            painter = background,
+            contentDescription = "Background Image",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Welcome to Arena",
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+
+            Spacer(modifier = Modifier.height(28.dp))
+
+            Text(
+                text = "Enter email and password",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            OutlinedTextField(
+                value = emailTextController,
+                onValueChange = { emailTextController = it },
+                label = { Text(text = "Email", color = Color.Gray) },
+                textStyle = TextStyle(color = Color.Black),
+                isError = loginError != null
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            OutlinedTextField(
+                value = passwordTextController,
+                onValueChange = { passwordTextController = it },
+                label = { Text(text = "Password", color = Color.Gray) },
+                textStyle = TextStyle(color = Color.Black),
+                visualTransformation = PasswordVisualTransformation(),
+                isError = loginError != null
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            if (loginError != null) {
+                Text(
+                    text = loginError!!,
+                    color = Color.Red,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(horizontal = 10.dp)
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+            }
+
+            Button(
+                onClick = {
+                    if (emailTextController.isNotEmpty() && passwordTextController.isNotEmpty()) {
+                        isLoading = true
+                        loginError = null
+                        login(
+                            navController,
+                            emailTextController,
+                            passwordTextController
+                        ) { success, message ->
+                            isLoading = false
+                            if (!success) {
+                                loginError = message
+                            }
+                        }
+                    } else {
+                        loginError = "Please fill in both email and password."
+                    }
+                },
+                enabled = !isLoading,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF6200EA),
+                    contentColor = Color.White
+                )
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(color = Color.White, modifier = Modifier.size(18.dp))
+                } else {
+                    Text(text = "Login")
+                }
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            TextButton(onClick = {
+                navController.navigate("registerScreen") {
+                    navController.popBackStack()
+                }
+            }) {
+                Text(
+                    text = "Don't have an account? Click to register",
+                    color = Color.Blue
+                )
+            }
+
+            TextButton(onClick = {
+                showPasswordResetField = !showPasswordResetField
+            }) {
+                Text(
+                    text = "Forgot your password? Click to reset",
+                    color = Color.Blue
+                )
+            }
+
+            if (showPasswordResetField) {
+                Spacer(modifier = Modifier.height(20.dp))
+
+                OutlinedTextField(
+                    value = resetEmailText,
+                    onValueChange = { resetEmailText = it },
+                    label = { Text(text = "Enter your email", color = Color.Gray) },
+                    textStyle = TextStyle(color = Color.Black),
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Button(
+                    onClick = {
+                        if (resetEmailText.isNotEmpty()) {
+                            isLoading = true
+                            sendPasswordResetEmail(resetEmailText) { success, message ->
+                                isLoading = false
+                                resetMessage = "Password reset e-mail sent to $resetEmailText"
+                            }
+                        } else {
+                            resetMessage = "Please enter your email."
+                        }
+                    },
+                    enabled = !isLoading,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF6200EA),
+                        contentColor = Color.White
+                    )
+                ) {
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            color = Color.White,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    } else {
+                        Text(text = "Send Reset Email")
+                    }
+                }
+
+                if (!resetMessage.isNullOrEmpty()) {
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = resetMessage ?: "",
+                        color = if (resetMessage!!.contains(
+                                "success",
+                                true
+                            )
+                        ) Color.Green else Color.Red
+                    )
+                }
+            }
+        }
+    }
+    }
 }
 
 private fun login(navController: NavController, email: String, password: String, onResult: (Boolean, String?) -> Unit) {
@@ -240,10 +419,10 @@ private fun sendPasswordResetEmail(email: String, onResult: (Boolean, String?) -
         }
 }
 
-
+/*
 @Preview(showBackground = true)
     @Composable
     fun LoginViewPreview() {
         LoginView(navController = rememberNavController())
     }
-
+*/

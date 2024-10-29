@@ -73,10 +73,10 @@ fun Arena(darkMODE: Boolean) {
             }
         ) {
             composable("loginScreen") {
-                LoginView(navController = navController)
+                LoginView(navController = navController, isDarkMode = isDarkMode)
             }
             composable("registerScreen") {
-                RegisterView(navController = navController)
+                RegisterView(navController = navController, isDarkMode = isDarkMode)
             }
             composable("homeScreen") {
                 HomeView(
