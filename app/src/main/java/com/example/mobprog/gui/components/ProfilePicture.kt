@@ -39,7 +39,7 @@ fun GetSelfProfileImage() {
     } else if (error != null) {
         Text(text = "Error loading image: $error", color = Color.Red)
     } else {
-        Text("Loading image...")
+        Text("")
     }
 }
 
@@ -74,7 +74,7 @@ fun GetSelfProfileImageCircle(size: Int) {
             contentScale = ContentScale.Crop
         )
     } else {
-        Text("Loading...")
+        Text("")
     }
 }
 
@@ -110,6 +110,6 @@ fun GetUserProfileImageCircle(userID: String, size: Int) {
             contentScale = ContentScale.Crop
         )
     } else {
-        Text("Loading...")
+        Text("")
     }
 }
