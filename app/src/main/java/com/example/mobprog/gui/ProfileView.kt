@@ -12,10 +12,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -43,6 +46,8 @@ import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.gui.components.GetSelfProfileImageCircle
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+
+
 
 private fun logout(navController: NavController) {
     val auth = Firebase.auth
@@ -128,30 +133,37 @@ fun ProfileView(navController: NavController, userService: UserService) {
                 ) {
                     GetSelfProfileImageCircle(200)
                 }
+
+
                 Column (modifier = Modifier
                     .fillMaxSize()
                     .padding(12.dp)) {
-                    Text(text = "Username: $username",
-                        fontSize = 18.sp,
+                    Text(text = username,
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .padding(top = 12.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                    Icon(
+                        imageVector = Icons.Default.CheckCircle,
+                        contentDescription = "Profile Icon",
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+
+
+
+
+                    Text(text = createdAt,
+                        fontSize = 14.sp,
                         fontWeight = FontWeight.W400,
                         modifier = Modifier
-                            .padding(12.dp)
-                            .align(Alignment.Start)
+                            .padding(2.dp)
+                            .align(Alignment.CenterHorizontally)
                     )
-                    Text(text = "Email: $email",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.W400,
-                        modifier = Modifier
-                            .padding(12.dp)
-                            .align(Alignment.Start)
-                    )
-                    Text(text = "User created: $createdAt",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.W400,
-                        modifier = Modifier
-                            .padding(12.dp)
-                            .align(Alignment.Start)
-                    )
+
+
                     Spacer(
                         modifier = Modifier.height(20.dp)
                     )
@@ -173,6 +185,32 @@ fun ProfileView(navController: NavController, userService: UserService) {
         }
     )
 }
+
+@Composable
+fun UsernameWithIcon(username: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .padding(top = 12.dp)
+    ) {
+        Text(
+            text = username,
+            fontSize = 26.sp,
+            fontWeight = FontWeight.Bold
+        )
+
+        Spacer(modifier = Modifier.width(8.dp)) // Optional spacing between text and icon
+
+        Icon(
+            imageVector = Icons.Default.Star, // Replace with your desired icon
+            contentDescription = "User Icon",
+            tint = Color.Yellow,
+            modifier = Modifier.size(24.dp) // Adjust icon size as needed
+        )
+    }
+}
+
+
 
 @Preview(showBackground = true)
 @Composable
