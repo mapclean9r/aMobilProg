@@ -1,64 +1,89 @@
 package com.example.mobprog.gui.components
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.core.text.trimmedLength
-import com.example.mobprog.R
 import com.example.mobprog.api.GameData
-import com.example.mobprog.createEvent.EventData
 import com.example.mobprog.util.titleLengthCheck
+import androidx.compose.foundation.layout.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import coil.compose.AsyncImage
 
 @Composable
-fun GameBox (gameData: GameData, onClick: (GameData) -> Unit) {
-    Column(
+fun GameBox(gameData: GameData, onClick: (GameData) -> Unit) {
+    Card(
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
+        elevation = CardDefaults.cardElevation(8.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .border(2.dp, Color.Blue, shape = RoundedCornerShape(10.dp))
-            .padding(12.dp)
+            .padding(8.dp)
+            .clickable { onClick(gameData) }
     ) {
-        Box(
+        Row(
             modifier = Modifier
-                .fillMaxSize()
-                .padding()
-                .clickable {
-                    onClick(gameData)
-                }
+                .fillMaxWidth()
+                .padding(16.dp)
         ) {
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = titleLengthCheck(gameData.title),
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold
-                , color = Color.Black
+            AsyncImage(
+                model = gameData.thumbnail,
+                contentDescription = "${gameData.title} image",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(80.dp)
+                    .align(Alignment.CenterVertically)
+                    .padding(end = 16.dp)
+                    .aspectRatio(1f)
+                    .clip(RoundedCornerShape(8.dp))
             )
-            Text(
-                text = gameData.genre,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.W400,
-                modifier = Modifier.align(Alignment.CenterEnd)
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 16.dp)
+            ) {
+                Text(
+                    text = titleLengthCheck(gameData.title ?: "Unknown Game"),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+
+                Text(
+                    text = gameData.genre ?: "Unknown Genre",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontWeight = FontWeight.Medium
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+                if (!gameData.description.isNullOrEmpty()) {
+                    Text(
+                        text = gameData.description,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
+                        maxLines = 2,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
+            }
         }
     }
-
 }
+
+
