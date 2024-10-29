@@ -154,7 +154,7 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
                                     .padding(12.dp)
                                     .align(Alignment.Start)
                             )
-                            Spacer(modifier = Modifier.height(320.dp))
+                            Spacer(modifier = Modifier.height(250.dp))
                             Row(modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceAround) {
                                 Button(onClick = { /*TODO*/ }) {
