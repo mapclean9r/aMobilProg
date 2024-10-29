@@ -36,6 +36,7 @@ import coil.compose.AsyncImage
 import com.example.mobprog.createEvent.EventData
 import com.example.mobprog.data.EventService
 import com.example.mobprog.data.UserService
+import com.example.mobprog.gui.components.BottomNavBar
 import com.google.firebase.auth.FirebaseAuth
 import java.util.Locale
 
@@ -157,6 +158,9 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                     }
                 }
             }
+        },
+        bottomBar = {
+            BottomNavBar(navController = navController, userService = UserService())
         }
     )
 }
