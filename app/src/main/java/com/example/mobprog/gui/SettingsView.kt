@@ -75,7 +75,7 @@ fun SettingsView(navController: NavController, onDarkModeToggle: (Boolean) -> Un
 
         if (uri != null) {
             selectedImageUri?.let {
-                ImageHandler().uploadImageToFirebase(uri,
+                ImageHandler().uploadProfileImageToFirebase(uri,
                     onSuccess = {
                         println("Image uploaded and URL saved to Firestore successfully!")
                     },
