@@ -3,11 +3,17 @@ package com.example.mobprog.gui
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.widget.DatePicker
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,7 +22,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -29,18 +37,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -56,11 +60,31 @@ import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.gui.components.GameBox
 import com.google.firebase.auth.FirebaseAuth
 import java.util.Calendar
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.font.FontWeight
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CreateEventView(navController: NavController, eventService: EventService) {
+    var isLoading by remember { mutableStateOf(false) }
+
     val scrollState = rememberScrollState()
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
@@ -102,12 +126,29 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
         }
     }
 
+    LaunchedEffect(isLoading) {
+        if (isLoading) {
+            kotlinx.coroutines.delay(2000)
+            isLoading = false
+            navController.navigate("homeScreen") {
+                while (navController.popBackStack()) {
+                    navController.popBackStack()
+                }
+            }
+        }
+    }
+
 
     LaunchedEffect(searchGameText) {
         filteredGames = games.filter { game ->
             game.title.contains(searchGameText, ignoreCase = true)
         } ?: emptyList()
     }
+    if (isLoading) {
+        LoadingScreen()
+    } else {
+
+
     if (!isLandscape) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -277,6 +318,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                     Spacer(modifier = Modifier.height(22.dp))
                     Button(
                         onClick = {
+                            isLoading = true
                             onSubmit(
                                 name,
                                 maxAttendance,
@@ -287,11 +329,8 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                                 eventService = eventService,
                                 creatorId = FirebaseAuth.getInstance().currentUser?.uid.toString()
                             )
-                            navController.navigate("homeScreen") {
-                                while (navController.popBackStack()) {
-                                    navController.popBackStack()
-                                }
-                            }
+
+
                         },
                         modifier = Modifier.fillMaxWidth(),
                     ) {
@@ -452,6 +491,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                         Spacer(modifier = Modifier.height(22.dp))
                         Button(
                             onClick = {
+                                isLoading = true
                                 onSubmit(
                                     name,
                                     maxAttendance,
@@ -462,13 +502,10 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                                     eventService = eventService,
                                     creatorId = FirebaseAuth.getInstance().currentUser?.uid.toString()
                                 )
-                                navController.navigate("homeScreen") {
-                                    while (navController.popBackStack()) {
-                                        navController.popBackStack()
-                                    }
-                                }
+
+
                             },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
                         ) {
                             Text("Create Event")
                         }
@@ -479,6 +516,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                 BottomNavBar(navController = navController, userService = UserService())
             }
         )
+    }
     }
 
     if (showSearch) {
@@ -563,6 +601,39 @@ fun onSubmit(name: String,
         description = description,
         startDate = startDate,
         creatorId = creatorId))
+}
+
+@Composable
+fun LoadingScreen() {
+    val infiniteTransition = rememberInfiniteTransition()
+    val animatedAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.3f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .wrapContentSize(Alignment.Center),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier
+                .size(64.dp)
+                .padding(bottom = 16.dp),
+            progress = animatedAlpha
+        )
+        Text(
+            text = "Your event is being created, please wait...",
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium
+        )
+    }
 }
 
 @Preview(showBackground = true)
