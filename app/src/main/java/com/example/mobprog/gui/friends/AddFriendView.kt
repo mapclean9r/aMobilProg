@@ -73,6 +73,7 @@ fun AddFriendView(navController: NavController) {
                     .fillMaxWidth()
                     .height(88.dp)
                     .padding(bottom = 10.dp, top = 24.dp)
+                    .background(MaterialTheme.colorScheme.primary)
                  ,
                 verticalAlignment = Alignment.CenterVertically,
                 //horizontalArrangement = Arrangement.SpaceBetween

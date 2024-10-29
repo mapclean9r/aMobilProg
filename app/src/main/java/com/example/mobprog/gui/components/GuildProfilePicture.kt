@@ -72,9 +72,9 @@ fun GetGuildProfileImageCircle(guildID: String, size: Int) {
             contentScale = ContentScale.Crop
         )
     } else if (error != null) {
-        Text(text = "Error loading image: $error")
+        DynamicImageSelector(imageName = "guild")
     } else {
-        Text("Loading...")
+        Text("")
     }
 }
 
