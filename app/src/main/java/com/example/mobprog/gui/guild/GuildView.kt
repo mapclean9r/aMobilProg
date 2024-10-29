@@ -40,6 +40,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.mobprog.data.GuildService
 import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
+import com.example.mobprog.gui.components.GetGuildProfileImageCircle
 import com.example.mobprog.guild.GuildData
 
 @Composable
@@ -115,19 +116,14 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
                     ) {
                         Box(
                             modifier = Modifier
-                                .size(62.dp) // The size of the circular container
+                                .size(162.dp)
                                 .background(
-                                    Color.LightGray,
+                                    MaterialTheme.colorScheme.secondary,
                                     shape = CircleShape
-                                ) // Background with circle shape and light grey color
-                                .padding(10.dp)
+                                )
+                                .padding(1.dp)
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Person,
-                                contentDescription = "Profile icon",
-                                tint = Color.Black,
-                                modifier = Modifier.size(50.dp)
-                            )
+                            GetGuildProfileImageCircle(guildID = guildData.guildId, size = 250)
                         }
                         Column(
                             modifier = Modifier
@@ -158,7 +154,7 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
                                     .padding(12.dp)
                                     .align(Alignment.Start)
                             )
-                            Spacer(modifier = Modifier.height(320.dp))
+                            Spacer(modifier = Modifier.height(250.dp))
                             Row(modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceAround) {
                                 Button(onClick = { /*TODO*/ }) {

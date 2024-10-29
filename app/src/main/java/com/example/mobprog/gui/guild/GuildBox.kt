@@ -11,6 +11,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -18,23 +23,47 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mobprog.data.UserService
+import com.example.mobprog.data.handlers.ImageHandler
 import com.example.mobprog.gui.components.DynamicImageSelector
+import com.example.mobprog.gui.components.GetGuildProfileImageCircle
+import com.example.mobprog.gui.components.GetGuildProfileImageView
 import com.example.mobprog.guild.GuildData
 
 @Composable
 fun GuildBox(guildData: GuildData, userService: UserService, navController: NavController) {
+
+    var imageUrl by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(guildData.guildId) {
+        ImageHandler().getGuildImageUrl(
+            guildID = guildData.guildId,
+
+            onSuccess =
+            { url -> imageUrl = url },
+
+            onFailure =
+            { exception -> println(exception.message) }
+        )
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .border(2.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
             .padding(12.dp)
     ) {
-        DynamicImageSelector(imageName = "guild")
+        GetGuildProfileImageView(guildID = guildData.guildId, size = 500)
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Guild name: ${guildData.name}",
+            text = guildData.name,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold
+        )
+        Text(
+            modifier = Modifier.padding( top = 5.dp),
+            text = guildData.description,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.W400
         )
         Text(
             text = "Guildleader: ${guildData.leader}",
