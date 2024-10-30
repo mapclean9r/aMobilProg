@@ -19,6 +19,7 @@ import com.example.mobprog.createEvent.EventData
 import com.example.mobprog.data.EventService
 import com.example.mobprog.data.GuildService
 import com.example.mobprog.data.UserService
+import com.example.mobprog.gui.AnyProfileView
 import com.example.mobprog.gui.CreateEventView
 import com.example.mobprog.gui.friends.FriendsView
 import com.example.mobprog.gui.HomeView
@@ -36,6 +37,7 @@ import com.example.mobprog.gui.guild.GuildView
 import com.example.mobprog.gui.guild.NoGuildView
 import com.example.mobprog.settings.SettingsManager
 import com.example.mobprog.ui.theme.MobProgTheme
+import com.example.mobprog.user.UserData
 
 
 @SuppressLint("StaticFieldLeak")
@@ -59,6 +61,7 @@ fun Arena(darkMODE: Boolean) {
     val navController = rememberNavController()
     var thisEvent by remember { mutableStateOf(EventData()) }
 
+    var selectedUser by remember { mutableStateOf(UserData()) }
 
 
     MobProgTheme(darkTheme = isDarkMode) {
@@ -121,7 +124,6 @@ fun Arena(darkMODE: Boolean) {
                 SettingsView(
                     navController = navController,
                     onDarkModeToggle = { darkMode ->
-                        // Update the state and save the preference
                         isDarkMode = darkMode
                         settingsManager.saveDarkMode(darkMode)
                     },
@@ -130,6 +132,9 @@ fun Arena(darkMODE: Boolean) {
             }
             composable("addFriendScreen") {
                 AddFriendView(navController = navController)
+            }
+            composable("anyProfileView") {
+                AnyProfileView(navController = navController, user = selectedUser)
             }
         }
     }}
