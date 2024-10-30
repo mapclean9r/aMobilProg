@@ -36,6 +36,7 @@ import androidx.navigation.NavController
 import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.gui.components.GetSelfProfileImageCircle
+import com.example.mobprog.gui.components.GetUserProfileImageCircle
 import com.example.mobprog.user.UserData
 
 @Composable
@@ -89,7 +90,7 @@ fun AnyProfileView(navController: NavController, user: UserData) {
                         )
                         .padding(1.dp)
                 ) {
-                    GetSelfProfileImageCircle(200)
+                    GetUserProfileImageCircle(userID = user.id, size = 250)
                 }
 
 
