@@ -10,8 +10,6 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.snapping.SnapPosition
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.foundation.layout.Box
@@ -26,7 +24,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -61,23 +58,11 @@ import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.gui.components.GameBox
 import com.google.firebase.auth.FirebaseAuth
 import java.util.Calendar
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
 
 
@@ -157,7 +142,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
     LaunchedEffect(searchGameText) {
         filteredGames = games.filter { game ->
             game.title.contains(searchGameText, ignoreCase = true)
-        } ?: emptyList()
+        }
     }
     if (isLoading) {
         LoadingScreen()
@@ -176,21 +161,13 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                         .background(MaterialTheme.colorScheme.primary),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text("Select Game", color = MaterialTheme.colorScheme.primary)
-                }
-                Spacer(modifier = Modifier.height(22.dp))
-                Button(
-                    onClick = {
-                        onSubmit(
-                            name,
-                            maxAttendance,
-                            location,
-                            startDate,
-                            description,
-                            gameCoverImage,
-                            eventService = eventService,
-                            creatorId = FirebaseAuth.getInstance().currentUser?.uid.toString(),
-                            locationCoordinates = selectedLocation?.value?.let { "${it.first},${it.second}" } ?: ""
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = "Create Event",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            modifier = Modifier.align(Alignment.Center)
                         )
                     }
                 }
@@ -363,7 +340,8 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                                 description,
                                 gameCoverImage,
                                 eventService = eventService,
-                                creatorId = FirebaseAuth.getInstance().currentUser?.uid.toString()
+                                creatorId = FirebaseAuth.getInstance().currentUser?.uid.toString(),
+                                locationCoordinates = selectedLocation?.value?.let { "${it.first},${it.second}" } ?: ""
                             )
 
 
@@ -555,7 +533,8 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                                     description,
                                     gameCoverImage,
                                     eventService = eventService,
-                                    creatorId = FirebaseAuth.getInstance().currentUser?.uid.toString()
+                                    creatorId = FirebaseAuth.getInstance().currentUser?.uid.toString(),
+                                    locationCoordinates = selectedLocation?.value?.let { "${it.first},${it.second}" } ?: ""
                                 )
 
 
@@ -640,6 +619,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
         }
 
 }
+
 fun onSubmit(name: String,
              maxAttendance: Int,
              location: String,
@@ -680,10 +660,12 @@ fun LoadingScreen() {
         verticalArrangement = Arrangement.Center
     ) {
         CircularProgressIndicator(
+            progress = {
+                animatedAlpha
+            },
             modifier = Modifier
                 .size(64.dp)
                 .padding(bottom = 16.dp),
-            progress = animatedAlpha
         )
         Text(
             text = "Your event is being created, please wait...",
