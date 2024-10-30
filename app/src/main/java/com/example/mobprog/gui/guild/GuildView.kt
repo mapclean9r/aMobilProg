@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
@@ -26,6 +28,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -42,20 +45,36 @@ import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.gui.components.GetGuildProfileImageCircle
 import com.example.mobprog.guild.GuildData
-
+import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun GuildView(navController: NavController, modifier: Modifier = Modifier, userService: UserService) {
 
+    val guildService = GuildService()
+    val membersIds = remember { mutableListOf<String>() }
+    val usernames = remember { mutableStateListOf<String>() }
     val guildDataState = remember { mutableStateOf<GuildData?>(null) }
     val isLoading = remember { mutableStateOf(true) }
+    val hostNameString = remember { mutableStateOf<String?>("") }
 
-    LaunchedEffect(Unit) {
-        GuildService().getCurrentUserGuildData { guildData ->
-            guildDataState.value = guildData
-            isLoading.value = false
-        }
+    userService.getUsernameWithDocID(guildDataState.value?.leader) { username ->
+        hostNameString.value = username ?: "Unknown"
     }
 
+    LaunchedEffect(Unit) {
+        guildService.getCurrentUserGuildData { guildData ->
+            guildDataState.value = guildData
+            isLoading.value = false
+
+            guildData?.members?.let { ids ->
+                membersIds.addAll(ids)
+                ids.forEach { memberId ->
+                    userService.getUsernameWithDocID(memberId) { username ->
+                        usernames.add(username ?: "Unknown")
+                    }
+                }
+            }
+        }
+    }
 
     if (isLoading.value) {
         Box(
@@ -63,7 +82,6 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.Center
-
         ) {
             CircularProgressIndicator(
                 strokeWidth = 15.dp,
@@ -139,61 +157,55 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
                                     .align(Alignment.Start)
                             )
                             Text(
-                                text = "Guild Leader:  ${guildData.leader}",
+                                text = "Guild Leader: ${hostNameString.value}",
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.W400,
-                                modifier = Modifier
-                                    .padding(12.dp)
-                                    .align(Alignment.Start)
+                                modifier = Modifier.padding(12.dp)
                             )
                             Text(
-                                text = "Guild Members: " + "",
+                                text = "Guild Members:",
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.W400,
-                                modifier = Modifier
-                                    .padding(12.dp)
-                                    .align(Alignment.Start)
+                                modifier = Modifier.padding(12.dp)
                             )
-                            Row(modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceAround) {
-                                Button(onClick = { /*TODO*/ }) {
-                                    Text(text = "Invite members")
-                                }
-                                Button(onClick = { /*TODO*/ }) {
-                                    Text(text = "Create Guild Event")
+                            LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                                items(usernames) { username ->
+                                    Text(
+                                        text = username,
+                                        fontSize = 16.sp,
+                                        modifier = Modifier.padding(8.dp)
+                                    )
                                 }
                             }
+
                             Button(
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color.Red // Bare endrer bakgrunnsfargen til mørkegrønn
+                                    containerColor = Color.Red
                                 ),
-                                onClick = { userService.updateUserGuild("") { success, exception ->
-                                    if (success) {
-                                        /* TODO: Lage notification for left guild */
-                                        navController.navigate("noGuildScreen") {
-                                            while (navController.popBackStack() == true) {
-                                                navController.popBackStack()
+                                onClick = {
+                                    userService.updateUserGuild("") { success, exception ->
+                                        if (success) {
+                                            navController.navigate("noGuildScreen") {
+                                                while (navController.popBackStack()) {
+                                                    navController.popBackStack()
+                                                }
                                             }
+                                        } else {
+                                            exception?.printStackTrace()
                                         }
-                                    } else {
-                                        /* TODO: Lage feilmelding til bruker hvis det ikke gikk å leave guild */
-                                        exception?.printStackTrace()
                                     }
-                                } },
+                                },
                                 modifier = Modifier
                                     .padding(16.dp)
-                                    .align(Alignment.End)){
+                                    .align(Alignment.End)
+                            ) {
                                 Text(text = "Leave Guild")
                             }
-
-
                         }
                     }
                 },
                 bottomBar = {
-                    // inspirert av link under for å lage navbar.
-                    // https://www.youtube.com/watch?v=O9csfKW3dZ4
-                    BottomNavBar(navController = navController, userService = UserService())
+                    BottomNavBar(navController = navController, userService = userService)
                 }
             )
         }
@@ -205,3 +217,4 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
 fun GuildViewPreview() {
     GuildView(navController = rememberNavController(), userService = UserService())
 }
+

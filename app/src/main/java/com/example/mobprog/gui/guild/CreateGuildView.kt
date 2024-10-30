@@ -39,9 +39,13 @@ import com.example.mobprog.data.UserService
 import com.example.mobprog.data.handlers.ImageHandler
 import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.guild.GuildData
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun CreateGuildView(navController: NavController, modifier: Modifier = Modifier, userService: UserService) {
+
+    val currentuserid = FirebaseAuth.getInstance().currentUser?.uid;
+
 
     var username by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
@@ -168,7 +172,7 @@ fun CreateGuildView(navController: NavController, modifier: Modifier = Modifier,
                             description,
                             picture = picture,
                             guildService = GuildService(),
-                            leader = username,
+                            leader = currentuserid.toString(),
                             userService = userService,
                             navController = navController,
                             guildURI = imageUri
