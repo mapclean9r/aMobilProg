@@ -76,7 +76,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
     val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
     val selectedLocation = savedStateHandle?.getLiveData<Pair<Double, Double>>("selected_location")
     selectedLocation?.observe(LocalLifecycleOwner.current) { locationPair ->
-        location = "Lat: ${locationPair.first}, Lng: ${locationPair.second}"
+        location = "${locationPair.first}, ${locationPair.second}"
     }
 
     GamingApi().fetchAllGames { gameList ->
