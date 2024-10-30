@@ -10,6 +10,12 @@ interface GeocodingApiService {
         @Query("address") address: String,
         @Query("key") apiKey: String
     ): Call<GeocodingResponse>
+
+    @GET("geocode/json")
+    fun getLocationName(
+        @Query("latlng") latlng: String,
+        @Query("key") apiKey: String
+    ): Call<GeocodingResponse>
 }
 
 data class GeocodingResponse(
@@ -17,6 +23,7 @@ data class GeocodingResponse(
 )
 
 data class Result(
+    val formatted_address: String,
     val geometry: Geometry
 )
 

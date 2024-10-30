@@ -131,8 +131,10 @@ fun Arena(darkMODE: Boolean) {
             composable("locationPickerScreen") {
                 LocationPickerView(
                     navController = navController,
-                    onLocationSelected = { latitude, longitude ->
-                        navController.previousBackStackEntry?.savedStateHandle?.set("selected_location", Pair(latitude, longitude))
+                    onLocationSelected = { latitude, longitude, locationName ->
+                        navController.previousBackStackEntry?.savedStateHandle?.set(
+                            "selected_location", Triple(latitude, longitude, locationName)
+                        )
                     },
                     isFineLocationGranted = isFineLocationGranted,
                     isCoarseLocationGranted = isCoarseLocationGranted

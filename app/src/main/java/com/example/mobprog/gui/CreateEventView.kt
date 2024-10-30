@@ -73,11 +73,20 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
 
     var selectedGame by remember { mutableStateOf<GameData?>(null) }
 
+    var latitude by remember { mutableStateOf<Double?>(null) }
+    var longitude by remember { mutableStateOf<Double?>(null) }
+
+
     val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
-    val selectedLocation = savedStateHandle?.getLiveData<Pair<Double, Double>>("selected_location")
-    selectedLocation?.observe(LocalLifecycleOwner.current) { locationPair ->
-        location = "${locationPair.first}, ${locationPair.second}"
+    val selectedLocation = savedStateHandle?.getLiveData<Triple<Double, Double, String>>("selected_location")
+    selectedLocation?.observe(LocalLifecycleOwner.current) { locationTriple ->
+        val (selectedLatitude, selectedLongitude, selectedLocationName) = locationTriple
+        latitude = selectedLatitude
+        longitude = selectedLongitude
+        location = selectedLocationName
     }
+
+
 
     GamingApi().fetchAllGames { gameList ->
         gameList?.let {
@@ -163,11 +172,10 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                     label = { Text("Enter Location or use Map") },
                     placeholder = { Text("location") },
                     modifier = Modifier.fillMaxWidth(),
-                    readOnly = true // Make it read-only since we want to use the map for selection
+                    readOnly = true
                 )
                 Button(
                     onClick = {
-                        // Navigate to LocationPickerView to select a location
                         navController.navigate("locationPickerScreen")
                     },
                     modifier = Modifier.fillMaxWidth(),
@@ -270,7 +278,8 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                             description,
                             gameCoverImage,
                             eventService = eventService,
-                            creatorId = FirebaseAuth.getInstance().currentUser?.uid.toString()
+                            creatorId = FirebaseAuth.getInstance().currentUser?.uid.toString(),
+                            locationCoordinates = selectedLocation?.value?.let { "${it.first},${it.second}" } ?: ""
                         )
                         navController.navigate("homeScreen") {
                             while (navController.popBackStack()) {
@@ -367,7 +376,8 @@ fun onSubmit(name: String,
              description: String,
              gameCoverImage: String,
              eventService: EventService,
-             creatorId: String) {
+             creatorId: String,
+             locationCoordinates: String) {
     eventService.createEvent(EventData(
         name = name,
         image = gameCoverImage,
@@ -375,7 +385,8 @@ fun onSubmit(name: String,
         location = location,
         description = description,
         startDate = startDate,
-        creatorId = creatorId))
+        creatorId = creatorId,
+        coordinates = locationCoordinates))
 }
 
 @Preview(showBackground = true)

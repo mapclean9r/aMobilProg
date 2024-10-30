@@ -137,16 +137,6 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                                 .wrapContentHeight()
                         )
                     }
-                    /*
-                    if (currentEvent != null) {
-                        Text(
-                            text = currentEvent.location.toUpperCase(Locale.ROOT),
-                            modifier = Modifier
-                                .padding(start = 28.dp, end = 28.dp, top = 8.dp)
-                                .wrapContentHeight()
-                        )
-                    }
-                    */
                     if (currentEvent != null) {
                         Text(
                             text = "Host: $username",
@@ -175,22 +165,20 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                     }
                     // Location START
                     if (currentEvent != null) {
-                        val locationParts = currentEvent.location.split(",")
-                        if (locationParts.size == 2) {
-                            val latitude = locationParts[0].toDoubleOrNull()
-                            val longitude = locationParts[1].toDoubleOrNull()
+                        val coordinatesParts = currentEvent.coordinates.split(",")
+                        if (coordinatesParts.size == 2) {
+                            val latitude = coordinatesParts[0].toDoubleOrNull()
+                            val longitude = coordinatesParts[1].toDoubleOrNull()
 
                             if (latitude != null && longitude != null) {
-                                // Display the map with the selected location
                                 Text(
-                                    text = "Location",
+                                    text = "Location: ${currentEvent.location}",
                                     modifier = Modifier
                                         .padding(start = 28.dp, end = 28.dp, top = 8.dp)
                                         .wrapContentHeight()
                                 )
                                 EventLocationMapView(latitude, longitude)
                             } else {
-                                // If the coordinates are not valid, just display the location text
                                 Text(
                                     text = currentEvent.location.uppercase(Locale.ROOT),
                                     modifier = Modifier
@@ -199,7 +187,6 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                                 )
                             }
                         } else {
-                            // If the location is not in coordinates, display it as text
                             Text(
                                 text = currentEvent.location.uppercase(Locale.ROOT),
                                 modifier = Modifier
