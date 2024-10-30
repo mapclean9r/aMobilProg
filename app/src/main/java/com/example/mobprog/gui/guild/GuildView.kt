@@ -19,6 +19,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
@@ -37,6 +38,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -152,21 +155,33 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
                                 .padding(12.dp)
                         ) {
                             Text(
-                                text = "Guild Name:  ${guildData.name}",
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.W400,
+                                text = guildData.name,
+                                fontSize = 28.sp,
+                                fontWeight = FontWeight.Bold,
                                 modifier = Modifier
                                     .padding(12.dp)
-                                    .align(Alignment.Start)
+                                    .align(Alignment.CenterHorizontally)
                             )
+                            Row {
+                                Icon(
+                                    imageVector = Icons.Default.Star,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier
+                                        .size(34.dp)
+                                        .padding(5.dp)
+                                )
+                                Text(
+                                    text = "${hostNameString.value}",
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontStyle = FontStyle.Italic,
+                                    modifier = Modifier.padding(5.dp)
+                                )
+                            }
+
                             Text(
-                                text = "Guild Leader: ${hostNameString.value}",
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.W400,
-                                modifier = Modifier.padding(12.dp)
-                            )
-                            Text(
-                                text = "Guild Members:",
+                                text = "Members:",
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.W400,
                                 modifier = Modifier.padding(12.dp)
@@ -174,7 +189,7 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
                             LazyColumn(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(300.dp)
+                                    .height(250.dp)
                                     .padding(horizontal = 16.dp)
                             ) {
                                 items(usernames) { username ->
