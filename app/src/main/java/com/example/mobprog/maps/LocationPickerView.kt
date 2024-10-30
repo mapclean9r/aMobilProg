@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -19,7 +20,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.Query
 
 @Composable
 fun LocationPickerView(
@@ -29,6 +29,7 @@ fun LocationPickerView(
     isCoarseLocationGranted: Boolean
 ) {
     val context = LocalContext.current
+    val focusManager = LocalFocusManager.current // Used to manage the focus state
 
     // Default location: Oslo, Norway
     val defaultLocation = LatLng(59.9139, 10.7522)
@@ -53,78 +54,104 @@ fun LocationPickerView(
     val geocodingApiService = retrofit.create(GeocodingApiService::class.java)
 
     if (isFineLocationGranted || isCoarseLocationGranted) {
-        Column(
+        Box(
             modifier = Modifier.fillMaxSize()
         ) {
-            // Search bar
-            TextField(
-                value = searchText,
-                onValueChange = { searchText = it },
-                label = { Text("Search Location") },
-                placeholder = { Text("Enter a location") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
-                singleLine = true
-            )
-
-            Button(
-                onClick = {
-                    // Make a geocoding request to search for the location
-                    if (searchText.isNotBlank()) {
-                        val call = geocodingApiService.getCoordinates(searchText, geocodingApiKey)
-                        call.enqueue(object : Callback<GeocodingResponse> {
-                            override fun onResponse(
-                                call: Call<GeocodingResponse>,
-                                response: Response<GeocodingResponse>
-                            ) {
-                                if (response.isSuccessful) {
-                                    val location = response.body()?.results?.firstOrNull()?.geometry?.location
-                                    if (location != null) {
-                                        val newLatLng = LatLng(location.lat, location.lng)
-                                        cameraPositionState.position = CameraPosition.fromLatLngZoom(newLatLng, 12f)
-                                    }
-                                } else {
-                                    Log.e("LocationPickerView", "Error fetching location: ${response.errorBody()?.string()}")
-                                }
-                            }
-
-                            override fun onFailure(call: Call<GeocodingResponse>, t: Throwable) {
-                                Log.e("LocationPickerView", "Error: ${t.message}")
-                            }
-                        })
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
+            Column(
+                modifier = Modifier.fillMaxSize()
             ) {
-                Text("Search")
+                // Search bar
+                TextField(
+                    value = searchText,
+                    onValueChange = { searchText = it },
+                    label = { Text("Search Location") },
+                    placeholder = { Text("Enter a location") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
+                    singleLine = true
+                )
+
+                Button(
+                    onClick = {
+                        // Make a geocoding request to search for the location
+                        if (searchText.isNotBlank()) {
+                            val call = geocodingApiService.getCoordinates(searchText, geocodingApiKey)
+                            call.enqueue(object : Callback<GeocodingResponse> {
+                                override fun onResponse(
+                                    call: Call<GeocodingResponse>,
+                                    response: Response<GeocodingResponse>
+                                ) {
+                                    if (response.isSuccessful) {
+                                        val location = response.body()?.results?.firstOrNull()?.geometry?.location
+                                        if (location != null) {
+                                            val newLatLng = LatLng(location.lat, location.lng)
+                                            cameraPositionState.position = CameraPosition.fromLatLngZoom(newLatLng, 12f)
+                                            focusManager.clearFocus() // Clear the focus after the search
+                                        }
+                                    } else {
+                                        Log.e("LocationPickerView", "Error fetching location: ${response.errorBody()?.string()}")
+                                    }
+                                }
+
+                                override fun onFailure(call: Call<GeocodingResponse>, t: Throwable) {
+                                    Log.e("LocationPickerView", "Error: ${t.message}")
+                                }
+                            })
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp)
+                ) {
+                    Text("Search")
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Google Map
+                GoogleMap(
+                    modifier = Modifier.weight(1f),
+                    cameraPositionState = cameraPositionState,
+                    onMapClick = { latLng ->
+                        // Update the state with the selected position
+                        selectedLatLng = latLng
+
+                        // Clear focus after clicking on the map
+                        focusManager.clearFocus()
+                    },
+                    properties = MapProperties(
+                        isMyLocationEnabled = isFineLocationGranted,
+                        isTrafficEnabled = false,
+                        isBuildingEnabled = false,
+                        isIndoorEnabled = false),
+                    uiSettings = MapUiSettings(zoomControlsEnabled = true)
+                ) {
+                    // Place a marker if a position has been selected
+                    selectedLatLng?.let {
+                        Marker(
+                            state = MarkerState(position = it),
+                            title = "Selected Location"
+                        )
+                    }
+                }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Google Map
-            GoogleMap(
-                modifier = Modifier.weight(1f),
-                cameraPositionState = cameraPositionState,
-                onMapClick = { latLng ->
-                    // Update the state with the selected position
-                    selectedLatLng = latLng
-
-                    // When the map is clicked, call the callback with the selected location
-                    onLocationSelected(latLng.latitude, latLng.longitude)
-                },
-                properties = MapProperties(isMyLocationEnabled = isFineLocationGranted),
-                uiSettings = MapUiSettings(zoomControlsEnabled = true)
-            ) {
-                // Place a marker if a position has been selected
-                selectedLatLng?.let {
-                    Marker(
-                        state = MarkerState(position = it),
-                        title = "Selected Location"
-                    )
+            // Floating Action Button to confirm the selected location
+            selectedLatLng?.let {
+                FloatingActionButton(
+                    onClick = {
+                        onLocationSelected(it.latitude, it.longitude)
+                        navController.popBackStack() // Optionally navigate back after selecting the location
+                    },
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = Color.White,
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(16.dp)
+                ) {
+                    Text("✓")
                 }
             }
         }

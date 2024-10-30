@@ -133,7 +133,6 @@ fun Arena(darkMODE: Boolean) {
                     navController = navController,
                     onLocationSelected = { latitude, longitude ->
                         navController.previousBackStackEntry?.savedStateHandle?.set("selected_location", Pair(latitude, longitude))
-                        navController.popBackStack()
                     },
                     isFineLocationGranted = isFineLocationGranted,
                     isCoarseLocationGranted = isCoarseLocationGranted
