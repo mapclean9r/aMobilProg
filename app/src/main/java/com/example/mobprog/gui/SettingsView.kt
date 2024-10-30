@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -48,7 +49,20 @@ import com.example.mobprog.data.UserService
 import com.example.mobprog.data.handlers.ImageHandler
 import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.ui.theme.MobProgTheme
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
+
+private fun logout(navController: NavController) {
+    val auth = Firebase.auth
+    auth.signOut()
+    navController.navigate("loginScreen") {
+        popUpTo("homeScreen") {
+            inclusive = true
+        }
+        navController.popBackStack()
+    }
+}
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -157,6 +171,14 @@ fun SettingsView(navController: NavController, onDarkModeToggle: (Boolean) -> Un
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
+                Button(
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Red
+                    ),
+                    onClick = {
+                        logout(navController) }, ) {
+                    Text(text = "Logout")
+                }
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Row(

@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
@@ -50,19 +52,6 @@ import com.example.mobprog.gui.components.GetSelfProfileImageCircle
 import com.example.mobprog.gui.components.ProfileEventBox
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-
-
-
-private fun logout(navController: NavController) {
-    val auth = Firebase.auth
-    auth.signOut()
-    navController.navigate("loginScreen") {
-        popUpTo("homeScreen") {
-            inclusive = true
-        }
-        navController.popBackStack()
-    }
-}
 
 @Composable
 fun ProfileView(navController: NavController, userService: UserService) {
@@ -180,26 +169,24 @@ fun ProfileView(navController: NavController, userService: UserService) {
                             .align(Alignment.CenterHorizontally)
                     )
 
-                    Divider(color = Color.Black, thickness = 1.dp)
+
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    println(myEvents)
-                    myEvents?.forEach { event ->
-                        ProfileEventBox(navController = navController, eventData = event) {
-                            println("Event stuff -> $event")
-                        }}
-
-                    Spacer(modifier = Modifier.height(20.dp))
-
-                        Button(
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.Red // Bare endrer bakgrunnsfargen til mørkegrønn
-                            ),
-                            onClick = {
-                           logout(navController) }, ) {
-                            Text(text = "Logout")
+                    LazyColumn(
+                        modifier = Modifier
+                            .height(350.dp)
+                            .padding(16.dp)
+                    ) {
+                        items(myEvents ?: emptyList()) { event ->
+                            ProfileEventBox(navController = navController, eventData = event) {
+                                println("Event stuff -> $event")
+                            }
                         }
+                    }
+
+
+
                 }
             }
         },
