@@ -1,4 +1,4 @@
-package com.example.mobprog.data;
+package com.example.mobprog.data
 
 import com.example.mobprog.createEvent.EventData
 import com.google.firebase.auth.FirebaseAuth
@@ -80,7 +80,23 @@ class EventService {
             }
     }
 
-    fun deleteEvent(documentId: String) {
+    fun getEventsByCreatorId(creatorID: String, callback: (List<EventData>?) -> Unit) {
+        val eventsRef = db.collection("events")
+        eventsRef.whereEqualTo("creatorId", creatorID)
+            .get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val eventsList = task.result?.mapNotNull { document ->
+                        document.toObject(EventData::class.java).copy(id = document.id)
+                    }
+                    callback(eventsList)
+                } else {
+                    callback(null)
+                }
+            }
+    }
+
+                fun deleteEvent(documentId: String) {
         val docRef = db.collection("events").document(documentId)
         docRef.delete()
     }
@@ -97,7 +113,7 @@ class EventService {
                 location = data["location"] as? String ?: "N/A",
                 creatorId = data["creatorId"] as? String ?: currentUserID,
                 comments = data["comments"] as? List<String> ?: emptyList(),
-                maxAttendance = data["maxAttendance"] as? Number ?: 0,
+                maxAttendance = data["maxAttendance"] as? Int ?: 0,
                 attending = data["attending"] as? List<String> ?: emptyList(),
                 image = data["image"] as? String ?: "",
                 id = data["id"] as? String ?: ""

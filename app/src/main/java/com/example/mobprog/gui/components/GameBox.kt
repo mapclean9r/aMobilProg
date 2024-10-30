@@ -45,7 +45,7 @@ fun GameBox(gameData: GameData, onClick: (GameData) -> Unit) {
                 contentDescription = "${gameData.title} image",
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
-                    .size(150.dp)
+                    .size(50.dp)
                     .align(Alignment.CenterVertically)
                     .padding(end = 16.dp)
                     .aspectRatio(1f)

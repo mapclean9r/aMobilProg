@@ -14,9 +14,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
@@ -41,9 +41,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.mobprog.createEvent.EventData
+import com.example.mobprog.data.EventService
 import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
+import com.example.mobprog.gui.components.EventBox
 import com.example.mobprog.gui.components.GetSelfProfileImageCircle
+import com.example.mobprog.gui.components.ProfileEventBox
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -66,6 +70,10 @@ fun ProfileView(navController: NavController, userService: UserService) {
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var createdAt by remember { mutableStateOf("") }
+    var userID by remember { mutableStateOf("")}
+
+    var myEvents by remember { mutableStateOf<List<EventData>?>(null) }
+
 
     LaunchedEffect(Unit) {
         userService.getCurrentUserData { userData ->
@@ -74,11 +82,23 @@ fun ProfileView(navController: NavController, userService: UserService) {
                 val fetchedName = userData["name"] as? String
                 val fetchedEmail = userData["email"] as? String
                 val fetchedDate = userData["dateCreated"] as? String
+                val fetchedID = userData["id"] as? String
                 username = fetchedName ?: ""
                 email = fetchedEmail ?: ""
                 createdAt = fetchedDate ?: ""
+                userID = fetchedID ?: ""
             } else {
                 Log.w("UserData", "No user data found for current user")
+            }
+        }
+    }
+    LaunchedEffect(userID) {
+        EventService().getEventsByCreatorId(userID) { result ->
+            if (result != null) {
+                myEvents = result
+                println("launch $result")
+            } else {
+                println("Failed to load events.")
             }
         }
     }
@@ -152,21 +172,26 @@ fun ProfileView(navController: NavController, userService: UserService) {
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
 
-
-
-
                     Text(text = createdAt,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.W400,
                         modifier = Modifier
-                            .padding(2.dp)
+                            .padding(2.dp, bottom = 15.dp)
                             .align(Alignment.CenterHorizontally)
                     )
 
+                    Divider(color = Color.Black, thickness = 1.dp)
 
-                    Spacer(
-                        modifier = Modifier.height(20.dp)
-                    )
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    println(myEvents)
+                    myEvents?.forEach { event ->
+                        ProfileEventBox(navController = navController, eventData = event) {
+                            println("Event stuff -> $event")
+                        }}
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
                         Button(
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color.Red // Bare endrer bakgrunnsfargen til mørkegrønn
