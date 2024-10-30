@@ -94,6 +94,23 @@ class UserService {
         }
     }
 
+    fun getUserDataByID(userID: String, callback:  (Map<String, Any>?) -> Unit){
+        val userRef = db.collection("users").document(userID)
+        userRef.get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val data = document.data
+                    callback(data)
+                } else {
+                    callback(null)
+                }
+            }
+            .addOnFailureListener { exception ->
+                exception.printStackTrace()
+                callback(null)
+            }
+    }
+
     fun updateUserProfile(name: String, picture: String, callback: (Boolean, Exception?) -> Unit) {
         val uid = FirebaseAuth.getInstance().currentUser?.uid
         if (uid != null) {
