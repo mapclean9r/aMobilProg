@@ -116,6 +116,7 @@ class EventService {
                 maxAttendance = data["maxAttendance"] as? Int ?: 0,
                 attending = data["attending"] as? List<String> ?: emptyList(),
                 image = data["image"] as? String ?: "",
+                coordinates = data["coordinates"] as? String ?: "",
                 id = data["id"] as? String ?: ""
             )
         } catch (e: Exception) {

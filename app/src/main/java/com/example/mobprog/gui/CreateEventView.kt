@@ -49,6 +49,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobprog.api.GameData
@@ -117,6 +118,20 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
             startDate = "$pickedDay/${pickedMonth + 1}/$pickedYear"
         }, year, month, day
     )
+    var latitude by remember { mutableStateOf<Double?>(null) }
+    var longitude by remember { mutableStateOf<Double?>(null) }
+
+
+    val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
+    val selectedLocation = savedStateHandle?.getLiveData<Triple<Double, Double, String>>("selected_location")
+    selectedLocation?.observe(LocalLifecycleOwner.current) { locationTriple ->
+        val (selectedLatitude, selectedLongitude, selectedLocationName) = locationTriple
+        latitude = selectedLatitude
+        longitude = selectedLongitude
+        location = selectedLocationName
+    }
+
+
 
     GamingApi().fetchAllGames { gameList ->
         gameList?.let {
@@ -161,13 +176,21 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                         .background(MaterialTheme.colorScheme.primary),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Box(modifier = Modifier.fillMaxWidth()) {
-                        Text(
-                            text = "Create Event",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            modifier = Modifier.align(Alignment.Center)
+                    Text("Select Game", color = MaterialTheme.colorScheme.primary)
+                }
+                Spacer(modifier = Modifier.height(22.dp))
+                Button(
+                    onClick = {
+                        onSubmit(
+                            name,
+                            maxAttendance,
+                            location,
+                            startDate,
+                            description,
+                            gameCoverImage,
+                            eventService = eventService,
+                            creatorId = FirebaseAuth.getInstance().currentUser?.uid.toString(),
+                            locationCoordinates = selectedLocation?.value?.let { "${it.first},${it.second}" } ?: ""
                         )
                     }
                 }
@@ -201,26 +224,39 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                         placeholder = { Text("title") },
                         modifier = Modifier.fillMaxWidth(),
                     )
-                    Text(
-                        text = "Location",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.W400,
-                        modifier = Modifier
-                            .padding(6.dp)
-                            .align(Alignment.Start),
-                        color = MaterialTheme.colorScheme.primary
+                // Location START
+                Text(
+                    text = "Location",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.W400,
+                    modifier = Modifier
+                        .padding(6.dp)
+                        .align(Alignment.Start),
+                    color = MaterialTheme.colorScheme.primary
+                )
+                TextField(
+                    value = location,
+                    onValueChange = { newText ->
+                        location = newText
+                    },
+                    label = { Text("Enter Location or use Map") },
+                    placeholder = { Text("location") },
+                    modifier = Modifier.fillMaxWidth(),
+                    readOnly = true
+                )
+                Button(
+                    onClick = {
+                        navController.navigate("locationPickerScreen")
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = Color.White
                     )
-                    TextField(
-                        value = location,
-                        onValueChange = { newText ->
-                            location = newText
-                            /* TODO behandle input her */
-                        },
-                        label = { Text("Enter Location") },
-                        placeholder = { Text("location") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
+                ) {
+                    Text("Select Location on Map", color = MaterialTheme.colorScheme.primary)
+                }
+                // Location END
                     Text(
                         text = "Description",
                         fontSize = 16.sp,
@@ -397,20 +433,39 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                             modifier = Modifier.fillMaxWidth()
                         )
 
+                        // Location START
                         Text(
                             text = "Location",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.W400,
-                            modifier = Modifier.align(Alignment.Start),
+                            modifier = Modifier
+                                .padding(6.dp)
+                                .align(Alignment.Start),
                             color = MaterialTheme.colorScheme.primary
                         )
                         TextField(
                             value = location,
-                            onValueChange = { newText -> location = newText },
-                            label = { Text("Enter Location") },
+                            onValueChange = { newText ->
+                                location = newText
+                            },
+                            label = { Text("Enter Location or use Map") },
                             placeholder = { Text("location") },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
+                            readOnly = true
                         )
+                        Button(
+                            onClick = {
+                                navController.navigate("locationPickerScreen")
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                contentColor = Color.White
+                            )
+                        ) {
+                            Text("Select Location on Map", color = MaterialTheme.colorScheme.primary)
+                        }
+                        // Location END
 
                         Text(
                             text = "Description",
@@ -592,7 +647,8 @@ fun onSubmit(name: String,
              description: String,
              gameCoverImage: String,
              eventService: EventService,
-             creatorId: String) {
+             creatorId: String,
+             locationCoordinates: String) {
     eventService.createEvent(EventData(
         name = name,
         image = gameCoverImage,
@@ -600,7 +656,8 @@ fun onSubmit(name: String,
         location = location,
         description = description,
         startDate = startDate,
-        creatorId = creatorId))
+        creatorId = creatorId,
+        coordinates = locationCoordinates))
 }
 
 @Composable

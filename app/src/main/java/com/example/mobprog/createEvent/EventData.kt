@@ -11,5 +11,6 @@ data class EventData(
     val maxAttendance: Int = 0,
     val attending: List<String> = emptyList(),
     val image: String = "",
+    val coordinates: String = "",
     val id: String = ""
 )

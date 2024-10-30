@@ -37,6 +37,7 @@ import com.example.mobprog.createEvent.EventData
 import com.example.mobprog.data.EventService
 import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
+import com.example.mobprog.maps.EventLocationMapView
 import com.google.firebase.auth.FirebaseAuth
 import java.util.Locale
 
@@ -114,36 +115,74 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                             .wrapContentHeight()
                     )
                     Divider(color = Color.Gray, thickness = 1.dp)
-                    Text(
-                        text = it.startDate + " - " + it.endDate,
-                        modifier = Modifier
-                            .padding(start = 28.dp, end = 28.dp, top = 8.dp)
-                            .wrapContentHeight()
-                    )
-                    Text(
-                        text = "Location: ${it.location.toUpperCase(Locale.ROOT)}",
-                        modifier = Modifier
-                            .padding(start = 28.dp, end = 28.dp, top = 8.dp)
-                            .wrapContentHeight()
-                    )
-                    Text(
-                        text = "Host: $username",
-                        modifier = Modifier
-                            .padding(start = 28.dp, end = 28.dp, top = 8.dp)
-                            .wrapContentHeight()
-                    )
-                    Text(
-                        text = "People attending: $numberOfPeopleAttending",
-                        modifier = Modifier
-                            .padding(start = 28.dp, end = 28.dp, top = 8.dp)
-                            .wrapContentHeight()
-                    )
-                    Text(
-                        text = "Max Party size: " + it.maxAttendance.toString(),
-                        modifier = Modifier
-                            .padding(start = 28.dp, end = 28.dp, top = 8.dp)
-                            .wrapContentHeight()
-                    )
+                    if (currentEvent != null) {
+                        Text(
+                            text = currentEvent.startDate + " - " + currentEvent.endDate,
+                            modifier = Modifier
+                                .padding(start = 28.dp, end = 28.dp, top = 8.dp)
+                                .wrapContentHeight()
+                        )
+                    }
+                    if (currentEvent != null) {
+                        Text(
+                            text = "Host: $username",
+                            modifier = Modifier
+                                .padding(start = 28.dp, end = 28.dp, top = 8.dp)
+                                .wrapContentHeight()
+                        )
+                    }
+                    if (currentEvent != null) {
+                        Text(
+                            //text = "People attending: " + currentEvent.attending.size,
+
+                            text = "People attending: $numberOfPeopleAttending",
+                            modifier = Modifier
+                                .padding(start = 28.dp, end = 28.dp, top = 8.dp)
+                                .wrapContentHeight()
+                        )
+                    }
+                    if (currentEvent != null) {
+                        Text(
+                            text = "Max Party size: " + currentEvent.maxAttendance.toString(),
+                            modifier = Modifier
+                                .padding(start = 28.dp, end = 28.dp, top = 8.dp)
+                                .wrapContentHeight()
+                        )
+                    }
+                    // Location START
+                    if (currentEvent != null) {
+                        val coordinatesParts = currentEvent.coordinates.split(",")
+                        if (coordinatesParts.size == 2) {
+                            val latitude = coordinatesParts[0].toDoubleOrNull()
+                            val longitude = coordinatesParts[1].toDoubleOrNull()
+
+                            if (latitude != null && longitude != null) {
+                                Text(
+                                    text = "Location: ${currentEvent.location}",
+                                    modifier = Modifier
+                                        .padding(start = 28.dp, end = 28.dp, top = 8.dp)
+                                        .wrapContentHeight()
+                                )
+                                EventLocationMapView(latitude, longitude)
+                            } else {
+                                Text(
+                                    text = currentEvent.location.uppercase(Locale.ROOT),
+                                    modifier = Modifier
+                                        .padding(start = 28.dp, end = 28.dp, top = 8.dp)
+                                        .wrapContentHeight()
+                                )
+                            }
+                        } else {
+                            Text(
+                                text = currentEvent.location.uppercase(Locale.ROOT),
+                                modifier = Modifier
+                                    .padding(start = 28.dp, end = 28.dp, top = 8.dp)
+                                    .wrapContentHeight()
+                            )
+                        }
+                    }
+                    // Location END
+                    //Spacer(modifier = Modifier.height(500.dp).padding(paddingValues))
                     Row {
                         Button(
                             onClick = {

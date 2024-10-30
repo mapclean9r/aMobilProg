@@ -3,8 +3,10 @@ package com.example.mobprog
 import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
@@ -12,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -35,10 +38,23 @@ import com.example.mobprog.gui.friends.FriendRequestView
 import com.example.mobprog.gui.guild.CreateGuildView
 import com.example.mobprog.gui.guild.GuildView
 import com.example.mobprog.gui.guild.NoGuildView
+import com.example.mobprog.maps.LocationPickerView
 import com.example.mobprog.settings.SettingsManager
 import com.example.mobprog.ui.theme.MobProgTheme
 import com.example.mobprog.user.UserData
 
+import android.Manifest
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 
 @SuppressLint("StaticFieldLeak")
 lateinit var settingsManager: SettingsManager
@@ -62,7 +78,31 @@ fun Arena(darkMODE: Boolean) {
     var thisEvent by remember { mutableStateOf(EventData()) }
 
     var selectedUser by remember { mutableStateOf(UserData()) }
+    val context = LocalContext.current
+    var isFineLocationGranted by remember { mutableStateOf(false) }
+    var isCoarseLocationGranted by remember { mutableStateOf(false) }
 
+    val locationPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        isFineLocationGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
+        isCoarseLocationGranted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
+
+        if (!isFineLocationGranted && !isCoarseLocationGranted) {
+            // If neither permission is granted, inform the user
+            // In a real-world app, you could use a snackbar, dialog, or similar UI element
+            println("Location permission is required to access map features.")
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        locationPermissionLauncher.launch(
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+        )
+    }
 
     MobProgTheme(darkTheme = isDarkMode) {
 
@@ -91,6 +131,18 @@ fun Arena(darkMODE: Boolean) {
             }
             composable("createEventScreen") {
                 CreateEventView(navController = navController, eventService = EventService())
+            }
+            composable("locationPickerScreen") {
+                LocationPickerView(
+                    navController = navController,
+                    onLocationSelected = { latitude, longitude, locationName ->
+                        navController.previousBackStackEntry?.savedStateHandle?.set(
+                            "selected_location", Triple(latitude, longitude, locationName)
+                        )
+                    },
+                    isFineLocationGranted = isFineLocationGranted,
+                    isCoarseLocationGranted = isCoarseLocationGranted
+                )
             }
             composable("eventScreen") {
                 EventView(
@@ -137,4 +189,5 @@ fun Arena(darkMODE: Boolean) {
                 AnyProfileView(navController = navController, user = selectedUser)
             }
         }
-    }}
+    }
+}
