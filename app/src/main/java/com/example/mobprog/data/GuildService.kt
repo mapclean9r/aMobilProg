@@ -82,6 +82,7 @@ class GuildService {
         }
     }
 
+
     fun getAllGuilds(callback: (List<Map<String, Any>>?) -> Unit) {
         val allGuildsRef = db.collection("guilds")
 

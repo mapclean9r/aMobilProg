@@ -108,7 +108,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                             .wrapContentHeight()
                     )
                     Text(
-                        text = "Description: " + it.description,
+                        text = it.description,
                         modifier = Modifier
                             .padding(start = 28.dp, end = 28.dp, top = 8.dp, bottom = 20.dp)
                             .wrapContentHeight()
@@ -121,7 +121,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                             .wrapContentHeight()
                     )
                     Text(
-                        text = it.location.toUpperCase(Locale.ROOT),
+                        text = "Location: ${it.location.toUpperCase(Locale.ROOT)}",
                         modifier = Modifier
                             .padding(start = 28.dp, end = 28.dp, top = 8.dp)
                             .wrapContentHeight()
