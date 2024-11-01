@@ -43,6 +43,7 @@ import java.util.Locale
 
 @Composable
 fun EventView(navController: NavController, eventData: EventData?, currentEvent: EventData?) {
+    val thisCurrentEvent = currentEvent;
     val eventService = EventService()
     val userService = UserService()
     val currentUserID = FirebaseAuth.getInstance().currentUser?.uid.toString()
@@ -50,21 +51,21 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
     var username by remember { mutableStateOf("") }
 
     fun attenderStarterValue(): Int {
-        return currentEvent?.attending?.size ?: 0
+        return thisCurrentEvent?.attending?.size ?: 0
     }
 
     var numberOfPeopleAttending by remember { mutableIntStateOf(attenderStarterValue()) }
 
     fun updateAttendingPeople() {
-        if (currentEvent != null) {
-            if (!currentEvent.attending.contains(currentUserID)) {
+        if (thisCurrentEvent != null) {
+            if (!thisCurrentEvent.attending.contains(currentUserID)) {
                 numberOfPeopleAttending = currentEvent.attending.size + 1
             }
         }
     }
 
-    if (currentEvent != null) {
-        userService.getUsernameWithDocID(currentEvent.creatorId) { creatorId ->
+    if (thisCurrentEvent != null) {
+        userService.getUsernameWithDocID(thisCurrentEvent.creatorId) { creatorId ->
             username = creatorId ?: "username not found..."
         }
     }
@@ -98,7 +99,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
-                currentEvent?.let {
+                thisCurrentEvent?.let {
                     CoverImageAPIEvent(it.image)
                     Text(
                         text = it.name,
@@ -115,15 +116,15 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                             .wrapContentHeight()
                     )
                     Divider(color = Color.Gray, thickness = 1.dp)
-                    if (currentEvent != null) {
+                    if (thisCurrentEvent != null) {
                         Text(
-                            text = currentEvent.startDate + " - " + currentEvent.endDate,
+                            text = thisCurrentEvent.startDate + " - " + thisCurrentEvent.endDate,
                             modifier = Modifier
                                 .padding(start = 28.dp, end = 28.dp, top = 8.dp)
                                 .wrapContentHeight()
                         )
                     }
-                    if (currentEvent != null) {
+                    if (thisCurrentEvent != null) {
                         Text(
                             text = "Host: $username",
                             modifier = Modifier
@@ -131,7 +132,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                                 .wrapContentHeight()
                         )
                     }
-                    if (currentEvent != null) {
+                    if (thisCurrentEvent != null) {
                         Text(
                             //text = "People attending: " + currentEvent.attending.size,
 
@@ -141,24 +142,24 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                                 .wrapContentHeight()
                         )
                     }
-                    if (currentEvent != null) {
+                    if (thisCurrentEvent != null) {
                         Text(
-                            text = "Max Party size: " + currentEvent.maxAttendance.toString(),
+                            text = "Max Party size: " + thisCurrentEvent.maxAttendance.toString(),
                             modifier = Modifier
                                 .padding(start = 28.dp, end = 28.dp, top = 8.dp)
                                 .wrapContentHeight()
                         )
                     }
                     // Location START
-                    if (currentEvent != null) {
-                        val coordinatesParts = currentEvent.coordinates.split(",")
+                    if (thisCurrentEvent != null) {
+                        val coordinatesParts = thisCurrentEvent.coordinates.split(",")
                         if (coordinatesParts.size == 2) {
                             val latitude = coordinatesParts[0].toDoubleOrNull()
                             val longitude = coordinatesParts[1].toDoubleOrNull()
 
                             if (latitude != null && longitude != null) {
                                 Text(
-                                    text = "Location: ${currentEvent.location}",
+                                    text = "Location: ${thisCurrentEvent.location}",
                                     modifier = Modifier
                                         .padding(start = 28.dp, end = 28.dp, top = 8.dp)
                                         .wrapContentHeight()
@@ -166,7 +167,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                                 EventLocationMapView(latitude, longitude)
                             } else {
                                 Text(
-                                    text = currentEvent.location.uppercase(Locale.ROOT),
+                                    text = thisCurrentEvent.location.uppercase(Locale.ROOT),
                                     modifier = Modifier
                                         .padding(start = 28.dp, end = 28.dp, top = 8.dp)
                                         .wrapContentHeight()
@@ -174,7 +175,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                             }
                         } else {
                             Text(
-                                text = currentEvent.location.uppercase(Locale.ROOT),
+                                text = thisCurrentEvent.location.uppercase(Locale.ROOT),
                                 modifier = Modifier
                                     .padding(start = 28.dp, end = 28.dp, top = 8.dp)
                                     .wrapContentHeight()
@@ -210,13 +211,13 @@ fun ShowDeleteButton(
     hostID: String,
     navController: NavController,
     eventService: EventService,
-    currentEvent: EventData?
+    thisCurrentEvent: EventData?
 ) {
     if (userIFromDb == hostID) {
         Button(
             colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
             onClick = {
-                currentEvent?.let {
+                thisCurrentEvent?.let {
                     eventService.deleteEvent(it.id)
                     navController.navigate("homeScreen") {
                         navController.popBackStack()

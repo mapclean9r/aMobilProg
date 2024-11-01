@@ -52,9 +52,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.mobprog.gui.event.eventDataSaver
 
 @SuppressLint("StaticFieldLeak")
 lateinit var settingsManager: SettingsManager
@@ -73,9 +75,11 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Arena(darkMODE: Boolean) {
+    var thisEvent by rememberSaveable(stateSaver = eventDataSaver) {
+        mutableStateOf(EventData())
+    }
     var isDarkMode by remember { mutableStateOf(darkMODE) }
     val navController = rememberNavController()
-    var thisEvent by remember { mutableStateOf(EventData()) }
 
     var selectedUser by remember { mutableStateOf(UserData()) }
     val context = LocalContext.current
