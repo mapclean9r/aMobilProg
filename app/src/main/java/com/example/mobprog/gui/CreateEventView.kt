@@ -59,7 +59,9 @@ import com.example.mobprog.gui.components.GameBox
 import com.google.firebase.auth.FirebaseAuth
 import java.util.Calendar
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.foundation.border
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -201,39 +203,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                         placeholder = { Text("title") },
                         modifier = Modifier.fillMaxWidth(),
                     )
-                // Location START
-                Text(
-                    text = "Location",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.W400,
-                    modifier = Modifier
-                        .padding(6.dp)
-                        .align(Alignment.Start),
-                    color = MaterialTheme.colorScheme.primary
-                )
-                TextField(
-                    value = location,
-                    onValueChange = { newText ->
-                        location = newText
-                    },
-                    label = { Text("Enter Location or use Map") },
-                    placeholder = { Text("location") },
-                    modifier = Modifier.fillMaxWidth(),
-                    readOnly = true
-                )
-                Button(
-                    onClick = {
-                        navController.navigate("locationPickerScreen")
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = Color.White
-                    )
-                ) {
-                    Text("Select Location on Map", color = MaterialTheme.colorScheme.primary)
-                }
-                // Location END
+                    // Location END
                     Text(
                         text = "Description",
                         fontSize = 16.sp,
@@ -254,6 +224,38 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                             .fillMaxWidth()
                             .padding(bottom = 6.dp)
                     )
+                // Location START
+                Text(
+                    text = "Location",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.W400,
+                    modifier = Modifier
+                        .padding(6.dp)
+                        .align(Alignment.Start),
+                    color = MaterialTheme.colorScheme.primary
+                )
+                TextField(
+                    value = location,
+                    onValueChange = { newText ->
+                        location = newText
+                    },
+                    label = { Text("Enter Location") },
+                    placeholder = { Text("location") },
+                    modifier = Modifier.fillMaxWidth(),
+                    readOnly = true
+                )
+                Button(
+                    onClick = {
+                        navController.navigate("locationPickerScreen")
+                    },
+                    modifier = Modifier
+                        .width(275.dp)
+                        .padding(bottom = 8.dp, top = 8.dp),
+
+                ) {
+                    Text("Select Location with Google Maps")
+                }
+
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -269,6 +271,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                                 modifier = Modifier
                                     .width(120.dp)
                                     .padding(bottom = 8.dp)
+
                             ) {
                                 Text(text = "Velg dato")
                             }
@@ -324,11 +327,12 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                         onClick = {
                             showSearch = true
                         },
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                        .width(275.dp),
                     ) {
                         Text("Select Game")
                     }
-                    Spacer(modifier = Modifier.height(22.dp))
+                    Spacer(modifier = Modifier.weight(1f))
                     Button(
                         onClick = {
                             isLoading = true
@@ -346,7 +350,16 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
 
 
                         },
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth()
+                            .height(75.dp),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.DarkGray, // Bakgrunnsfargen på knappen
+                            contentColor = Color.White,  // Tekstfargen på knappen
+                            disabledContainerColor = Color.Gray, // Bakgrunnsfarge når knappen er deaktivert
+                            disabledContentColor = Color.LightGray // Tekstfarge når knappen er deaktivert
+                        )
+
                     ) {
                         Text("Create Event")
                     }
@@ -521,7 +534,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                         ) {
                             Text("Select Game")
                         }
-                        Spacer(modifier = Modifier.height(22.dp))
+                        Spacer(modifier = Modifier.weight(1f))
                         Button(
                             onClick = {
                                 isLoading = true
@@ -539,7 +552,8 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
 
 
                             },
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
                         ) {
                             Text("Create Event")
                         }
