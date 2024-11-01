@@ -2,6 +2,7 @@ package com.example.mobprog.data
 
 import android.util.Log
 import androidx.compose.runtime.Composable
+import com.example.mobprog.createEvent.EventData
 import com.example.mobprog.gui.friends.FriendData
 import com.example.mobprog.user.UserData
 import com.google.firebase.Firebase
@@ -287,6 +288,36 @@ class UserService {
             .addOnFailureListener { exception ->
                 onFailure(exception)
             }
+    }
+
+    fun getAttendingEvents(callback: (List<EventData>?) -> Unit) {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser != null) {
+            db.collection("users").document(currentUser.uid).get()
+                .addOnSuccessListener { userDocument ->
+                    val eventsToAttend = userDocument.get("eventsToAttend") as? List<*>
+
+                    if (!eventsToAttend.isNullOrEmpty()) {
+                        db.collection("events")
+                            .whereIn("id", eventsToAttend)
+                            .get()
+                            .addOnSuccessListener { eventDocuments ->
+                                val events = eventDocuments.mapNotNull { doc ->
+                                    doc.toObject(EventData::class.java).copy(id = doc.id)
+                                }
+                                callback(events)
+                            }
+                            .addOnFailureListener {
+                                callback(null)
+                            }
+                    } else {
+                        callback(emptyList())
+                    }
+                }
+                .addOnFailureListener {
+                    callback(null)
+                }
+        }
     }
 
 
