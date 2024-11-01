@@ -107,6 +107,30 @@ class GuildService {
             }
     }
 
+    fun deleteGuildIfEmpty(guildId: String, callback: (Boolean, Exception?) -> Unit) {
+        val guildRef = db.collection("guilds").document(guildId)
+
+        guildRef.get()
+            .addOnSuccessListener { documentSnapshot ->
+                val members = documentSnapshot.get("members") as? List<*>
+                if (members.isNullOrEmpty()) {
+                    guildRef.delete()
+                        .addOnSuccessListener {
+                            callback(true, null)
+                        }
+                        .addOnFailureListener { exception ->
+                            callback(false, exception)
+                        }
+                } else {
+                    callback(false, null)
+                }
+            }
+            .addOnFailureListener { exception ->
+                callback(false, exception)
+            }
+    }
+
+
     fun getEventRef(guildEvents: EventManager): ArrayList<String>{
         val guildRef: ArrayList<String> = ArrayList()
 
