@@ -33,6 +33,16 @@ import com.example.mobprog.guild.GuildData
 fun GuildBox(guildData: GuildData, userService: UserService, navController: NavController) {
 
     var imageUrl by remember { mutableStateOf<String?>(null) }
+    var guildLeaderName by remember { mutableStateOf<String?>(null) }
+
+    userService.getUsernameWithDocID(guildData.leader) { guildLeader ->
+        if (guildData.leader != null) {
+            guildLeaderName =  guildLeader
+        }
+        else {
+            println("Guild leader name not found")
+        }
+    }
 
     LaunchedEffect(guildData.guildId) {
         ImageHandler().getGuildImageUrl(
@@ -66,7 +76,7 @@ fun GuildBox(guildData: GuildData, userService: UserService, navController: NavC
             fontWeight = FontWeight.W400
         )
         Text(
-            text = "Guildleader: ${guildData.leader}",
+            text = "Guildleader: $guildLeaderName",
             fontSize = 16.sp,
             fontWeight = FontWeight.W400
         )
