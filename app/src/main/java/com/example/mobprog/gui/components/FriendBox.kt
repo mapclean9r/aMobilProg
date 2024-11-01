@@ -75,7 +75,7 @@ fun FriendBox (friendData: FriendData, navController: NavController, onClick: (F
                     }
                 }
             }
-            .border(2.dp, Color.Black, shape = RoundedCornerShape(10.dp))
+            .border(2.dp, MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(10.dp))
             .padding(12.dp)
         ,
         verticalAlignment = Alignment.CenterVertically,

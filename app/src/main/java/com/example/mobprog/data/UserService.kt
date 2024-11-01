@@ -6,6 +6,7 @@ import androidx.navigation.NavController
 import com.example.mobprog.createEvent.EventData
 import com.example.mobprog.gui.friends.FriendData
 import com.example.mobprog.user.UserData
+import com.example.mobprog.user.formattedDateTime
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
@@ -96,13 +97,22 @@ class UserService {
         }
     }
 
-    fun getUserDataByID(userID: String, callback:  (Map<String, Any>?) -> Unit){
+    fun getUserDataByID(userID: String, callback: (UserData?) -> Unit) {
         val userRef = db.collection("users").document(userID)
+
         userRef.get()
             .addOnSuccessListener { document ->
                 if (document.exists()) {
                     val data = document.data
-                    callback(data)
+                    val user = UserData(
+                        id = document.id,
+                        name = data?.get("name") as? String ?: "",
+                        email = data?.get("email") as? String ?: "",
+                        picture = data?.get("picture") as? String ?: "",
+                        guild = data?.get("guild") as? String ?: "",
+                        dateCreated = data?.get("dateCreated") as? String ?: formattedDateTime
+                    )
+                    callback(user)
                 } else {
                     callback(null)
                 }

@@ -1,7 +1,9 @@
 package com.example.mobprog.data
 
 import com.example.mobprog.gui.friends.FriendData
+import com.example.mobprog.gui.friends.message.MessageData
 import com.google.firebase.Firebase
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
@@ -295,4 +297,104 @@ class FriendService {
             }
     }
 
+    fun getFriendRelationshipId(
+        friendId: String,
+        callback: (String?) -> Unit
+    ) {
+        val db = FirebaseFirestore.getInstance()
+        val friendsRef = db.collection("friends")
+
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser == null) {
+            callback(null)
+            return
+        }
+
+        val uid = currentUser.uid
+
+
+        // First, try to find where `u_id` is `userId` and `f_id` is `friendId`
+        friendsRef.whereEqualTo("u_id", uid).whereEqualTo("f_id", friendId).get()
+            .addOnSuccessListener { documents ->
+                if (!documents.isEmpty) {
+                    // Found the relationship document
+                    callback(documents.documents[0].id)
+                } else {
+                    // Try the reverse case where `u_id` is `friendId` and `f_id` is `userId`
+                    friendsRef.whereEqualTo("u_id", friendId).whereEqualTo("f_id", uid).get()
+                        .addOnSuccessListener { reverseDocuments ->
+                            if (!reverseDocuments.isEmpty) {
+                                // Found the relationship document in the reverse order
+                                callback(reverseDocuments.documents[0].id)
+                            } else {
+                                // No relationship document found
+                                callback(null)
+                            }
+                        }
+                        .addOnFailureListener { exception ->
+                            exception.printStackTrace()
+                            callback(null)
+                        }
+                }
+            }
+            .addOnFailureListener { exception ->
+                exception.printStackTrace()
+                callback(null)
+            }
+    }
+
+    fun sendMessage(
+        friendId: String,
+        content: String,
+        callback: (Boolean) -> Unit
+    ) {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser == null) {
+            callback(false)
+            return
+        }
+
+        val uid = currentUser.uid
+
+
+
+        val message = hashMapOf(
+            "senderId" to uid,
+            "content" to content,
+            "timestamp" to Timestamp.now()
+        )
+        getFriendRelationshipId(friendId) { relationshipId ->
+            if (relationshipId != null) {
+                db.collection("friends")
+                    .document(relationshipId)
+                    .collection("messages")
+                    .add(message)
+                    .addOnSuccessListener {
+                        callback(true)
+                    }
+                    .addOnFailureListener {
+                        callback(false)
+                    }
+            } else {
+                println("Friend relationship not found.")
+            }
+        }
+    }
+
+    fun getMessages(relationshipId: String, callback: (List<MessageData>?) -> Unit) {
+        db.collection("friends")
+            .document(relationshipId)
+            .collection("messages")
+            .orderBy("timestamp")
+            .get()
+            .addOnSuccessListener { snapshot ->
+                val messages = snapshot.documents.mapNotNull { document ->
+                    document.toObject(MessageData::class.java)
+                }
+                callback(messages)
+            }
+            .addOnFailureListener {
+                callback(null)
+            }
+    }
 }

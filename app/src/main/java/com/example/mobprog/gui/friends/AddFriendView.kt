@@ -168,7 +168,7 @@ fun AddFriendView(navController: NavController) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White.copy(alpha = 1.0f))
+                .background(MaterialTheme.colorScheme.background)
                 .padding()
                 .clickable {
                     showSearch = false
@@ -182,7 +182,8 @@ fun AddFriendView(navController: NavController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxSize(fraction = 0.09f)
-                .padding(top = 24.dp),
+                .padding(top = 24.dp)
+                .background(MaterialTheme.colorScheme.primary),
             singleLine = true
         )
         Button(onClick = {showSearch = false},

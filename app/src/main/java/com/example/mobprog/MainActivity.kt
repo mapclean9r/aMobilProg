@@ -10,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.mobprog.createEvent.EventData
 import com.example.mobprog.data.EventService
 import com.example.mobprog.data.GuildService
@@ -35,6 +37,7 @@ import com.example.mobprog.gui.event.EventView
 import com.example.mobprog.gui.friends.AddFriendView
 import com.example.mobprog.gui.friends.FriendInfoView
 import com.example.mobprog.gui.friends.FriendRequestView
+import com.example.mobprog.gui.friends.message.FriendMessageView
 import com.example.mobprog.gui.guild.CreateGuildView
 import com.example.mobprog.gui.guild.GuildView
 import com.example.mobprog.gui.guild.NoGuildView
@@ -191,8 +194,33 @@ fun Arena(darkMODE: Boolean) {
             composable("addFriendScreen") {
                 AddFriendView(navController = navController)
             }
-            composable("anyProfileView") {
-                AnyProfileView(navController = navController, user = selectedUser)
+            composable(route = "friendMessageView/{userId}",
+                arguments = listOf(navArgument("userId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val userId = backStackEntry.arguments?.getString("userId") ?: ""
+
+                FriendMessageView(navController = navController, friendId = userId)
+            }
+            composable(
+                route = "anyProfileView/{userId}",
+                arguments = listOf(navArgument("userId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val userId = backStackEntry.arguments?.getString("userId") ?: ""
+
+                // Use remember and mutableStateOf to hold the user data
+                val userDataState = remember { mutableStateOf<UserData?>(null) }
+
+                // Fetch the user data asynchronously
+                LaunchedEffect(userId) {
+                    UserService().getUserDataByID(userId) { userData ->
+                        userDataState.value = userData  // Update the state with the fetched user data
+                    }
+                }
+
+                // Pass the user data to AnyProfileView when it is available
+                userDataState.value?.let { user ->
+                    AnyProfileView(navController = navController, user = user)
+                }
             }
         }
     }
