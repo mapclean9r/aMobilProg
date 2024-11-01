@@ -19,7 +19,8 @@ data class UserData(
     val picture: String = "",
     val friends: List<String> = getFriends(),
     val guild: String = "",
-    val dateCreated: String = formattedDateTime
+    val dateCreated: String = formattedDateTime,
+    val eventsToAttend: List<String> = emptyList()
 )
 
 fun getFriends(): List<String> {
