@@ -13,17 +13,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -49,11 +44,8 @@ import com.example.mobprog.createEvent.EventData
 import com.example.mobprog.data.EventService
 import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
-import com.example.mobprog.gui.components.EventBox
 import com.example.mobprog.gui.components.GetSelfProfileImageCircle
 import com.example.mobprog.gui.components.ProfileEventBox
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 
 @Composable
 fun ProfileView(navController: NavController, userService: UserService) {
@@ -197,7 +189,7 @@ fun ProfileView(navController: NavController, userService: UserService) {
                             text = "My Events",
                             modifier = Modifier
                                 .weight(1f)
-                                .clickable { selectedMenu = "My Events"; currentView = "My Events"}
+                                .clickable { selectedMenu = "My Events"; currentView = "My Events" }
                                 .padding(1.dp)
                                 .background(
                                     color = if (selectedMenu == "My Events") MaterialTheme.colorScheme.primary.copy(
@@ -208,8 +200,12 @@ fun ProfileView(navController: NavController, userService: UserService) {
                                 .padding(vertical = 8.dp),
                             style = MaterialTheme.typography.bodyLarge.copy(
                                 fontSize = 18.sp,
-                                fontWeight = if (selectedMenu == "My Events") FontWeight.Bold else FontWeight.Normal,
-                                color = if (selectedMenu == "My Events") MaterialTheme.colorScheme.primary else Color.Gray,
+                                fontWeight = if (selectedMenu == "My Events") {
+                                    FontWeight.Bold
+                                } else FontWeight.Normal,
+                                color = if (selectedMenu == "My Events"){
+                                    MaterialTheme.colorScheme.primary
+                                } else Color.Gray,
                                 textAlign = TextAlign.Center
                             )
                         )
@@ -219,7 +215,9 @@ fun ProfileView(navController: NavController, userService: UserService) {
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(1.dp)
-                                .clickable { selectedMenu = "Attending"; currentView = "Attending Events" }
+                                .clickable {
+                                    selectedMenu = "Attending"; currentView = "Attending Events"
+                                }
                                 .background(
                                     color = if (selectedMenu == "Attending") MaterialTheme.colorScheme.primary.copy(
                                         alpha = 0.1f
@@ -229,8 +227,12 @@ fun ProfileView(navController: NavController, userService: UserService) {
                                 .padding(vertical = 8.dp),
                             style = MaterialTheme.typography.bodyLarge.copy(
                                 fontSize = 18.sp,
-                                fontWeight = if (selectedMenu == "Attending") FontWeight.Bold else FontWeight.Normal,
-                                color = if (selectedMenu == "Attending") MaterialTheme.colorScheme.primary else Color.Gray,
+                                fontWeight = if (selectedMenu == "Attending"){
+                                    FontWeight.Bold
+                                } else FontWeight.Normal,
+                                color = if (selectedMenu == "Attending"){
+                                    MaterialTheme.colorScheme.primary
+                                } else Color.Gray,
                                 textAlign = TextAlign.Center
                             )
                         )
@@ -241,6 +243,11 @@ fun ProfileView(navController: NavController, userService: UserService) {
 
                     when (currentView) {
                         "My Events" -> {
+                            if(myEvents?.size == 0){
+                                Text(text = "You have no events created",
+                                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                                        .padding(top = 20.dp))
+                            }
                             LazyColumn{
                                 items(myEvents ?: emptyList()) { event ->
                                     ProfileEventBox(navController = navController, eventData = event) {
@@ -250,6 +257,11 @@ fun ProfileView(navController: NavController, userService: UserService) {
                                 }
                             }                        }
                         "Attending Events" -> {
+                            if(attendingEvents?.size == 0){
+                                Text(text = "You are not attending any events",
+                                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                                        .padding(top = 20.dp))
+                            }
                             LazyColumn {
                                 items(attendingEvents ?: emptyList()) { event ->
                                     ProfileEventBox(navController = navController,eventData = event){
