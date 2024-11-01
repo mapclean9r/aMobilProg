@@ -115,6 +115,7 @@ fun FriendRequestView(navController: NavController) {
     },
         floatingActionButton = {
             FloatingActionButton(
+                containerColor =  Color(0xFFb57bb5),
                 onClick = { navController.navigate("addFriendScreen") },
                 modifier = Modifier.padding(16.dp),  // Padding from the bottom and right
                 content = {
