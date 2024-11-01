@@ -48,7 +48,7 @@ import com.example.mobprog.gui.components.GetSelfProfileImageCircle
 import com.example.mobprog.gui.components.ProfileEventBox
 
 @Composable
-fun ProfileView(navController: NavController, userService: UserService) {
+fun ProfileView(navController: NavController, userService: UserService, onEventClick: (EventData) -> Unit) {
 
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -250,9 +250,12 @@ fun ProfileView(navController: NavController, userService: UserService) {
                             }
                             LazyColumn{
                                 items(myEvents ?: emptyList()) { event ->
-                                    ProfileEventBox(navController = navController, eventData = event) {
-                                        println("Event stuff -> $event")
-                                    }
+                                    ProfileEventBox(
+                                        navController = navController,
+                                        eventData = event,
+                                        eventClick =  { event ->
+                                        onEventClick(event)
+                                        })
                                     Spacer(modifier = Modifier.height(8.dp))
                                 }
                             }
@@ -265,9 +268,12 @@ fun ProfileView(navController: NavController, userService: UserService) {
                             }
                             LazyColumn {
                                 items(attendingEvents ?: emptyList()) { event ->
-                                    ProfileEventBox(navController = navController,eventData = event){
-                                        println("Event Attend -> $event")
-                                    }
+                                    ProfileEventBox(
+                                        navController = navController,
+                                        eventData = event,
+                                        eventClick =  { event ->
+                                            onEventClick(event)
+                                        })
                                     Spacer(modifier = Modifier.height(8.dp))
                                 }
                             }
@@ -288,9 +294,11 @@ fun ProfileView(navController: NavController, userService: UserService) {
     )
 }
 
+/*
 
 @Preview(showBackground = true)
 @Composable
 fun ProfileViewPreview() {
     ProfileView(navController = rememberNavController(), userService = UserService())
 }
+*/

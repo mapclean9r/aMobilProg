@@ -171,7 +171,9 @@ fun Arena(darkMODE: Boolean) {
                 NoGuildView(navController = navController, guildService = GuildService())
             }
             composable("profileScreen") {
-                ProfileView(navController = navController, userService = UserService())
+                ProfileView(navController = navController, userService = UserService(), onEventClick = { selectedEvent ->
+                    thisEvent = selectedEvent
+                })
             }
             composable("notificationScreen") {
                 NotificationView(navController = navController)
