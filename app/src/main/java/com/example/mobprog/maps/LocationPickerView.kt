@@ -154,7 +154,7 @@ fun LocationPickerView(
                     contentColor = Color.White,
                     modifier = Modifier
                         .align(Alignment.BottomStart)
-                        .padding(16.dp)
+                        .padding(16.dp, 16.dp, 16.dp, 58.dp)
                 ) {
                     Text("✓")
                 }

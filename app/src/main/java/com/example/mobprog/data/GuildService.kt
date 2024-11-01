@@ -130,6 +130,47 @@ class GuildService {
             }
     }
 
+    fun transferGuildLeadership(guildId: String, currentLeaderId: String, newLeaderId: String, callback: (Boolean, Exception?) -> Unit) {
+        getAllMemberIdsFromGuild(guildId) { members ->
+            if (members == null) {
+                callback(false, Exception("Failed to retrieve members for the guild."))
+                return@getAllMemberIdsFromGuild
+            }
+
+            if (members.size <= 1) {
+                callback(false, Exception("Transfer failed: No other members in the guild."))
+                return@getAllMemberIdsFromGuild
+            }
+
+            if (!members.contains(newLeaderId)) {
+                callback(false, Exception("Transfer failed: New leader is not a member of the guild."))
+                return@getAllMemberIdsFromGuild
+            }
+
+            val guildRef = db.collection("guilds").document(guildId)
+            guildRef.get()
+                .addOnSuccessListener { documentSnapshot ->
+                    val guildData = documentSnapshot.data?.let { parseGuildData(it) }
+                    if (guildData != null && guildData.leader == currentLeaderId) {
+                        guildRef.update("leader", newLeaderId)
+                            .addOnSuccessListener {
+                                callback(true, null)
+                            }
+                            .addOnFailureListener { exception ->
+                                callback(false, exception)
+                            }
+                    } else {
+                        callback(false, Exception("Transfer failed: Unauthorized action or guild not found."))
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    callback(false, exception)
+                }
+        }
+    }
+
+
+
 
     fun getEventRef(guildEvents: EventManager): ArrayList<String>{
         val guildRef: ArrayList<String> = ArrayList()
@@ -144,19 +185,6 @@ class GuildService {
             }
         }
         return guildRef
-    }
-
-
-    fun createEventsForGuild(guildData: GuildData) {
-        db.collection("events").add(guildData)
-    }
-
-    fun fetchEventsForGuild(guildId: String) {
-        db.collection("events").whereEqualTo("guildId", guildId).get()
-    }
-
-    fun registerEvent(event: EventBase){
-        db.collection("events").add(event)
     }
 
     fun getAllMemberIdsFromGuild(guildId: String, callback: (List<String>?) -> Unit) {

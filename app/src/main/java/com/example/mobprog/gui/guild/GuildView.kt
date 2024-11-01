@@ -1,11 +1,12 @@
 package com.example.mobprog.gui.guild
 
+import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,15 +14,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -31,14 +29,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,31 +50,43 @@ import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.gui.components.GetGuildProfileImageCircle
 import com.example.mobprog.guild.GuildData
-import com.google.firebase.auth.FirebaseAuth
+
 @Composable
 fun GuildView(navController: NavController, modifier: Modifier = Modifier, userService: UserService) {
 
     val guildService = GuildService()
-    val membersIds = remember { mutableListOf<String>() }
-    val usernames = remember { mutableStateListOf<String>() }
+    val membersMap = remember { mutableMapOf<String, String>() }
     val guildDataState = remember { mutableStateOf<GuildData?>(null) }
     val isLoading = remember { mutableStateOf(true) }
-    val hostNameString = remember { mutableStateOf<String?>("") }
+    val guildLeaderId = remember { mutableStateOf<String?>("") }
+    var currentUserId  by remember { mutableStateOf("")}
+    val promoteButtonVisibilityMap = remember { mutableStateMapOf<String, Boolean>() }
 
-    userService.getUsernameWithDocID(guildDataState.value?.leader) { username ->
-        hostNameString.value = username ?: "Unknown"
+    userService.getUsernameWithDocID(guildDataState.value?.leader) { leaderId ->
+        guildLeaderId.value = leaderId ?: "Unknown"
     }
 
     LaunchedEffect(Unit) {
+        userService.getCurrentUserData { userData ->
+            if (userData != null) {
+                val fetchedID = userData["id"] as? String
+                currentUserId = fetchedID ?: ""
+            } else {
+                Log.w("UserData", "No user data found for current user")
+            }
+        }
+
         guildService.getCurrentUserGuildData { guildData ->
             guildDataState.value = guildData
             isLoading.value = false
 
-            guildData?.members?.let { ids ->
-                membersIds.addAll(ids)
-                ids.forEach { memberId ->
-                    userService.getUsernameWithDocID(memberId) { username ->
-                        usernames.add(username ?: "Unknown")
+            guildData?.members?.forEach { memberId ->
+                userService.getUsernameWithDocID(memberId) { username ->
+                    if (username != null) {
+                        membersMap[memberId] = username
+                        if (promoteButtonVisibilityMap[memberId] == null) {
+                            promoteButtonVisibilityMap[memberId] = false
+                        }
                     }
                 }
             }
@@ -172,7 +183,7 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
                                         .padding(5.dp)
                                 )
                                 Text(
-                                    text = "${hostNameString.value}",
+                                    text = "${guildLeaderId.value}",
                                     fontSize = 18.sp,
                                     fontWeight = FontWeight.SemiBold,
                                     fontStyle = FontStyle.Italic,
@@ -192,7 +203,7 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
                                     .height(250.dp)
                                     .padding(horizontal = 16.dp)
                             ) {
-                                items(usernames) { username ->
+                                items(membersMap.toList()) { (memberId, username) -> // Map to list of pairs
                                     Box(
                                         modifier = Modifier
                                             .fillMaxWidth()
@@ -202,8 +213,15 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
                                                 shape = MaterialTheme.shapes.medium
                                             )
                                             .padding(12.dp)
+                                            .clickable(enabled = guildData.leader == currentUserId && guildData.leader != memberId) {
+                                                // Toggle visibility state for the selected member
+                                                promoteButtonVisibilityMap[memberId] = !(promoteButtonVisibilityMap[memberId] ?: false)
+                                            }
                                     ) {
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            modifier = Modifier.fillMaxWidth()
+                                        ) {
                                             Icon(
                                                 imageVector = Icons.Default.Person,
                                                 contentDescription = null,
@@ -217,7 +235,38 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
                                                 fontSize = 16.sp,
                                                 fontWeight = FontWeight.Medium,
                                                 color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                                modifier = Modifier.weight(1f)
                                             )
+
+                                            // Show the Promote button only if the visibility state is true
+                                            if (promoteButtonVisibilityMap[memberId] == true) {
+                                                Button(
+                                                    onClick = {
+                                                        guildService.transferGuildLeadership(
+                                                            guildId = guildData.guildId,
+                                                            currentLeaderId = currentUserId,
+                                                            newLeaderId = memberId
+                                                        ) { success, exception ->
+                                                            if (success) {
+                                                                promoteButtonVisibilityMap[memberId] = false
+                                                                userService.getUsernameWithDocID(memberId) { newLeaderName ->
+                                                                    guildDataState.value =
+                                                                        guildDataState.value?.copy(
+                                                                            leader = memberId,
+                                                                            name = newLeaderName
+                                                                                ?: "Unknown"
+                                                                        )
+                                                                }
+                                                            } else {
+                                                                exception?.printStackTrace()
+                                                            }
+                                                        }
+                                                    },
+                                                    modifier = Modifier.padding(start = 8.dp)
+                                                ) {
+                                                    Text(text = "Promote")
+                                                }
+                                            }
                                         }
                                     }
                                 }
