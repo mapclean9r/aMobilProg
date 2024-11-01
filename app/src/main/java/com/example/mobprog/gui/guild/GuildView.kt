@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -61,6 +62,8 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
     val guildLeaderId = remember { mutableStateOf<String?>("") }
     var currentUserId  by remember { mutableStateOf("")}
     val promoteButtonVisibilityMap = remember { mutableStateMapOf<String, Boolean>() }
+    var showChooseNewLeaderDialog by remember { mutableStateOf(false) }
+    var selectedNewLeaderId by remember { mutableStateOf<String?>(null) }
 
     userService.getUsernameWithDocID(guildDataState.value?.leader) { leaderId ->
         guildLeaderId.value = leaderId ?: "Unknown"
@@ -203,7 +206,7 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
                                     .height(250.dp)
                                     .padding(horizontal = 16.dp)
                             ) {
-                                items(membersMap.toList()) { (memberId, username) -> // Map to list of pairs
+                                items(membersMap.toList()) { (memberId, username) ->ole@
                                     Box(
                                         modifier = Modifier
                                             .fillMaxWidth()
@@ -214,7 +217,6 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
                                             )
                                             .padding(12.dp)
                                             .clickable(enabled = guildData.leader == currentUserId && guildData.leader != memberId) {
-                                                // Toggle visibility state for the selected member
                                                 promoteButtonVisibilityMap[memberId] = !(promoteButtonVisibilityMap[memberId] ?: false)
                                             }
                                     ) {
@@ -238,7 +240,6 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
                                                 modifier = Modifier.weight(1f)
                                             )
 
-                                            // Show the Promote button only if the visibility state is true
                                             if (promoteButtonVisibilityMap[memberId] == true) {
                                                 Button(
                                                     onClick = {
@@ -277,24 +278,14 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
                                     containerColor = Color.Red
                                 ),
                                 onClick = {
-                                    userService.updateUserGuild("") { success, exception ->
-                                        if (success) {
-                                            guildService.deleteGuildIfEmpty(guildDataState.value?.guildId ?: "") { deleted, error ->
-                                                if (deleted) {
-                                                    println("Guild deleted successfully")
-                                                } else {
-                                                    error?.printStackTrace()
-                                                }
-                                            }
-
-                                            navController.navigate("noGuildScreen") {
-                                                while (navController.popBackStack()) {
-                                                    navController.popBackStack()
-                                                }
-                                            }
+                                    if (guildData.leader == currentUserId) {
+                                        if (membersMap.size == 1) {
+                                            userService.leaveGuild(navController, guildData.guildId, userService, guildService)
                                         } else {
-                                            exception?.printStackTrace()
+                                            showChooseNewLeaderDialog = true
                                         }
+                                    } else {
+                                        userService.leaveGuild(navController, guildData.guildId, userService, guildService)
                                     }
                                 },
                                 modifier = Modifier
@@ -305,6 +296,27 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
                             }
                         }
                     }
+
+                    if (showChooseNewLeaderDialog) {
+                        ChooseNewLeaderDialog(
+                            membersMap = membersMap.filterKeys { it != currentUserId },
+                            onSelectNewLeader = { newLeaderId ->
+                                showChooseNewLeaderDialog = false
+                                guildService.transferGuildLeadership(
+                                    guildId = guildData.guildId,
+                                    currentLeaderId = currentUserId,
+                                    newLeaderId = newLeaderId
+                                ) { success, exception ->
+                                    if (success) {
+                                        userService.leaveGuild(navController, guildData.guildId, userService, guildService)
+                                    } else {
+                                        exception?.printStackTrace()
+                                    }
+                                }
+                            },
+                            onDismiss = { showChooseNewLeaderDialog = false }
+                        )
+                    }
                 },
                 bottomBar = {
                     BottomNavBar(navController = navController, userService = userService)
@@ -314,9 +326,39 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
     }
 }
 
+@Composable
+fun ChooseNewLeaderDialog(
+    membersMap: Map<String, String>,
+    onSelectNewLeader: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = "Choose a New Guild Leader") },
+        text = {
+            LazyColumn {
+                items(membersMap.toList()) { (memberId, username) ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onSelectNewLeader(memberId) }
+                            .padding(vertical = 8.dp)
+                    ) {
+                        Text(text = username, fontSize = 16.sp)
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            Button(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
 fun GuildViewPreview() {
     GuildView(navController = rememberNavController(), userService = UserService())
 }
-

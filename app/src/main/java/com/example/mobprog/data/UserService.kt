@@ -2,6 +2,7 @@ package com.example.mobprog.data
 
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavController
 import com.example.mobprog.createEvent.EventData
 import com.example.mobprog.gui.friends.FriendData
 import com.example.mobprog.user.UserData
@@ -128,6 +129,34 @@ class UserService {
             callback(false, Exception("User not authenticated"))
         }
     }
+
+    fun leaveGuild(
+        navController: NavController,
+        guildId: String,
+        userService: UserService,
+        guildService: GuildService
+    ) {
+        userService.updateUserGuild("") { success, exception ->
+            if (success) {
+                guildService.deleteGuildIfEmpty(guildId) { deleted, error ->
+                    if (deleted) {
+                        println("Guild deleted successfully")
+                    } else if (error != null) {
+                        error.printStackTrace()
+                    }
+                }
+
+                navController.navigate("noGuildScreen") {
+                    popUpTo(navController.graph.startDestinationId) {
+                        inclusive = true
+                    }
+                }
+            } else {
+                exception?.printStackTrace()
+            }
+        }
+    }
+
 
     fun updateUserPicture(picture: String, callback: (Boolean, Exception?) -> Unit) {
         val uid = FirebaseAuth.getInstance().currentUser?.uid
