@@ -230,6 +230,14 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
                                 onClick = {
                                     userService.updateUserGuild("") { success, exception ->
                                         if (success) {
+                                            guildService.deleteGuildIfEmpty(guildDataState.value?.guildId ?: "") { deleted, error ->
+                                                if (deleted) {
+                                                    println("Guild deleted successfully")
+                                                } else {
+                                                    error?.printStackTrace()
+                                                }
+                                            }
+
                                             navController.navigate("noGuildScreen") {
                                                 while (navController.popBackStack()) {
                                                     navController.popBackStack()
