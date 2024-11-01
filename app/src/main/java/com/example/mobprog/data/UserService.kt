@@ -276,5 +276,18 @@ class UserService {
         }
     }
 
+    fun addEventToAttend(userId: String, eventId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+        val userRef = db.collection("users").document(userId)
+
+        userRef.update("eventsToAttend", FieldValue.arrayUnion(eventId))
+            .addOnSuccessListener {
+                onSuccess()
+            }
+            .addOnFailureListener { exception ->
+                onFailure(exception)
+            }
+    }
+
 
 }
