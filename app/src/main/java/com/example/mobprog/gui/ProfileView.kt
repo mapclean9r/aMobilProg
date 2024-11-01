@@ -255,7 +255,8 @@ fun ProfileView(navController: NavController, userService: UserService) {
                                     }
                                     Spacer(modifier = Modifier.height(8.dp))
                                 }
-                            }                        }
+                            }
+                        }
                         "Attending Events" -> {
                             if(attendingEvents?.size == 0){
                                 Text(text = "You are not attending any events",
