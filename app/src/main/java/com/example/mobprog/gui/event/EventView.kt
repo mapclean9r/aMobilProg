@@ -189,6 +189,14 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                             onClick = {
                                 eventService.joinEvent(currentUserID, it.id)
                                 updateAttendingPeople()
+                                UserService().addEventToAttend(currentUserID, currentEvent.id,
+                                    onSuccess = {
+                                        println("Event added to user")
+                                    },
+                                    onFailure = { exception ->
+                                        println("Failed to add event to user: ${exception.message}")
+                                    }
+                                )
                             },
                             modifier = Modifier.padding(16.dp)
                         ) {

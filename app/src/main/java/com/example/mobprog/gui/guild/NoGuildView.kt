@@ -33,21 +33,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.mobprog.R
-import com.example.mobprog.createEvent.EventData
 import com.example.mobprog.data.GuildService
 import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
-import com.example.mobprog.gui.components.EventBox
 import com.example.mobprog.guild.GuildData
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -62,21 +56,24 @@ fun NoGuildView(navController: NavController, guildService: GuildService, modifi
     var filteredGuildData by remember { mutableStateOf(emptyList<GuildData>()) }
 
 
-    guildService.getAllGuilds { guildList ->
-        guildList?.let { documents ->
-            val eventDataList = documents.mapNotNull { document ->
-                guildService.parseGuildData(document)
+    fun fetchGuilds(){
+        guildService.getAllGuilds { guildList ->
+            guildList?.let { documents ->
+                val guildDataList = documents.mapNotNull { document ->
+                    guildService.parseGuildData(document)
+                }
+                guilds = guildDataList
+            } ?: run {
+                println("No events found")
             }
-            guilds = eventDataList
-        } ?: run {
-            println("No events found")
         }
     }
 
     LaunchedEffect(searchText) {
+        fetchGuilds()
         filteredGuildData = guilds.filter { event ->
             event.name.contains(searchText, ignoreCase = true)
-        } ?: emptyList()
+        }
     }
 
 

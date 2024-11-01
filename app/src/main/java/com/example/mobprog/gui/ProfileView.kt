@@ -2,6 +2,7 @@ package com.example.mobprog.gui
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -61,7 +63,11 @@ fun ProfileView(navController: NavController, userService: UserService) {
     var createdAt by remember { mutableStateOf("") }
     var userID by remember { mutableStateOf("")}
 
+    var selectedMenu by remember { mutableStateOf("My Events") }
+
     var myEvents by remember { mutableStateOf<List<EventData>?>(null) }
+    var attendingEvents by remember { mutableStateOf<List<EventData>?>(null) }
+    var currentView by remember { mutableStateOf("My Events") }
 
 
     LaunchedEffect(Unit) {
@@ -88,6 +94,17 @@ fun ProfileView(navController: NavController, userService: UserService) {
                 println("launch $result")
             } else {
                 println("Failed to load events.")
+            }
+        }
+    }
+
+    LaunchedEffect(userID) {
+        userService.getAttendingEvents() { result ->
+            if (result != null) {
+                attendingEvents = result
+                println("attend $result")
+            } else {
+                println("Failed to retrieve attending events.")
             }
         }
     }
@@ -169,21 +186,81 @@ fun ProfileView(navController: NavController, userService: UserService) {
                             .align(Alignment.CenterHorizontally)
                     )
 
-
-
-                    Spacer(modifier = Modifier.height(20.dp))
-
-                    LazyColumn(
+                    Row(
                         modifier = Modifier
-                            .height(350.dp)
-                            .padding(16.dp)
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        items(myEvents ?: emptyList()) { event ->
-                            ProfileEventBox(navController = navController, eventData = event) {
-                                println("Event stuff -> $event")
+                        Text(
+                            text = "My Events",
+                            modifier = Modifier
+                                .weight(1f)
+                                .clickable { selectedMenu = "My Events"; currentView = "My Events"}
+                                .padding(1.dp)
+                                .background(
+                                    color = if (selectedMenu == "My Events") MaterialTheme.colorScheme.primary.copy(
+                                        alpha = 0.1f
+                                    ) else Color.Transparent,
+                                    shape = MaterialTheme.shapes.small
+                                )
+                                .padding(vertical = 8.dp),
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                fontSize = 18.sp,
+                                fontWeight = if (selectedMenu == "My Events") FontWeight.Bold else FontWeight.Normal,
+                                color = if (selectedMenu == "My Events") MaterialTheme.colorScheme.primary else Color.Gray,
+                                textAlign = TextAlign.Center
+                            )
+                        )
+
+                        Text(
+                            text = "Attending",
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(1.dp)
+                                .clickable { selectedMenu = "Attending"; currentView = "Attending Events" }
+                                .background(
+                                    color = if (selectedMenu == "Attending") MaterialTheme.colorScheme.primary.copy(
+                                        alpha = 0.1f
+                                    ) else Color.Transparent,
+                                    shape = MaterialTheme.shapes.small
+                                )
+                                .padding(vertical = 8.dp),
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                fontSize = 18.sp,
+                                fontWeight = if (selectedMenu == "Attending") FontWeight.Bold else FontWeight.Normal,
+                                color = if (selectedMenu == "Attending") MaterialTheme.colorScheme.primary else Color.Gray,
+                                textAlign = TextAlign.Center
+                            )
+                        )
+                    }
+
+
+                    Spacer(modifier = Modifier.height(5.dp))
+
+                    when (currentView) {
+                        "My Events" -> {
+                            LazyColumn{
+                                items(myEvents ?: emptyList()) { event ->
+                                    ProfileEventBox(navController = navController, eventData = event) {
+                                        println("Event stuff -> $event")
+                                    }
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                }
+                            }                        }
+                        "Attending Events" -> {
+                            LazyColumn {
+                                items(attendingEvents ?: emptyList()) { event ->
+                                    ProfileEventBox(navController = navController,eventData = event){
+                                        println("Event Attend -> $event")
+                                    }
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                }
                             }
                         }
                     }
+
 
 
 
@@ -197,31 +274,6 @@ fun ProfileView(navController: NavController, userService: UserService) {
         }
     )
 }
-
-@Composable
-fun UsernameWithIcon(username: String) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .padding(top = 12.dp)
-    ) {
-        Text(
-            text = username,
-            fontSize = 26.sp,
-            fontWeight = FontWeight.Bold
-        )
-
-        Spacer(modifier = Modifier.width(8.dp)) // Optional spacing between text and icon
-
-        Icon(
-            imageVector = Icons.Default.Star, // Replace with your desired icon
-            contentDescription = "User Icon",
-            tint = Color.Yellow,
-            modifier = Modifier.size(24.dp) // Adjust icon size as needed
-        )
-    }
-}
-
 
 
 @Preview(showBackground = true)

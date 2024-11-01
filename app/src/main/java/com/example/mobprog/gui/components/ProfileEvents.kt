@@ -50,9 +50,6 @@ fun ProfileEventBox(navController: NavController, eventData: EventData, eventCli
         }
     }
 
-
-
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
