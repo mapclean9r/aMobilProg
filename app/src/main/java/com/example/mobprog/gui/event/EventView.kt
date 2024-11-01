@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -104,72 +105,65 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                 }
             },
             content = { paddingValues ->
-                Column(
+                LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues)
                 ) {
-                    thisCurrentEvent?.let {
-                        CoverImageAPIEvent(it.image)
-                        Text(
-                            text = it.name,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp,
-                            modifier = Modifier
-                                .padding(start = 28.dp, top = 12.dp, end = 28.dp)
-                                .wrapContentHeight()
-                        )
-                        Text(
-                            text = it.description,
-                            modifier = Modifier
-                                .padding(start = 28.dp, end = 28.dp, top = 8.dp, bottom = 20.dp)
-                                .wrapContentHeight()
-                        )
-                        Divider(color = Color.Gray, thickness = 1.dp)
-                        if (thisCurrentEvent != null) {
+                    item {
+                        thisCurrentEvent?.let {
+                            // Cover Image
+                            CoverImageAPIEvent(it.image)
+
+                            // Event Details
                             Text(
-                                text = thisCurrentEvent.startDate + " - " + thisCurrentEvent.endDate,
+                                text = it.name,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 18.sp,
+                                modifier = Modifier
+                                    .padding(start = 28.dp, top = 12.dp, end = 28.dp)
+                                    .wrapContentHeight()
+                            )
+                            Text(
+                                text = it.description,
+                                modifier = Modifier
+                                    .padding(start = 28.dp, end = 28.dp, top = 8.dp, bottom = 20.dp)
+                                    .wrapContentHeight()
+                            )
+                            Divider(color = Color.Gray, thickness = 1.dp)
+                            Text(
+                                text = "${thisCurrentEvent.startDate} - ${thisCurrentEvent.endDate}",
                                 modifier = Modifier
                                     .padding(start = 28.dp, end = 28.dp, top = 8.dp)
                                     .wrapContentHeight()
                             )
-                        }
-                        if (thisCurrentEvent != null) {
                             Text(
                                 text = "Host: $username",
                                 modifier = Modifier
                                     .padding(start = 28.dp, end = 28.dp, top = 8.dp)
                                     .wrapContentHeight()
                             )
-                        }
-                        if (thisCurrentEvent != null) {
                             Text(
-                                //text = "People attending: " + currentEvent.attending.size,
-
                                 text = "People attending: $numberOfPeopleAttending",
                                 modifier = Modifier
                                     .padding(start = 28.dp, end = 28.dp, top = 8.dp)
                                     .wrapContentHeight()
                             )
-                        }
-                        if (thisCurrentEvent != null) {
                             Text(
-                                text = "Max Party size: " + thisCurrentEvent.maxAttendance.toString(),
+                                text = "Max Party size: ${thisCurrentEvent.maxAttendance}",
                                 modifier = Modifier
                                     .padding(start = 28.dp, end = 28.dp, top = 8.dp)
                                     .wrapContentHeight()
                             )
-                        }
-                        // Location START
-                        if (thisCurrentEvent != null) {
+
+                            // Location
                             val coordinatesParts = thisCurrentEvent.coordinates.split(",")
                             if (coordinatesParts.size == 2) {
                                 val latitude = coordinatesParts[0].toDoubleOrNull()
                                 val longitude = coordinatesParts[1].toDoubleOrNull()
-
                                 if (latitude != null && longitude != null) {
                                     Text(
-                                        text = "Location: ${thisCurrentEvent.location}",
+                                        text = thisCurrentEvent.location,
                                         modifier = Modifier
                                             .padding(start = 28.dp, end = 28.dp, top = 8.dp)
                                             .wrapContentHeight()
@@ -192,33 +186,43 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                                 )
                             }
                         }
-                        // Location END
-                        //Spacer(modifier = Modifier.height(500.dp).padding(paddingValues))
-                        Row {
+                    }
+
+                    item {
+                        // Action Buttons
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
                             Button(
                                 onClick = {
-                                    eventService.joinEvent(currentUserID, it.id)
+                                    if (thisCurrentEvent != null) {
+                                        eventService.joinEvent(currentUserID, thisCurrentEvent.id)
+                                    }
                                     updateAttendingPeople()
-                                    UserService().addEventToAttend(currentUserID, currentEvent.id,
-                                        onSuccess = {
-                                            println("Event added to user")
-                                        },
-                                        onFailure = { exception ->
-                                            println("Failed to add event to user: ${exception.message}")
-                                        }
-                                    )
+                                    if (thisCurrentEvent != null) {
+                                        UserService().addEventToAttend(
+                                            currentUserID, thisCurrentEvent.id,
+                                            onSuccess = { println("Event added to user") },
+                                            onFailure = { exception -> println("Failed to add event to user: ${exception.message}") }
+                                        )
+                                    }
                                 },
                                 modifier = Modifier.padding(16.dp)
                             ) {
                                 Text("Join")
                             }
-                            ShowDeleteButton(
-                                it.creatorId,
-                                currentUserID,
-                                navController,
-                                eventService,
-                                it
-                            )
+                            if (thisCurrentEvent != null) {
+                                ShowDeleteButton(
+                                    thisCurrentEvent.creatorId,
+                                    currentUserID,
+                                    navController,
+                                    eventService,
+                                    thisCurrentEvent
+                                )
+                            }
                         }
                     }
                 }
@@ -227,6 +231,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                 BottomNavBar(navController = navController, userService = UserService())
             }
         )
+
     } else {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -237,15 +242,19 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                         .height(64.dp)
                         .padding(bottom = 10.dp, top = 24.dp)
                         .background(MaterialTheme.colorScheme.primary),
+
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.Center
                 ) {
                     Text(
                         text = "Event",
                         fontSize = 24.sp, // Slightly larger font for landscape mode
                         fontWeight = FontWeight.Bold,
+
                         color = Color.White,
-                        modifier = Modifier.align(Alignment.CenterVertically)
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .align(Alignment.CenterVertically)
                     )
                 }
             },
@@ -318,6 +327,68 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                                             .padding(top = 4.dp)
                                             .wrapContentHeight()
                                     )
+                                    if (thisCurrentEvent != null) {
+                                        val coordinatesParts =
+                                            thisCurrentEvent.coordinates.split(",")
+                                        if (coordinatesParts.size == 2) {
+                                            val latitude = coordinatesParts[0].toDoubleOrNull()
+                                            val longitude = coordinatesParts[1].toDoubleOrNull()
+
+                                            if (latitude != null && longitude != null) {
+                                                Text(
+                                                    text = thisCurrentEvent.location,
+                                                    modifier = Modifier
+                                                        .padding(top = 4.dp)
+                                                        .wrapContentHeight()
+                                                )
+
+                                            } else {
+                                                Text(
+                                                    text = thisCurrentEvent.location.uppercase(
+                                                        Locale.ROOT
+                                                    ),
+                                                    modifier = Modifier
+                                                        .padding(top = 4.dp)
+                                                        .wrapContentHeight()
+                                                )
+                                            }
+                                        } else {
+                                            Text(
+                                                text = thisCurrentEvent.location.uppercase(Locale.ROOT),
+                                                modifier = Modifier
+                                                    .padding(top = 4.dp)
+                                                    .wrapContentHeight()
+                                            )
+                                        }
+                                    }
+                                    Row {
+
+                                    
+                                    Button(
+                                        onClick = {
+                                            eventService.joinEvent(
+                                                currentUserID,
+                                                thisCurrentEvent.id
+                                            )
+                                            updateAttendingPeople()
+                                            UserService().addEventToAttend(
+                                                currentUserID, thisCurrentEvent.id,
+                                                onSuccess = { println("Event added to user") },
+                                                onFailure = { exception -> println("Failed to add event to user: ${exception.message}") }
+                                            )
+                                        },
+                                        modifier = Modifier.padding(16.dp)
+                                    ) {
+                                        Text("Join Now")
+                                    }
+                                    ShowDeleteButton(
+                                        thisCurrentEvent.creatorId,
+                                        currentUserID,
+                                        navController,
+                                        eventService,
+                                        thisCurrentEvent
+                                    )
+                                }
                                 }
                             }
                         }
@@ -330,60 +401,24 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(horizontal = 16.dp, vertical = 16.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                // Map View (50% of row width)
-                                val coordinatesParts = thisCurrentEvent.coordinates.split(",")
-                                if (coordinatesParts.size == 2) {
-                                    val latitude = coordinatesParts[0].toDoubleOrNull()
-                                    val longitude = coordinatesParts[1].toDoubleOrNull()
-                                    if (latitude != null && longitude != null) {
-                                        Box(
-                                            modifier = Modifier
-                                                .weight(1f)
-                                                .fillMaxHeight()
-                                                .padding(end = 8.dp)
-                                        ) {
+                                if (thisCurrentEvent != null) {
+                                    val coordinatesParts = thisCurrentEvent.coordinates.split(",")
+                                    if (coordinatesParts.size == 2) {
+                                        val latitude = coordinatesParts[0].toDoubleOrNull()
+                                        val longitude = coordinatesParts[1].toDoubleOrNull()
+
+                                        if (latitude != null && longitude != null) {
                                             EventLocationMapView(latitude, longitude)
                                         }
                                     }
-                                }
-
-                                // Buttons (50% of row width)
-                                Column(
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .padding(start = 8.dp)
-                                ) {
-                                    Button(
-                                        onClick = {
-                                            eventService.joinEvent(currentUserID, it.id)
-                                            updateAttendingPeople()
-                                            UserService().addEventToAttend(
-                                                currentUserID, it.id,
-                                                onSuccess = { println("Event added to user") },
-                                                onFailure = { exception -> println("Failed to add event to user: ${exception.message}") }
-                                            )
-                                        },
-                                        modifier = Modifier
-                                                .padding(16.dp)
-                                    ) {
-                                        Text("Join Now")
-                                    }
-
                                     // Show delete button if the event belongs to the current user
-                                    if (thisCurrentEvent != null) {
-                                        ShowDeleteButton(
-                                            thisCurrentEvent.creatorId,
-                                            currentUserID,
-                                            navController,
-                                            eventService,
-                                            thisCurrentEvent
-                                        )
-                                    }
 
                                 }
                             }
+
                         }
                     }
                 }
