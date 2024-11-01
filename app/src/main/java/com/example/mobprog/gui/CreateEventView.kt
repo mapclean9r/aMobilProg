@@ -353,10 +353,10 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                             .height(75.dp),
                         shape = RoundedCornerShape(8.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.DarkGray, // Bakgrunnsfargen på knappen
-                            contentColor = Color.White,  // Tekstfargen på knappen
-                            disabledContainerColor = Color.Gray, // Bakgrunnsfarge når knappen er deaktivert
-                            disabledContentColor = Color.LightGray // Tekstfarge når knappen er deaktivert
+                            containerColor = Color.DarkGray,
+                            contentColor = Color.White,
+                            disabledContainerColor = Color.Gray,
+                            disabledContentColor = Color.LightGray
                         )
 
                     ) {
@@ -448,12 +448,9 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                                 navController.navigate("locationPickerScreen")
                             },
                             modifier = Modifier.fillMaxWidth(),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                contentColor = Color.White
-                            )
+
                         ) {
-                            Text("Select Location on Map", color = MaterialTheme.colorScheme.primary)
+                            Text("Select Location on Map")
                         }
                         // Location END
 
