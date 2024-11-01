@@ -293,7 +293,6 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.W400,
                                 modifier = Modifier.padding(bottom = 6.dp),
-                                color = MaterialTheme.colorScheme.primary
                             )
                             TextField(
                                 value = maxAttendanceString,
