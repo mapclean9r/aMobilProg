@@ -1,5 +1,6 @@
 package com.example.mobprog.data
 
+import android.util.Log
 import com.example.mobprog.gui.friends.FriendData
 import com.example.mobprog.gui.friends.message.MessageData
 import com.google.firebase.Firebase
@@ -101,14 +102,18 @@ class FriendService {
                 val friendsRef = db.collection("friends")
                 val usersRef = db.collection("users")
 
-                val friendIds = mutableMapOf<String, Boolean>() // ID -> accepted status
+                val friendIds = mutableMapOf<String, Boolean>()
 
-                // Fetch friends where current user is `u_id` or `f_id`
+                val query1 = friendsRef.whereEqualTo("u_id", uid).get().await()
                 val query2 = friendsRef.whereEqualTo("f_id", uid).get().await()
 
-                // Process results from both queries
-
-
+                query1.documents.forEach { document ->
+                    val friendId = document.getString("f_id")
+                    val friendAccepted = document.getBoolean("accepted")
+                    if (friendId != null && friendAccepted != null) {
+                        friendIds[friendId] = friendAccepted
+                    }
+                }
 
                 query2.documents.forEach { document ->
                     val friendId = document.getString("u_id")
@@ -119,32 +124,35 @@ class FriendService {
                 }
 
                 if (friendIds.isEmpty()) {
-                    callback(ArrayList()) // No friends
+                    callback(ArrayList())
                     return@launch
                 }
 
-                // Fetch all friends' data at once using `whereIn`
-                val userIds = friendIds.keys.toList()
-                val userDocuments = usersRef.whereIn("id", userIds).get().await()
-
                 val friendDataList = ArrayList<FriendData>()
-                for (document in userDocuments.documents) {
-                    val friendName = document.getString("name")
-                    val id = document.getString("id")
-                    val accepted = friendIds[id] // Get accepted status from map
+                val userIds = friendIds.keys.toList()
+                userIds.chunked(10).forEach { chunk ->
+                    val userDocuments = usersRef.whereIn("id", chunk).get().await()
 
-                    if (friendName != null && id != null && accepted != null) {
-                        friendDataList.add(FriendData(id, friendName, accepted))
+                    for (document in userDocuments.documents) {
+                        val friendName = document.getString("name")
+                        val id = document.getString("id")
+                        val accepted = friendIds[id]
+
+                        if (friendName != null && id != null && accepted != null) {
+                            friendDataList.add(FriendData(id, friendName, accepted))
+                        }
                     }
                 }
 
-                callback(friendDataList) // Return the result
+                callback(friendDataList)
 
             } catch (e: Exception) {
+                Log.e("getUserFriends", "Error fetching friends", e) // Log error for debugging
                 callback(null) // Handle any errors
             }
         }
     }
+
 
     fun addFriend(friendId: String, callback: (Boolean) -> Unit) {
         val currentUser = FirebaseAuth.getInstance().currentUser
