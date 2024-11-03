@@ -34,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -199,7 +200,8 @@ fun AddFriendView(navController: NavController) {
                 .fillMaxWidth()
                 .fillMaxSize(fraction = 0.09f)
                 .padding(top = 24.dp)
-                .background(MaterialTheme.colorScheme.primary),
+                .background(MaterialTheme.colorScheme.primary)
+                .focusRequester(focusRequester),
             keyboardActions = KeyboardActions(
                 onDone = {
                     focusManager.clearFocus()
