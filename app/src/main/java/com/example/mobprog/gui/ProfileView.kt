@@ -279,10 +279,6 @@ fun ProfileView(navController: NavController, userService: UserService, onEventC
                             }
                         }
                     }
-
-
-
-
                 }
             }
         },
