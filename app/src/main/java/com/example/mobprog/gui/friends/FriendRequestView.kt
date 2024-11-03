@@ -165,7 +165,9 @@ fun FriendRequestItem(navController: NavController, friend: FriendData, onClick:
     Row (
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .clickable(onClick = {
+                navController.navigate("anyProfileView/${friend.id}")
+            })
             .padding(8.dp)
         //.border(2.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
         ,
