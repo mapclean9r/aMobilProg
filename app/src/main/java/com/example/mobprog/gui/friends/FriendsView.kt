@@ -61,7 +61,7 @@ fun FriendsView(navController: NavController) {
     val hasRequests = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        FriendService().getAllFriends { friendData ->
+        FriendService().getAcceptedFriends { friendData ->
             if (friendData != null) {
                 allFriends.value = friendData
             }

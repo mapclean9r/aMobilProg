@@ -85,7 +85,6 @@ class FriendService {
         }
     }
 
-
     fun getUserFriends(callback: (ArrayList<FriendData>?) -> Unit) {
         val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser == null) {
@@ -142,6 +141,67 @@ class FriendService {
 
             } catch (e: Exception) {
                 callback(null) // Handle any errors
+            }
+        }
+    }
+
+    fun getAcceptedFriends(callback: (ArrayList<FriendData>?) -> Unit) {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser == null) {
+            callback(null)
+            return
+        }
+
+        val uid = currentUser.uid
+        val db = FirebaseFirestore.getInstance()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val friendsRef = db.collection("friends")
+                val usersRef = db.collection("users")
+
+                val friendIds = mutableMapOf<String, Boolean>()
+
+                val query1 = friendsRef.whereEqualTo("u_id", uid).whereEqualTo("accepted", true).get().await()
+                val query2 = friendsRef.whereEqualTo("f_id", uid).whereEqualTo("accepted", true).get().await()
+
+                query1.documents.forEach { document ->
+                    val friendId = document.getString("f_id")
+                    if (friendId != null) {
+                        friendIds[friendId] = true
+                    }
+                }
+
+                query2.documents.forEach { document ->
+                    val friendId = document.getString("u_id")
+                    if (friendId != null) {
+                        friendIds[friendId] = true
+                    }
+                }
+
+                if (friendIds.isEmpty()) {
+                    callback(ArrayList())
+                    return@launch
+                }
+
+                val userIds = friendIds.keys.toList()
+                val userDocuments = usersRef.whereIn("id", userIds).get().await()
+
+                val friendDataList = ArrayList<FriendData>()
+                for (document in userDocuments.documents) {
+                    val friendName = document.getString("name")
+                    val id = document.getString("id")
+                    val accepted = friendIds[id]
+
+                    if (friendName != null && id != null && accepted != null && accepted) {
+                        friendDataList.add(FriendData(id, friendName, accepted))
+                    }
+                }
+
+                callback(friendDataList)
+
+            } catch (e: Exception) {
+                callback(null)
             }
         }
     }
