@@ -138,7 +138,7 @@ fun SettingsView(navController: NavController, onDarkModeToggle: (Boolean) -> Un
                 ) {
                     IconButton(onClick = {
                         navController.navigate("profileScreen") {
-                            while (navController.popBackStack() == true) {
+                            while (navController.popBackStack()) {
                                 navController.popBackStack()
                             }
                         } },

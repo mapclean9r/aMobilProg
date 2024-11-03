@@ -68,7 +68,7 @@ fun AnyProfileView(navController: NavController, user: UserData) {
                         }
                     }
                     Text(
-                        text = "Settings",
+                        text = "Profile",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White,
