@@ -56,10 +56,19 @@ import com.example.mobprog.gui.components.GetUserProfileImageCircle
 fun FriendsView(navController: NavController) {
 
     val friends = remember { mutableStateOf<ArrayList<FriendData>?>(ArrayList()) }
+    val allFriends = remember { mutableStateOf<ArrayList<FriendData>?>(ArrayList()) }
     val isLoading = remember { mutableStateOf(true) }
     val hasRequests = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
+        FriendService().getAllFriends { friendData ->
+            if (friendData != null) {
+                allFriends.value = friendData
+            }
+            else {
+                println("getAllFriends Failed")
+            }
+        }
         FriendService().getUserFriends { friendData ->
             if(friendData != null) {
                 friends.value = friendData
@@ -116,9 +125,9 @@ fun FriendsView(navController: NavController) {
         }
     }, content = {
         if (!isLoading.value) {
-            if (friends.value?.isEmpty() != true) {
-                if(friends.value?.stream()?.filter{it.accepted}?.count()!! >= 1) {
-                    friends.value?.let { FriendsList(navController, it) }
+            if (allFriends.value?.isEmpty() != true) {
+                if(allFriends.value?.stream()?.filter{it.accepted}?.count()!! >= 1) {
+                    allFriends.value?.let { FriendsList(navController, it) }
                     return@Scaffold
                 }
             }
