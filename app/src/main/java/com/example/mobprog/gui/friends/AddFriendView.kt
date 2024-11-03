@@ -56,6 +56,7 @@ fun AddFriendView(navController: NavController) {
     var searchFriendText by remember { mutableStateOf("") }
     var selectedFriend by remember { mutableStateOf<FriendData?>(null) }
     var friends by remember { mutableStateOf(emptyList<FriendData>()) }
+    var currentUserFriends by remember { mutableStateOf(emptyList<String>()) }
 
 
     UserService().getAllUsers { userList ->
@@ -63,6 +64,12 @@ fun AddFriendView(navController: NavController) {
             friends = userList
         } ?: run {
             println("No Users found")
+        }
+    }
+
+    FriendService().getUserFriends { friendData ->
+        friendData?.let {
+            currentUserFriends = it.map { friend -> friend.id }
         }
     }
 
@@ -200,10 +207,8 @@ fun AddFriendView(navController: NavController) {
             Text("Cancel Search")
         }
 
-        val filteredFriends = if (searchFriendText.isNotEmpty()) {
-            friends.filter { it.name.contains(searchFriendText, ignoreCase = true) }
-        } else {
-            friends
+        val filteredFriends = friends.filter { friend ->
+            !currentUserFriends.contains(friend.id) && friend.name.contains(searchFriendText, ignoreCase = true)
         }
 
         LazyColumn(
@@ -212,18 +217,24 @@ fun AddFriendView(navController: NavController) {
                 .padding(horizontal = 8.dp, vertical = 8.dp)
                 .padding(top = 110.dp)
         ) {
-
-            items(filteredFriends) { friend ->
-                Spacer(modifier = Modifier.height(8.dp))
-
-                if(friend.id != uid) {
-                    FriendBox(friendData = friend, navController) {
-                        selectedFriend = friend
-                        showSearch = false
-
+            if (filteredFriends.isEmpty()) {
+                item {
+                    Text(
+                        text = "No users found matching \"$searchFriendText\"",
+                        modifier = Modifier.padding(16.dp),
+                        color = Color.Gray
+                    )
+                }
+            } else {
+                items(filteredFriends) { friend ->
+                    Spacer(modifier = Modifier.height(8.dp))
+                    if (friend.id != uid) {
+                        FriendBox(friendData = friend, navController) {
+                            selectedFriend = friend
+                            showSearch = false
+                        }
                     }
                 }
-
             }
         }
     }
