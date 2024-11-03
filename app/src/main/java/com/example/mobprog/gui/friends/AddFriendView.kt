@@ -177,7 +177,9 @@ fun AddFriendView(navController: NavController) {
 
         TextField(
             value = searchFriendText,
-            onValueChange = { searchFriendText = it },
+            onValueChange = { newText ->
+                searchFriendText = newText
+            },
             placeholder = { Text("Search...") },
             modifier = Modifier
                 .fillMaxWidth()
@@ -198,6 +200,12 @@ fun AddFriendView(navController: NavController) {
             Text("Cancel Search")
         }
 
+        val filteredFriends = if (searchFriendText.isNotEmpty()) {
+            friends.filter { it.name.contains(searchFriendText, ignoreCase = true) }
+        } else {
+            friends
+        }
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -205,7 +213,7 @@ fun AddFriendView(navController: NavController) {
                 .padding(top = 110.dp)
         ) {
 
-            items(friends) { friend ->
+            items(filteredFriends) { friend ->
                 Spacer(modifier = Modifier.height(8.dp))
 
                 if(friend.id != uid) {
