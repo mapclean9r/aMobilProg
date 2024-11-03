@@ -57,11 +57,8 @@ fun AnyProfileView(navController: NavController, user: UserData) {
                         modifier = Modifier.align(Alignment.CenterStart)
                     ) {
                         IconButton(onClick = {
-                            navController.navigate("friendsScreen") {
-                                while (navController.popBackStack()) {
-                                    navController.popBackStack()
-                                }
-                            } },
+                            navController.popBackStack()
+                             },
                             modifier = Modifier.align(Alignment.CenterEnd)) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
