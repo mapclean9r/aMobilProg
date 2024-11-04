@@ -112,21 +112,7 @@ fun FriendRequestView(navController: NavController) {
         // inspirert av link under for å lage navbar.
         // https://www.youtube.com/watch?v=O9csfKW3dZ4
         BottomNavBar(navController = navController, userService = UserService())
-    },
-        floatingActionButton = {
-            FloatingActionButton(
-                containerColor =  Color(0xFFb57bb5),
-                onClick = { navController.navigate("addFriendScreen") },
-                modifier = Modifier.padding(16.dp),  // Padding from the bottom and right
-                content = {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "add",
-                        tint = Color.Black
-                    )
-                }
-            )
-        })
+    })
 }
 
 @Composable
