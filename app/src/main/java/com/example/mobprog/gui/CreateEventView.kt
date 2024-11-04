@@ -71,28 +71,28 @@ import androidx.compose.ui.text.font.FontWeight
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CreateEventView(navController: NavController, eventService: EventService) {
+    val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
+
     var isLoading by remember { mutableStateOf(false) }
 
     val scrollState = rememberScrollState()
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
 
-    /* TODO - legge til alle felter som trengs og endre tekst felter til å benytte disse */
-    var name by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf(savedStateHandle?.get<String>("name") ?: "") }
     var location by remember { mutableStateOf("") }
-    var startDate by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var gameCoverImage by remember { mutableStateOf("") }
-
-    var maxAttendance by remember { mutableIntStateOf(0) }
-    var maxAttendanceString by remember { mutableStateOf("") }
+    var startDate by remember { mutableStateOf(savedStateHandle?.get<String>("startDate") ?: "") }
+    var description by remember { mutableStateOf(savedStateHandle?.get<String>("description") ?: "") }
+    var gameCoverImage by remember { mutableStateOf(savedStateHandle?.get<String>("gameCoverImage") ?: "") }
+    var maxAttendance by remember { mutableIntStateOf(savedStateHandle?.get<Int>("maxAttendance") ?: 0) }
+    var maxAttendanceString by remember { mutableStateOf(savedStateHandle?.get<String>("maxAttendanceString") ?: "") }
 
     var showSearch by remember { mutableStateOf(false) }
     var searchGameText by remember { mutableStateOf("") }
     var games by remember { mutableStateOf(emptyList<GameData>()) }
     var filteredGames by remember { mutableStateOf(emptyList<GameData>()) }
 
-    var selectedGame by remember { mutableStateOf<GameData?>(null) }
+    var selectedGame by remember { mutableStateOf(savedStateHandle?.get<GameData>("selectedGame")) }
 
     val calendar = Calendar.getInstance()
     val year = calendar.get(Calendar.YEAR)
@@ -108,8 +108,6 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
     var latitude by remember { mutableStateOf<Double?>(null) }
     var longitude by remember { mutableStateOf<Double?>(null) }
 
-
-    val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
     val selectedLocation = savedStateHandle?.getLiveData<Triple<Double, Double, String>>("selected_location")
     selectedLocation?.observe(LocalLifecycleOwner.current) { locationTriple ->
         val (selectedLatitude, selectedLongitude, selectedLocationName) = locationTriple
@@ -246,6 +244,13 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                 )
                 Button(
                     onClick = {
+                        savedStateHandle?.set("name", name)
+                        savedStateHandle?.set("startDate", startDate)
+                        savedStateHandle?.set("description", description)
+                        savedStateHandle?.set("gameCoverImage", gameCoverImage)
+                        savedStateHandle?.set("maxAttendance", maxAttendance)
+                        savedStateHandle?.set("maxAttendanceString", maxAttendanceString)
+                        savedStateHandle?.set("selectedGame", selectedGame)
                         navController.navigate("locationPickerScreen")
                     },
                     modifier = Modifier
