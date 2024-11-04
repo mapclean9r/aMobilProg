@@ -12,22 +12,24 @@ import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,6 +45,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -56,10 +59,19 @@ import com.example.mobprog.gui.components.GetUserProfileImageCircle
 fun FriendsView(navController: NavController) {
 
     val friends = remember { mutableStateOf<ArrayList<FriendData>?>(ArrayList()) }
+    val allFriends = remember { mutableStateOf<ArrayList<FriendData>?>(ArrayList()) }
     val isLoading = remember { mutableStateOf(true) }
     val hasRequests = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
+        FriendService().getAcceptedFriends { friendData ->
+            if (friendData != null) {
+                allFriends.value = friendData
+            }
+            else {
+                println("getAllFriends Failed")
+            }
+        }
         FriendService().getUserFriends { friendData ->
             if(friendData != null) {
                 friends.value = friendData
@@ -80,45 +92,59 @@ fun FriendsView(navController: NavController) {
                 .padding(bottom = 10.dp, top = 24.dp)
                 .background(MaterialTheme.colorScheme.primary),
             verticalAlignment = Alignment.CenterVertically,
-            //horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Box(modifier = Modifier.fillMaxWidth()) {
+            IconButton(
+                onClick = { navController.navigate("friendRequestScreen") },
 
-                IconButton(onClick = {
-                    navController.navigate("friendRequestScreen")
-                },
-                ) {
+            ) {
+                Box {
                     Icon(
                         imageVector = Icons.Default.Notifications,
                         contentDescription = "Notifications",
-                        tint = Color.White,
+                        tint = Color.White
                     )
-                    if(hasRequests.value) {
+                    if (hasRequests.value) {
                         Box(
                             modifier = Modifier
-                                .size(12.dp) // Size of the red dot
-                                .background(Color.Red, shape = CircleShape) // Red circle shape
-                                //.align(Alignment.TopEnd) // Aligns to the top right of the notification icon
-                                .absoluteOffset(x = 40.dp, y = 20.dp)
-                                .align(BiasAlignment(0.3f, -0.7f))
-
+                                .size(10.dp)
+                                .background(Color.Red, shape = CircleShape)
+                                .align(Alignment.TopEnd)
+                                .offset(x = (-4).dp, y = 4.dp)
                         )
                     }
                 }
-                Text(
-                    text = "Friends",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    modifier = Modifier.align(Alignment.Center)
+            }
+
+            Spacer(modifier = Modifier.width(32.dp))
+            Text(
+                text = "Friends",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
+                modifier = Modifier
+                    .weight(2f)
+                    .wrapContentWidth(Alignment.CenterHorizontally)
+            )
+
+            Spacer(modifier = Modifier.width(32.dp))
+
+            IconButton(
+                onClick = { navController.navigate("addFriendScreen") },
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add Friend",
+                    tint = Color.White
                 )
             }
         }
+
     }, content = {
         if (!isLoading.value) {
-            if (friends.value?.isEmpty() != true) {
-                if(friends.value?.stream()?.filter{it.accepted}?.count()!! >= 1) {
-                    friends.value?.let { FriendsList(navController, it) }
+            if (allFriends.value?.isEmpty() != true) {
+                if(allFriends.value?.stream()?.filter{it.accepted}?.count()!! >= 1) {
+                    allFriends.value?.let { FriendsList(navController, it) }
                     return@Scaffold
                 }
             }
@@ -167,20 +193,6 @@ fun FriendsView(navController: NavController) {
             // inspirert av link under for å lage navbar.
             // https://www.youtube.com/watch?v=O9csfKW3dZ4
             BottomNavBar(navController = navController, userService = UserService())
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                containerColor =  Color(0xFFb57bb5),
-                onClick = { navController.navigate("addFriendScreen") },
-                modifier = Modifier.padding(16.dp),  // Padding from the bottom and right
-                content = {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "add",
-                        tint = Color.Black
-                    )
-                }
-            )
         })
 }
 
@@ -244,7 +256,7 @@ fun FriendItem(navController: NavController, friend: FriendData, onClick: () -> 
                         onClick = { FriendService().removeFriend(friend.id, callback = {
                             navController.navigate("friendsScreen")
                         })},
-                        colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red),
+                        colors = ButtonDefaults.buttonColors(Color.Red),
                         shape = CircleShape
                     ) {
                         Text(text = "Remove Friend", color = Color.White)
@@ -253,7 +265,7 @@ fun FriendItem(navController: NavController, friend: FriendData, onClick: () -> 
                     Button(
                         onClick = { navController.navigate("friendMessageView/${friend.id}")
                         },
-                        colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue),
+                        colors = ButtonDefaults.buttonColors(Color.Blue),
                         shape = CircleShape
                     ) {
                         Text(text = "Message", color = Color.White)

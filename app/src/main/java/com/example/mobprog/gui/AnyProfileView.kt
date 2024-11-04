@@ -13,19 +13,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,7 +30,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
-import com.example.mobprog.gui.components.GetSelfProfileImageCircle
 import com.example.mobprog.gui.components.GetUserProfileImageCircle
 import com.example.mobprog.user.UserData
 
@@ -53,7 +47,26 @@ fun AnyProfileView(navController: NavController, user: UserData) {
                     .background(MaterialTheme.colorScheme.primary),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Box(modifier = Modifier.fillMaxWidth()){
+                Box(modifier = Modifier.fillMaxWidth()) {
+
+                    IconButton(onClick = {
+                        UserService().getCurrentUserData { docFields ->
+                            println("$docFields")
+                        }
+                    },
+                        modifier = Modifier.align(Alignment.CenterStart)
+                    ) {
+                        IconButton(onClick = {
+                            navController.popBackStack()
+                             },
+                            modifier = Modifier.align(Alignment.CenterEnd)) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back Button",
+                                tint = Color.White
+                            )
+                        }
+                    }
                     Text(
                         text = "Profile",
                         fontSize = 20.sp,
@@ -61,14 +74,6 @@ fun AnyProfileView(navController: NavController, user: UserData) {
                         color = Color.White,
                         modifier = Modifier.align(Alignment.Center)
                     )
-                    IconButton(onClick = { navController.navigate("settingsScreen") },
-                        modifier = Modifier.align(Alignment.CenterEnd)) {
-                        Icon(
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = "Profile Icon",
-                            tint = Color.White,
-                        )
-                    }
                 }
             }
         },

@@ -104,7 +104,7 @@ fun GetUserProfileImageCircle(userID: String, size: Int) {
         Image(
             modifier = Modifier
                 .clip(shape = CircleShape)
-                .size(56.dp),
+                .size(size.dp),
             painter = painterResource(id = R.drawable.profile),
             contentDescription = null,
             contentScale = ContentScale.Crop

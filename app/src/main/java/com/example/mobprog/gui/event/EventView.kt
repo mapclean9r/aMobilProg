@@ -17,8 +17,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Divider
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -91,9 +95,27 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                         .padding(bottom = 10.dp, top = 24.dp)
                         .background(MaterialTheme.colorScheme.primary),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Box(modifier = Modifier.fillMaxWidth()) {
+
+                        IconButton(onClick = {
+                            UserService().getCurrentUserData { docFields ->
+                                println("$docFields")
+                            }
+                        },
+                            modifier = Modifier.align(Alignment.CenterStart)
+                        ) {
+                            IconButton(onClick = {
+                                navController.popBackStack()
+                            },
+                                modifier = Modifier.align(Alignment.CenterEnd)) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                    contentDescription = "Back Button",
+                                    tint = Color.White
+                                )
+                            }
+                        }
                         Text(
                             text = "Event",
                             fontSize = 20.sp,

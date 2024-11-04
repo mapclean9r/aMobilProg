@@ -103,7 +103,7 @@ fun FriendBox (friendData: FriendData, navController: NavController, onClick: (F
             ) {
                 Button(
                     onClick = {
-                        FriendService().removeFriend(friendData.id, callback = {
+                        FriendService().addFriend(friendData.id, callback = {
                             navController.navigate("friendsScreen")
                         })
                     },
