@@ -1,4 +1,5 @@
 package com.example.mobprog.api
+import java.io.Serializable
 
 data class GameData(
     val id: Int,
@@ -16,7 +17,7 @@ data class GameData(
     val freeToGameProfileUrl: String,
     val minimumSystemRequirements: MinimumSystemRequirements,
     val screenshots: List<Screenshot>
-)
+) : Serializable
 
 data class MinimumSystemRequirements(
     val os: String,
