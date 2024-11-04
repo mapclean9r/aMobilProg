@@ -220,7 +220,13 @@ fun Arena(darkMODE: Boolean) {
 
                 // Pass the user data to AnyProfileView when it is available
                 userDataState.value?.let { user ->
-                    AnyProfileView(navController = navController, user = user)
+                    AnyProfileView(
+                        navController = navController,
+                        user = user,
+                        onEventClick = { event ->
+
+                        }
+                    )
                 }
             }
         }
