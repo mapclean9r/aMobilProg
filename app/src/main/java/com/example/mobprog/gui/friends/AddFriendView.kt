@@ -75,7 +75,7 @@ fun AddFriendView(navController: NavController) {
         }
     }
 
-    FriendService().getUserFriends { friendData ->
+    FriendService().getAcceptedFriends { friendData ->
         friendData?.let {
             currentUserFriends = it.map { friend -> friend.id }
         }
