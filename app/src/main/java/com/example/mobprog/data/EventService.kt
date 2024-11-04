@@ -133,4 +133,20 @@ class EventService {
         val allEventsRef = db.collection("events").document(eventID)
         allEventsRef.update("attending", FieldValue.arrayUnion(userID))
     }
+
+    fun getEventsByUserId(userId: String, callback: (List<EventData>?) -> Unit) {
+        val eventsRef = db.collection("events")
+        eventsRef.whereArrayContains("attending", userId)
+            .get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val eventsList = task.result?.mapNotNull { document ->
+                        document.toObject(EventData::class.java).copy(id = document.id)
+                    }
+                    callback(eventsList)
+                } else {
+                    callback(null)
+                }
+            }
+    }
 }
