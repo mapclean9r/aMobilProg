@@ -65,8 +65,11 @@ fun FriendRequestView(navController: NavController) {
 
     LaunchedEffect(Unit) {
         FriendService().getUserFriends { friendData ->
-            if(friendData != null) {
-                friendRequests.value = friendData
+            if (friendData != null) {
+                val pendingRequests = friendData.filter { !it.accepted }
+                friendRequests.value = ArrayList(pendingRequests)
+            } else {
+                friendRequests.value = ArrayList()
             }
             isLoading.value = false
         }
@@ -105,28 +108,18 @@ fun FriendRequestView(navController: NavController) {
             }
         }
     }, content = {
-        if(!isLoading.value) {
-            friendRequests.value?.let { it1 -> FriendRequestList(navController, it1) }
+        if (!isLoading.value) {
+            if (friendRequests.value.isNullOrEmpty()) {
+                NoFriendRequestsMessage()
+            } else {
+                FriendRequestList(navController, friendRequests.value!!)
+            }
         }
     }, bottomBar = {
         // inspirert av link under for å lage navbar.
         // https://www.youtube.com/watch?v=O9csfKW3dZ4
         BottomNavBar(navController = navController, userService = UserService())
-    },
-        floatingActionButton = {
-            FloatingActionButton(
-                containerColor =  Color(0xFFb57bb5),
-                onClick = { navController.navigate("addFriendScreen") },
-                modifier = Modifier.padding(16.dp),  // Padding from the bottom and right
-                content = {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "add",
-                        tint = Color.Black
-                    )
-                }
-            )
-        })
+    })
 }
 
 @Composable
@@ -212,6 +205,24 @@ fun FriendRequestItem(navController: NavController, friend: FriendData, onClick:
             }
         }
 
+    }
+}
+
+@Composable
+fun NoFriendRequestsMessage() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "No pending friend requests",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.onBackground
+        )
     }
 }
 
