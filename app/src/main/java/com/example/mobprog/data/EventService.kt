@@ -113,7 +113,7 @@ class EventService {
                 location = data["location"] as? String ?: "N/A",
                 creatorId = data["creatorId"] as? String ?: currentUserID,
                 comments = data["comments"] as? List<String> ?: emptyList(),
-                maxAttendance = data["maxAttendance"] as? Int ?: 0,
+                maxAttendance = (data["maxAttendance"] as? Number)?.toInt() ?: 0,
                 attending = data["attending"] as? List<String> ?: emptyList(),
                 image = data["image"] as? String ?: "",
                 coordinates = data["coordinates"] as? String ?: "",
@@ -124,8 +124,6 @@ class EventService {
             null
         }
     }
-
-    //In Progress @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
     fun joinEvent(userID: String, eventID: String) {
         print(userID)
