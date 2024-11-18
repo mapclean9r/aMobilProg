@@ -146,7 +146,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                             // Cover Image
                             CoverImageAPIEvent(it.image)
 
-                            val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.getDefault())
+                            val dateFormatter = DateTimeFormatter.ofPattern("d/M/yyyy", Locale.getDefault())
                             val parsedDate = LocalDate.parse(it.startDate, dateFormatter)
 
                             val formattedDate = parsedDate.format(DateTimeFormatter.ofPattern("EEEE d MMMM yyyy"))
