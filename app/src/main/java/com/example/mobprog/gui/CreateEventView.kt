@@ -66,6 +66,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import com.example.mobprog.ui.theme.BackgroundTheme40
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -572,7 +573,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White.copy(alpha = 1.0f))
+                .background(MaterialTheme.colorScheme.onPrimary)
                 .padding()
                 .clickable {
                     showSearch = false

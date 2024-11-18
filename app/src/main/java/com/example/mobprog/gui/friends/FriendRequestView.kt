@@ -89,6 +89,9 @@ fun FriendRequestView(navController: NavController) {
 
                 IconButton(onClick = {
                     navController.navigate("friendsScreen")
+                    {
+                        popUpTo(0) { inclusive = true }
+                    }
                 },
                     modifier = Modifier.align(Alignment.CenterStart)
                 ) {
