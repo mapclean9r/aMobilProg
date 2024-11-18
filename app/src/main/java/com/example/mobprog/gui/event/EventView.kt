@@ -1,5 +1,7 @@
 package com.example.mobprog.gui.event
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -49,7 +52,13 @@ import com.example.mobprog.maps.EventLocationMapView
 import com.google.firebase.auth.FirebaseAuth
 import java.util.Locale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
+import com.example.mobprog.R
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun EventView(navController: NavController, eventData: EventData?, currentEvent: EventData?) {
     val scrollState = rememberScrollState()
@@ -137,15 +146,67 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                             // Cover Image
                             CoverImageAPIEvent(it.image)
 
+                            val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.getDefault())
+                            val parsedDate = LocalDate.parse(it.startDate, dateFormatter)
+
+                            val formattedDate = parsedDate.format(DateTimeFormatter.ofPattern("EEEE d MMMM yyyy"))
+
+                            Row( modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically){
+
+                                Text(
+                                    text = formattedDate,
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Light,
+                                    fontStyle = FontStyle.Italic,
+                                    modifier = Modifier.padding(5.dp)
+                                )
+                            }
+
                             // Event Details
-                            Text(
-                                text = it.name,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp,
+                            Box(
                                 modifier = Modifier
-                                    .padding(start = 28.dp, top = 12.dp, end = 28.dp)
+                                    .fillMaxWidth()
                                     .wrapContentHeight()
-                            )
+                            ) {
+                                Text(
+                                    text = it.name,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 22.sp,
+                                    modifier = Modifier
+                                        .align(Alignment.Center)
+                                        .padding(start = 28.dp, top = 1.dp, end = 28.dp)
+                                )
+                            }
+
+                            Row( modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically){
+
+                                Text(
+                                    text = "Arrangement av: ",
+                                    fontSize = 15.sp,
+                                    modifier = Modifier
+                                        .padding(start = 28.dp, top = 2.dp, bottom = 8.dp)
+                                        .wrapContentHeight()
+                                )
+                                Text(
+                                    text = username,
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 15.sp,
+                                    modifier = Modifier
+                                        .padding( end = 28.dp, top = 2.dp, bottom = 8.dp)
+                                        .wrapContentHeight()
+
+                                )
+                            }
+
+
+
+
+
+
                             Text(
                                 text = it.description,
                                 modifier = Modifier
@@ -153,30 +214,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                                     .wrapContentHeight()
                             )
                             Divider(color = Color.Gray, thickness = 1.dp)
-                            Text(
-                                text = thisCurrentEvent.startDate,
-                                modifier = Modifier
-                                    .padding(start = 28.dp, end = 28.dp, top = 8.dp)
-                                    .wrapContentHeight()
-                            )
-                            Text(
-                                text = "Host: $username",
-                                modifier = Modifier
-                                    .padding(start = 28.dp, end = 28.dp, top = 8.dp)
-                                    .wrapContentHeight()
-                            )
-                            Text(
-                                text = "People attending: $numberOfPeopleAttending",
-                                modifier = Modifier
-                                    .padding(start = 28.dp, end = 28.dp, top = 8.dp)
-                                    .wrapContentHeight()
-                            )
-                            Text(
-                                text = "Max Party size: ${thisCurrentEvent.maxAttendance}",
-                                modifier = Modifier
-                                    .padding(start = 28.dp, end = 28.dp, top = 8.dp)
-                                    .wrapContentHeight()
-                            )
+
 
                             // Location
                             val coordinatesParts = thisCurrentEvent.coordinates.split(",")
@@ -486,8 +524,8 @@ fun CoverImageAPIEvent(url: String) {
         contentDescription = "Cover Image",
         contentScale = ContentScale.Fit,
         modifier = Modifier
-            .padding(top = 25.dp)
+            .padding(top = 1.dp)
             .fillMaxWidth()
-            .height(200.dp)
+            .height(250.dp)
     )
 }
