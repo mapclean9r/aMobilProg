@@ -76,7 +76,7 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
     LaunchedEffect(searchText) {
         filteredEvents = events.filter { event ->
             event.name.contains(searchText, ignoreCase = true)
-        } ?: emptyList()
+        }
     }
 
     if (!isLandscape) {
@@ -118,7 +118,7 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues)
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
                         .background(MaterialTheme.colorScheme.background)
                 ) {
                     if (filteredEvents.isEmpty()) {
@@ -129,7 +129,7 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
                                 eventClick = { selectedEvent ->
                                     onEventClick(selectedEvent)
                                 })
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(22.dp))
                         }
                     }
                     items(filteredEvents) { event ->
