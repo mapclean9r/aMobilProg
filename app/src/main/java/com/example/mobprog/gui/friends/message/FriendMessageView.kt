@@ -99,6 +99,9 @@ fun FriendMessageView(navController: NavController, friendId: String) {
                     IconButton(
                         onClick = {
                             navController.navigate("friendsScreen")
+                            {
+                                popUpTo(0) { inclusive = true }
+                            }
                         },
                         modifier = Modifier.align(Alignment.CenterStart)
                     ) {
@@ -130,7 +133,7 @@ fun FriendMessageView(navController: NavController, friendId: String) {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .background(Color(0xFFEFEFEF))
+                    .background(MaterialTheme.colorScheme.onPrimary)
             ) {
                 LazyColumn(
                     modifier = Modifier.weight(1f),

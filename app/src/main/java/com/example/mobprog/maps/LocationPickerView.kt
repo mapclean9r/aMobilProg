@@ -71,7 +71,7 @@ fun LocationPickerView(
 
     if (isFineLocationGranted || isCoarseLocationGranted) {
         Box(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.onPrimary)
         ) {
             Column(
                 modifier = Modifier.fillMaxSize()
