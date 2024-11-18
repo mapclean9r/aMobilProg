@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
@@ -39,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.mobprog.R
 import com.example.mobprog.data.GuildService
 import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
@@ -178,7 +181,7 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
                             )
                             Row {
                                 Icon(
-                                    imageVector = Icons.Default.Star,
+                                    painter = painterResource(id = R.drawable.crown),
                                     contentDescription = null,
                                     tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier
@@ -206,7 +209,7 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
                                     .height(250.dp)
                                     .padding(horizontal = 16.dp)
                             ) {
-                                items(membersMap.toList()) { (memberId, username) ->ole@
+                                items(membersMap.toList()) { (memberId, username) ->
                                     Box(
                                         modifier = Modifier
                                             .fillMaxWidth()
@@ -224,14 +227,27 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
                                             verticalAlignment = Alignment.CenterVertically,
                                             modifier = Modifier.fillMaxWidth()
                                         ) {
-                                            Icon(
-                                                imageVector = Icons.Default.Person,
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.primary,
-                                                modifier = Modifier
-                                                    .size(24.dp)
-                                                    .padding(end = 8.dp)
-                                            )
+                                            if(guildLeaderId.value != username){
+                                                Icon(
+                                                    imageVector = Icons.Default.Person,
+                                                    contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.primary,
+                                                    modifier = Modifier
+                                                        .size(24.dp)
+                                                        .padding(end = 8.dp)
+                                                )
+                                            }
+                                            if(guildLeaderId.value == username){
+                                                Icon(
+                                                    painter = painterResource(id = R.drawable.crown),
+                                                    contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.primary,
+                                                    modifier = Modifier
+                                                        .size(24.dp)
+                                                        .padding(end = 8.dp)
+                                                )
+                                            }
+
                                             Text(
                                                 text = username,
                                                 fontSize = 16.sp,
