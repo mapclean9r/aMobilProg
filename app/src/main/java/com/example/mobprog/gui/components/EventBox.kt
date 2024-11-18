@@ -62,7 +62,7 @@ fun EventBox(navController: NavController, eventData: EventData, eventClick: (Ev
             fontWeight = FontWeight.SemiBold
         )
         Text(
-            text = eventData.startDate + " - " + eventData.endDate,
+            text = eventData.startDate,
             fontSize = 13.sp,
             fontWeight = FontWeight.W300
         )
