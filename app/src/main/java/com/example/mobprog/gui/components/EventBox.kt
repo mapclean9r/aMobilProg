@@ -51,7 +51,7 @@ fun EventBox(navController: NavController, eventData: EventData, eventClick: (Ev
             .fillMaxWidth()
             .shadow(6.dp, shape = RoundedCornerShape(12.dp))
             .clip(RoundedCornerShape(12.dp))
-            .background(Color.White)
+            .background(color = MaterialTheme.colorScheme.onPrimary)
             .border(1.dp, color = MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(12.dp))
             .clickable {
                 eventClick(eventData)
