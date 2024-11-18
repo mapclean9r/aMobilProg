@@ -154,7 +154,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                             )
                             Divider(color = Color.Gray, thickness = 1.dp)
                             Text(
-                                text = "${thisCurrentEvent.startDate} - ${thisCurrentEvent.endDate}",
+                                text = thisCurrentEvent.startDate,
                                 modifier = Modifier
                                     .padding(start = 28.dp, end = 28.dp, top = 8.dp)
                                     .wrapContentHeight()

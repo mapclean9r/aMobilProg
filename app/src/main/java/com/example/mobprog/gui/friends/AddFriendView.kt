@@ -134,6 +134,7 @@ fun AddFriendView(navController: NavController) {
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                /*
                 Text(
                     text = "User Id",
                     fontSize = 16.sp,
@@ -153,6 +154,8 @@ fun AddFriendView(navController: NavController) {
                 )
 
                 Spacer(modifier = Modifier.height(22.dp))
+
+
                 Button(
                     onClick = {
                         onAddFriend(
@@ -165,6 +168,8 @@ fun AddFriendView(navController: NavController) {
                     Text("Add Friend")
                 }
                 Spacer(modifier = Modifier.height(22.dp))
+                */
+
 
                 Button(
                     onClick = {
