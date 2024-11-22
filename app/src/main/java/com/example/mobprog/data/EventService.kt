@@ -128,7 +128,14 @@ class EventService {
     fun joinEvent(userID: String, eventID: String) {
         print(userID)
         print(eventID)
-        val allEventsRef = db.collection("events").document(eventID)
-        allEventsRef.update("attending", FieldValue.arrayUnion(userID))
+        val eventToBeUpdated = db.collection("events").document(eventID)
+        eventToBeUpdated.update("attending", FieldValue.arrayUnion(userID))
+    }
+
+    fun leaveEvent(userID: String, eventID: String) {
+        print(userID)
+        print(eventID)
+        val eventToBeUpdated = db.collection("events").document(eventID)
+        eventToBeUpdated.update("attending", FieldValue.arrayRemove(userID))
     }
 }

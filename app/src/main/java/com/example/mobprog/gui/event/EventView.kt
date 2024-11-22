@@ -7,14 +7,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
@@ -30,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -52,9 +50,7 @@ import com.example.mobprog.maps.EventLocationMapView
 import com.google.firebase.auth.FirebaseAuth
 import java.util.Locale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
-import com.example.mobprog.R
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -65,30 +61,41 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
 
-    val thisCurrentEvent = currentEvent;
     val eventService = EventService()
     val userService = UserService()
     val currentUserID = FirebaseAuth.getInstance().currentUser?.uid.toString()
 
-
+    var isAttending by remember { mutableStateOf(false) }
     var username by remember { mutableStateOf("") }
 
     fun attenderStarterValue(): Int {
-        return thisCurrentEvent?.attending?.size ?: 0
+        return currentEvent?.attending?.size ?: 0
     }
 
     var numberOfPeopleAttending by remember { mutableIntStateOf(attenderStarterValue()) }
 
-    fun updateAttendingPeople() {
-        if (thisCurrentEvent != null) {
-            if (!thisCurrentEvent.attending.contains(currentUserID)) {
-                numberOfPeopleAttending = currentEvent.attending.size + 1
+    LaunchedEffect(currentUserID) {
+        UserService().getAttendingEvents { attendingEvents ->
+            if (currentEvent != null) {
+                isAttending = attendingEvents?.any { it.id == currentEvent.id } == true
             }
         }
     }
 
-    if (thisCurrentEvent != null) {
-        userService.getUsernameWithDocID(thisCurrentEvent.creatorId) { creatorId ->
+    fun updateAttendingPeople(isJoining: Boolean) {
+        if (currentEvent != null) {
+            if (isJoining) {
+                isAttending = true
+                numberOfPeopleAttending++
+            } else {
+                isAttending = false
+                numberOfPeopleAttending--
+            }
+        }
+    }
+
+    if (currentEvent != null) {
+        userService.getUsernameWithDocID(currentEvent.creatorId) { creatorId ->
             username = creatorId ?: "username not found..."
         }
     }
@@ -142,18 +149,22 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                         .padding(paddingValues)
                 ) {
                     item {
-                        thisCurrentEvent?.let {
+                        currentEvent?.let {
                             // Cover Image
                             CoverImageAPIEvent(it.image)
 
-                            val dateFormatter = DateTimeFormatter.ofPattern("d/M/yyyy", Locale.getDefault())
+                            val dateFormatter =
+                                DateTimeFormatter.ofPattern("d/M/yyyy", Locale.getDefault())
                             val parsedDate = LocalDate.parse(it.startDate, dateFormatter)
 
-                            val formattedDate = parsedDate.format(DateTimeFormatter.ofPattern("EEEE d MMMM yyyy"))
+                            val formattedDate =
+                                parsedDate.format(DateTimeFormatter.ofPattern("EEEE d MMMM yyyy"))
 
-                            Row( modifier = Modifier.fillMaxWidth(),
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.Center,
-                                verticalAlignment = Alignment.CenterVertically){
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
 
                                 Text(
                                     text = formattedDate,
@@ -180,9 +191,11 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                                 )
                             }
 
-                            Row( modifier = Modifier.fillMaxWidth(),
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.Center,
-                                verticalAlignment = Alignment.CenterVertically){
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
 
                                 Text(
                                     text = "Arrangement av: ",
@@ -196,7 +209,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                                     fontWeight = FontWeight.SemiBold,
                                     fontSize = 15.sp,
                                     modifier = Modifier
-                                        .padding( end = 28.dp, top = 2.dp, bottom = 8.dp)
+                                        .padding(end = 28.dp, top = 2.dp, bottom = 8.dp)
                                         .wrapContentHeight()
 
                                 )
@@ -217,13 +230,13 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
 
 
                             // Location
-                            val coordinatesParts = thisCurrentEvent.coordinates.split(",")
+                            val coordinatesParts = currentEvent.coordinates.split(",")
                             if (coordinatesParts.size == 2) {
                                 val latitude = coordinatesParts[0].toDoubleOrNull()
                                 val longitude = coordinatesParts[1].toDoubleOrNull()
                                 if (latitude != null && longitude != null) {
                                     Text(
-                                        text = thisCurrentEvent.location,
+                                        text = currentEvent.location,
                                         modifier = Modifier
                                             .padding(start = 28.dp, end = 28.dp, top = 8.dp)
                                             .wrapContentHeight()
@@ -231,7 +244,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                                     EventLocationMapView(latitude, longitude)
                                 } else {
                                     Text(
-                                        text = thisCurrentEvent.location.uppercase(Locale.ROOT),
+                                        text = currentEvent.location.uppercase(Locale.ROOT),
                                         modifier = Modifier
                                             .padding(start = 28.dp, end = 28.dp, top = 8.dp)
                                             .wrapContentHeight()
@@ -239,7 +252,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                                 }
                             } else {
                                 Text(
-                                    text = thisCurrentEvent.location.uppercase(Locale.ROOT),
+                                    text = currentEvent.location.uppercase(Locale.ROOT),
                                     modifier = Modifier
                                         .padding(start = 28.dp, end = 28.dp, top = 8.dp)
                                         .wrapContentHeight()
@@ -256,31 +269,50 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                                 .padding(16.dp),
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
-                            Button(
-                                onClick = {
-                                    if (thisCurrentEvent != null) {
-                                        eventService.joinEvent(currentUserID, thisCurrentEvent.id)
-                                    }
-                                    updateAttendingPeople()
-                                    if (thisCurrentEvent != null) {
-                                        UserService().addEventToAttend(
-                                            currentUserID, thisCurrentEvent.id,
-                                            onSuccess = { println("Event added to user") },
-                                            onFailure = { exception -> println("Failed to add event to user: ${exception.message}") }
-                                        )
-                                    }
-                                },
-                                modifier = Modifier.padding(16.dp)
-                            ) {
-                                Text("Join")
+                            if (!isAttending && currentEvent?.creatorId != currentUserID) {
+                                Button(
+                                    onClick = {
+                                        if (currentEvent != null) {
+                                            eventService.joinEvent(currentUserID, currentEvent.id)
+                                            updateAttendingPeople(true)
+                                            UserService().addEventToAttend(
+                                                currentUserID, currentEvent.id,
+                                                onSuccess = { println("Event added to user") },
+                                                onFailure = { exception -> println("Failed to add event to user: ${exception.message}") }
+                                            )
+                                        }
+                                    },
+                                    modifier = Modifier.padding(16.dp)
+                                ) {
+                                    Text("Join")
+                                }
                             }
-                            if (thisCurrentEvent != null) {
+                            if (isAttending && currentEvent?.creatorId != currentUserID) {
+                                Button(
+                                    onClick = {
+                                        if (currentEvent != null) {
+                                            eventService.leaveEvent(currentUserID, currentEvent.id)
+                                            updateAttendingPeople(false)
+                                            UserService().removeEventFromAttend(
+                                                currentUserID, currentEvent.id,
+                                                onSuccess = { println("Event removed from user") },
+                                                onFailure = { exception -> println("Failed to remove event from user: ${exception.message}") }
+                                            )
+                                        }
+                                    },
+                                    modifier = Modifier.padding(16.dp)
+                                ) {
+                                    Text("Leave")
+                                }
+                            }
+
+                            if (currentEvent != null) {
                                 ShowDeleteButton(
-                                    thisCurrentEvent.creatorId,
+                                    currentEvent.creatorId,
                                     currentUserID,
                                     navController,
                                     eventService,
-                                    thisCurrentEvent
+                                    currentEvent
                                 )
                             }
                         }
@@ -325,7 +357,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                         .padding(paddingValues)
                 ) {
                     item {
-                        thisCurrentEvent?.let {
+                        currentEvent?.let {
                             // First Row: Image and Event Details
                             Row(
                                 modifier = Modifier
@@ -364,7 +396,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                                     Divider(color = Color.Gray, thickness = 1.dp)
 
                                     Text(
-                                        text = "${thisCurrentEvent.startDate} - ${thisCurrentEvent.endDate}",
+                                        text = "${currentEvent.startDate} - ${currentEvent.endDate}",
                                         modifier = Modifier
                                             .padding(top = 8.dp)
                                             .wrapContentHeight()
@@ -382,73 +414,91 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                                             .wrapContentHeight()
                                     )
                                     Text(
-                                        text = "Max Party size: ${thisCurrentEvent.maxAttendance}",
+                                        text = "Max Party size: ${currentEvent.maxAttendance}",
                                         modifier = Modifier
                                             .padding(top = 4.dp)
                                             .wrapContentHeight()
                                     )
-                                    if (thisCurrentEvent != null) {
-                                        val coordinatesParts =
-                                            thisCurrentEvent.coordinates.split(",")
-                                        if (coordinatesParts.size == 2) {
-                                            val latitude = coordinatesParts[0].toDoubleOrNull()
-                                            val longitude = coordinatesParts[1].toDoubleOrNull()
+                                    val coordinatesParts =
+                                        currentEvent.coordinates.split(",")
+                                    if (coordinatesParts.size == 2) {
+                                        val latitude = coordinatesParts[0].toDoubleOrNull()
+                                        val longitude = coordinatesParts[1].toDoubleOrNull()
 
-                                            if (latitude != null && longitude != null) {
-                                                Text(
-                                                    text = thisCurrentEvent.location,
-                                                    modifier = Modifier
-                                                        .padding(top = 4.dp)
-                                                        .wrapContentHeight()
-                                                )
+                                        if (latitude != null && longitude != null) {
+                                            Text(
+                                                text = currentEvent.location,
+                                                modifier = Modifier
+                                                    .padding(top = 4.dp)
+                                                    .wrapContentHeight()
+                                            )
 
-                                            } else {
-                                                Text(
-                                                    text = thisCurrentEvent.location.uppercase(
-                                                        Locale.ROOT
-                                                    ),
-                                                    modifier = Modifier
-                                                        .padding(top = 4.dp)
-                                                        .wrapContentHeight()
-                                                )
-                                            }
                                         } else {
                                             Text(
-                                                text = thisCurrentEvent.location.uppercase(Locale.ROOT),
+                                                text = currentEvent.location.uppercase(
+                                                    Locale.ROOT
+                                                ),
                                                 modifier = Modifier
                                                     .padding(top = 4.dp)
                                                     .wrapContentHeight()
                                             )
                                         }
+                                    } else {
+                                        Text(
+                                            text = currentEvent.location.uppercase(Locale.ROOT),
+                                            modifier = Modifier
+                                                .padding(top = 4.dp)
+                                                .wrapContentHeight()
+                                        )
                                     }
                                     Row {
+                                        if (!isAttending) {
+                                            Button(
+                                                onClick = {
+                                                    eventService.joinEvent(
+                                                        currentUserID,
+                                                        currentEvent.id
+                                                    )
+                                                    updateAttendingPeople(true)
+                                                    UserService().addEventToAttend(
+                                                        currentUserID, currentEvent.id,
+                                                        onSuccess = { println("Event added to user") },
+                                                        onFailure = { exception -> println("Failed to add event to user: ${exception.message}") }
+                                                    )
+                                                },
+                                                modifier = Modifier.padding(16.dp)
+                                            ) {
+                                                Text("Join Now")
+                                            }
+                                        } else {
+                                            Button(
+                                                onClick = {
+                                                    eventService.leaveEvent(
+                                                        currentUserID,
+                                                        currentEvent.id
+                                                    )
+                                                    updateAttendingPeople(false)
+                                                    UserService().removeEventFromAttend(
+                                                        currentUserID, currentEvent.id,
+                                                        onSuccess = { println("Event removed from user") },
+                                                        onFailure = { exception -> println("Failed to remove event from user: ${exception.message}") }
+                                                    )
+                                                },
+                                                modifier = Modifier.padding(16.dp)
+                                            ) {
+                                                Text("Leave Now")
+                                            }
+                                        }
 
-                                    
-                                    Button(
-                                        onClick = {
-                                            eventService.joinEvent(
-                                                currentUserID,
-                                                thisCurrentEvent.id
-                                            )
-                                            updateAttendingPeople()
-                                            UserService().addEventToAttend(
-                                                currentUserID, thisCurrentEvent.id,
-                                                onSuccess = { println("Event added to user") },
-                                                onFailure = { exception -> println("Failed to add event to user: ${exception.message}") }
-                                            )
-                                        },
-                                        modifier = Modifier.padding(16.dp)
-                                    ) {
-                                        Text("Join Now")
+                                        ShowDeleteButton(
+                                            currentEvent.creatorId,
+                                            currentUserID,
+                                            navController,
+                                            eventService,
+                                            currentEvent
+                                        )
                                     }
-                                    ShowDeleteButton(
-                                        thisCurrentEvent.creatorId,
-                                        currentUserID,
-                                        navController,
-                                        eventService,
-                                        thisCurrentEvent
-                                    )
-                                }
+
                                 }
                             }
                         }
@@ -456,7 +506,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
 
                     item {
                         // Second Row: Map and Buttons
-                        thisCurrentEvent?.let {
+                        currentEvent?.let {
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -464,19 +514,17 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                if (thisCurrentEvent != null) {
-                                    val coordinatesParts = thisCurrentEvent.coordinates.split(",")
-                                    if (coordinatesParts.size == 2) {
-                                        val latitude = coordinatesParts[0].toDoubleOrNull()
-                                        val longitude = coordinatesParts[1].toDoubleOrNull()
+                                val coordinatesParts = currentEvent.coordinates.split(",")
+                                if (coordinatesParts.size == 2) {
+                                    val latitude = coordinatesParts[0].toDoubleOrNull()
+                                    val longitude = coordinatesParts[1].toDoubleOrNull()
 
-                                        if (latitude != null && longitude != null) {
-                                            EventLocationMapView(latitude, longitude)
-                                        }
+                                    if (latitude != null && longitude != null) {
+                                        EventLocationMapView(latitude, longitude)
                                     }
-                                    // Show delete button if the event belongs to the current user
-
                                 }
+                                // Show delete button if the event belongs to the current user
+
                             }
 
                         }
