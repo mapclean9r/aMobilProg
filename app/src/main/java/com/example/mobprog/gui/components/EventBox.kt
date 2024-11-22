@@ -52,14 +52,14 @@ fun EventBox(navController: NavController, eventData: EventData, eventClick: (Ev
             .shadow(6.dp, shape = RoundedCornerShape(12.dp))
             .clip(RoundedCornerShape(12.dp))
             .background(color = MaterialTheme.colorScheme.onPrimary)
-            .border(1.dp, color = MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(12.dp))
+
             .clickable {
                 eventClick(eventData)
                 navController.navigate("eventScreen")
             }
             .padding(16.dp)
     ) {
-        Column {
+        Column{
             Box(modifier = Modifier
                 .align(Alignment.CenterHorizontally)){
                 CoverImageAPI(

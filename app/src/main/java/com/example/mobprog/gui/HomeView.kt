@@ -181,7 +181,9 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
         },
         content = { paddingValues ->
             LazyVerticalGrid(
-                columns = GridCells.Adaptive(minSize = 160.dp),
+                columns = GridCells.Adaptive(minSize = 200.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(30.dp),
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
