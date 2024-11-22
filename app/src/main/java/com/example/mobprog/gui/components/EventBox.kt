@@ -34,7 +34,6 @@ import java.util.Locale
 
 @Composable
 fun EventBox(navController: NavController, eventData: EventData, eventClick: (EventData) -> Unit) {
-
     val userService = UserService()
     var username by remember { mutableStateOf("") }
 
@@ -52,38 +51,39 @@ fun EventBox(navController: NavController, eventData: EventData, eventClick: (Ev
             .shadow(6.dp, shape = RoundedCornerShape(12.dp))
             .clip(RoundedCornerShape(12.dp))
             .background(color = MaterialTheme.colorScheme.onPrimary)
-
             .clickable {
                 eventClick(eventData)
                 navController.navigate("eventScreen")
             }
-            .padding(16.dp)
     ) {
-        Column{
-            Box(modifier = Modifier
-                .align(Alignment.CenterHorizontally)){
-                CoverImageAPI(
-                    url = eventData.image,
-                    date = eventData.startDate,
-                    attending = eventData.attending.size,
-                    maxAttendance = eventData.maxAttendance
+        Column(modifier = Modifier.fillMaxWidth()) {
+            CoverImageAPI(
+                url = eventData.image,
+                date = eventData.startDate,
+                attending = eventData.attending.size,
+                maxAttendance = eventData.maxAttendance,
+                parentHeightFraction = 0.6f
+            )
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+            ) {
+                Text(
+                    text = eventData.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() },
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = eventData.location.uppercase(Locale.ROOT),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.W400,
+                    color = Color.DarkGray
                 )
             }
-
-            Spacer(modifier = Modifier.height(12.dp))
-            Text(
-                text = eventData.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() },
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = eventData.location.uppercase(Locale.ROOT),
-                fontSize = 14.sp,
-                fontWeight = FontWeight.W400,
-                color = Color.DarkGray
-            )
         }
     }
 }
@@ -110,12 +110,18 @@ fun DynamicImageSelector(imageName: String) {
 }
 
 @Composable
-fun CoverImageAPI(url: String, date: String, attending: Int, maxAttendance: Int) {
+fun CoverImageAPI(
+    url: String,
+    date: String,
+    attending: Int,
+    maxAttendance: Int,
+    parentHeightFraction: Float
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(220.dp)
-            .clip(RoundedCornerShape(12.dp))
+            .aspectRatio(1.0f / parentHeightFraction)
+            .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
     ) {
         AsyncImage(
             model = url,
