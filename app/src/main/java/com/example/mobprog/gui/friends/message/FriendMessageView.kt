@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -86,6 +87,7 @@ fun FriendMessageView(navController: NavController, friendId: String) {
         topBar = {
             Row(
                 modifier = Modifier
+                    .systemBarsPadding()
                     .fillMaxWidth()
                     .height(88.dp)
                     .padding(bottom = 10.dp, top = 24.dp)
@@ -94,7 +96,7 @@ fun FriendMessageView(navController: NavController, friendId: String) {
                 verticalAlignment = Alignment.CenterVertically,
                 //horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Box(modifier = Modifier.fillMaxWidth()) {
+                Box(modifier = Modifier.fillMaxWidth().systemBarsPadding()) {
 
                     IconButton(
                         onClick = {

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
@@ -225,17 +226,15 @@ fun AddFriendView(navController: NavController) {
             topBar = {
                 Row(
                     modifier = Modifier
+                        .systemBarsPadding()
                         .fillMaxWidth()
-                        .height(70.dp)
-                        .padding(bottom = 10.dp, top = 24.dp)
+                        .height(30.dp)
                         .background(MaterialTheme.colorScheme.primary)
                     ,
                     verticalAlignment = Alignment.CenterVertically,
                     //horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Box(modifier = Modifier.fillMaxWidth()) {
-
-
                         Text(
                             text = "Add Friend",
                             fontSize = 20.sp,
@@ -257,22 +256,22 @@ fun AddFriendView(navController: NavController) {
 
                 Column(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                        .systemBarsPadding()
+                        .fillMaxWidth()
+                        .padding(3.dp)
+                        .padding(horizontal = 2.dp, vertical = 4.dp),
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Box(
                         modifier = Modifier
-
                             .background(MaterialTheme.colorScheme.background)
                             .padding()
                             .clickable {
                                 showSearch = false
                             }
                     )
-                    Column {
+                    Column{
                         TextField(
                             value = searchFriendText,
                             onValueChange = { newText ->
@@ -281,7 +280,7 @@ fun AddFriendView(navController: NavController) {
                             placeholder = { Text("Search...") },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .fillMaxSize(fraction = 0.25f)
+                                .fillMaxSize(fraction = 0.22f)
                                 .background(MaterialTheme.colorScheme.primary)
                                 .focusRequester(focusRequester),
                             keyboardActions = KeyboardActions(
@@ -326,7 +325,7 @@ fun AddFriendView(navController: NavController) {
                                 }
                             } else {
                                 items(filteredFriends) { friend ->
-                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Spacer(modifier = Modifier.height(4.dp))
                                     if (friend.id != uid) {
                                         FriendBox(friendData = friend, navController) {
                                             selectedFriend = friend

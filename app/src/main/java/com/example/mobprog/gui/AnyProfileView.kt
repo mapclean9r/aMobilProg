@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -41,13 +43,14 @@ fun AnyProfileView(navController: NavController, user: UserData) {
         topBar = {
             Row(
                 modifier = Modifier
+                    .systemBarsPadding()
                     .fillMaxWidth()
                     .height(88.dp)
                     .padding(bottom = 10.dp, top = 24.dp)
                     .background(MaterialTheme.colorScheme.primary),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Box(modifier = Modifier.fillMaxWidth()) {
+                Box(modifier = Modifier.fillMaxWidth().systemBarsPadding()) {
 
                     IconButton(onClick = {
                         UserService().getCurrentUserData { docFields ->
@@ -78,54 +81,63 @@ fun AnyProfileView(navController: NavController, user: UserData) {
             }
         },
         content = { paddingValues ->
-            Column(
+            LazyColumn {
+item {
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(
+            modifier = Modifier
+                .size(152.dp)
+                .background(
+                    MaterialTheme.colorScheme.secondary,
+                    shape = CircleShape
+                )
+                .padding(1.dp)
+        ) {
+            GetUserProfileImageCircle(userID = user.id, size = 250)
+        }
+
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(12.dp)
+        ) {
+            Text(
+                text = user.name,
+                fontSize = 26.sp,
+                fontWeight = FontWeight.Bold,
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ){
-                Box(
-                    modifier = Modifier
-                        .size(152.dp)
-                        .background(
-                            MaterialTheme.colorScheme.secondary,
-                            shape = CircleShape
-                        )
-                        .padding(1.dp)
-                ) {
-                    GetUserProfileImageCircle(userID = user.id, size = 250)
-                }
+                    .padding(top = 12.dp)
+                    .align(Alignment.CenterHorizontally)
+            )
+            Icon(
+                imageVector = Icons.Default.CheckCircle,
+                contentDescription = "Profile Icon",
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+
+            Text(
+                text = user.dateCreated,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.W400,
+                modifier = Modifier
+                    .padding(2.dp)
+                    .align(Alignment.CenterHorizontally)
+            )
 
 
-                Column (modifier = Modifier
-                    .fillMaxSize()
-                    .padding(12.dp)) {
-                    Text(text = user.name,
-                        fontSize = 26.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .padding(top = 12.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
-                    Icon(
-                        imageVector = Icons.Default.CheckCircle,
-                        contentDescription = "Profile Icon",
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    )
-
-                    Text(text = user.dateCreated,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.W400,
-                        modifier = Modifier
-                            .padding(2.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
-
-
-                }
+        }
+    }
+}
             }
         },
         bottomBar = {

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -115,10 +116,11 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
         val guildData = guildDataState.value
         if (guildData != null) {
             Scaffold(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().systemBarsPadding(),
                 topBar = {
                     Row(
                         modifier = Modifier
+
                             .fillMaxWidth()
                             .height(88.dp)
                             .padding(bottom = 10.dp, top = 24.dp)

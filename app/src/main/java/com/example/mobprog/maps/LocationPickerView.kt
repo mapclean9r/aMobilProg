@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -43,6 +44,9 @@ fun LocationPickerView(
     isFineLocationGranted: Boolean,
     isCoarseLocationGranted: Boolean
 ) {
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
+
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
 
@@ -123,7 +127,7 @@ fun LocationPickerView(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().systemBarsPadding() ) {
         // Google Map
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
@@ -182,7 +186,6 @@ fun LocationPickerView(
                     .background(Color.Gray.copy(alpha = 0.2f), RoundedCornerShape(24.dp))
             )
         }
-
         // Custom Current Location Button
         FloatingActionButton(
             onClick = {
@@ -201,10 +204,10 @@ fun LocationPickerView(
                 contentDescription = "My Location"
             )
         }
-
         // Custom Zoom Buttons
         Column(
             modifier = Modifier
+
                 .align(Alignment.BottomEnd)
                 .padding(end = 16.dp, bottom = 70.dp) // Align with FAB height
         ) {

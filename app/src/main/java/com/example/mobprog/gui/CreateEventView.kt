@@ -60,6 +60,7 @@ import com.google.firebase.auth.FirebaseAuth
 import java.util.Calendar
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.LaunchedEffect
@@ -377,7 +378,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
         )
     } else {
         Scaffold(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().systemBarsPadding(),
             topBar = {
                 Row(
                     modifier = Modifier
@@ -638,67 +639,69 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
         } else {
             Box(
                 modifier = Modifier
+                    .systemBarsPadding()
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.onPrimary)
                     .padding()
                     .clickable {
                         showSearch = false
                     }
-            )
+            ) {
 
-            TextField(
-                value = searchGameText,
-                onValueChange = { searchGameText = it },
-                placeholder = { Text("Search...") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxSize(fraction = 0.20f)
-                    .padding(top = 24.dp),
-                singleLine = true
-            )
-            Button(
-                onClick = { showSearch = false },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 80.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = Color.Gray
+                TextField(
+                    value = searchGameText,
+                    onValueChange = { searchGameText = it },
+                    placeholder = { Text("Search...") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxSize(fraction = 0.20f)
+                        .padding(top = 24.dp),
+                    singleLine = true
                 )
+                Button(
+                    onClick = { showSearch = false },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 80.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Transparent,
+                        contentColor = Color.Gray
+                    )
 
-            ) {
-                Text("Cancel Search")
-            }
+                ) {
+                    Text("Cancel Search")
+                }
 
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 8.dp, vertical = 8.dp)
-                    .padding(top = 110.dp)
-            ) {
-                if (filteredGames.isEmpty()) {
-                    items(games) { game ->
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 8.dp, vertical = 8.dp)
+                        .padding(top = 110.dp)
+                ) {
+                    if (filteredGames.isEmpty()) {
+                        items(games) { game ->
+                            Spacer(modifier = Modifier.height(8.dp))
+                            GameBox(gameData = game) {
+                                selectedGame = game
+                                println("Game cover = " + game.thumbnail)
+                                gameCoverImage = game.thumbnail
+                                showSearch = false
+
+                            }
+
+                        }
+                    }
+                    items(filteredGames) { game ->
                         Spacer(modifier = Modifier.height(8.dp))
                         GameBox(gameData = game) {
                             selectedGame = game
                             println("Game cover = " + game.thumbnail)
                             gameCoverImage = game.thumbnail
                             showSearch = false
-
                         }
-
                     }
+                    println("Selected Game: $selectedGame")
                 }
-                items(filteredGames) { game ->
-                    Spacer(modifier = Modifier.height(8.dp))
-                    GameBox(gameData = game) {
-                        selectedGame = game
-                        println("Game cover = " + game.thumbnail)
-                        gameCoverImage = game.thumbnail
-                        showSearch = false
-                    }
-                }
-                println("Selected Game: $selectedGame")
             }
         }
     }

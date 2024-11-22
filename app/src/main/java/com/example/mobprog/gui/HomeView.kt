@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -89,7 +90,9 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
                         .fillMaxWidth()
                         .height(88.dp)
                         .padding(bottom = 10.dp, top = 24.dp)
-                        .background(MaterialTheme.colorScheme.primary),
+                        .background(MaterialTheme.colorScheme.primary)
+                        ,
+
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
@@ -154,13 +157,14 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
         topBar = {
             Row(
                 modifier = Modifier
+                    .systemBarsPadding()
                     .fillMaxWidth()
                     .height(70.dp)
                     .padding(bottom = 10.dp, top = 24.dp)
                     .background(MaterialTheme.colorScheme.primary),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(modifier = Modifier.weight(1f) .padding(start = 50.dp)) {
+                Box(modifier = Modifier.weight(1f)) {
                     Text(
                         text = "Homepage",
                         fontSize = 20.sp,

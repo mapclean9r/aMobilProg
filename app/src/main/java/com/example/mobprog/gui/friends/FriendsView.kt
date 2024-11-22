@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -148,6 +149,7 @@ fun FriendsView(navController: NavController) {
             } else {
                 Row(
                     modifier = Modifier
+                        .systemBarsPadding()
                         .fillMaxWidth()
                         .height(70.dp)
                         .padding(bottom = 10.dp, top = 24.dp)
@@ -157,7 +159,6 @@ fun FriendsView(navController: NavController) {
                 ) {
                     IconButton(
                         onClick = { navController.navigate("friendRequestScreen") },
-                        Modifier.padding(start = 25.dp)
                         ) {
                         Box {
                             Icon(
@@ -192,7 +193,7 @@ fun FriendsView(navController: NavController) {
 
                     IconButton(
                         onClick = { navController.navigate("addFriendScreen") },
-                        Modifier.padding(end = 25.dp)
+
                     ) {
                         Icon(
                             imageVector = Icons.Default.Add,
@@ -260,6 +261,7 @@ fun FriendsView(navController: NavController) {
 fun FriendsList(navController: NavController, friends: ArrayList<FriendData>) {
     Column(
         modifier = Modifier
+            .systemBarsPadding()
             .fillMaxSize()
             .padding(28.dp),
         verticalArrangement = Arrangement.Top,
