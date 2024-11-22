@@ -19,8 +19,13 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
 import retrofit2.*
+import android.location.Location
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import android.annotation.SuppressLint
 import retrofit2.converter.gson.GsonConverterFactory
 
+@SuppressLint("MissingPermission") // Handle permissions explicitly
 @Composable
 fun LocationPickerView(
     navController: NavController,
@@ -29,12 +34,15 @@ fun LocationPickerView(
     isCoarseLocationGranted: Boolean
 ) {
     val context = LocalContext.current
-    val focusManager = LocalFocusManager.current // Used to manage the focus state
+    val focusManager = LocalFocusManager.current
+    val geocodingApiKey = "AIzaSyBxZif_OnF3EoynMVcZfwXTZrauOBrfScU"
 
-    // Default: Oslo, Norway
-    val defaultLocation = LatLng(59.9139, 10.7522)
+    val fusedLocationProviderClient = remember { LocationServices.getFusedLocationProviderClient(context) }
+    var userLocation by remember { mutableStateOf<LatLng?>(null) }
+    val defaultLocation = LatLng(59.9139, 10.7522) // Default: Oslo, Norway
     val defaultZoom = 10f
 
+    // Initialize camera position state
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(defaultLocation, defaultZoom)
     }
@@ -42,8 +50,6 @@ fun LocationPickerView(
     var selectedLatLng by remember { mutableStateOf<LatLng?>(null) }
     var searchText by remember { mutableStateOf("") }
     var selectedLocationName by remember { mutableStateOf("") }
-
-    val geocodingApiKey = "AIzaSyBxZif_OnF3EoynMVcZfwXTZrauOBrfScU" // Replace with your actual API key
 
     val retrofit = Retrofit.Builder()
         .baseUrl("https://maps.googleapis.com/maps/api/")
@@ -69,6 +75,22 @@ fun LocationPickerView(
         })
     }
 
+    // Get user's current location if permissions are granted
+    LaunchedEffect(isFineLocationGranted, isCoarseLocationGranted) {
+        if (isFineLocationGranted || isCoarseLocationGranted) {
+            fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
+                location?.let {
+                    val currentLatLng = LatLng(it.latitude, it.longitude)
+                    userLocation = currentLatLng
+                    cameraPositionState.position = CameraPosition.fromLatLngZoom(currentLatLng, 12f)
+                }
+            }.addOnFailureListener {
+                Log.e("LocationPickerView", "Failed to get location: ${it.message}")
+            }
+        }
+    }
+
+    // UI rendering remains largely the same
     if (isFineLocationGranted || isCoarseLocationGranted) {
         Box(
             modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.onPrimary)
@@ -148,7 +170,7 @@ fun LocationPickerView(
                 FloatingActionButton(
                     onClick = {
                         onLocationSelected(it.latitude, it.longitude, selectedLocationName)
-                        navController.popBackStack() // Optionally navigate back after selecting the location
+                        navController.popBackStack()
                     },
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = Color.White,
