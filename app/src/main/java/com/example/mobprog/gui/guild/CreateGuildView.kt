@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -78,7 +80,7 @@ fun CreateGuildView(navController: NavController, modifier: Modifier = Modifier,
     }
 
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().systemBarsPadding(),
         topBar = {
             Row(
                 modifier = Modifier
@@ -100,96 +102,107 @@ fun CreateGuildView(navController: NavController, modifier: Modifier = Modifier,
             }
         },
         content = { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ){
-                Text(text = "Create Guild",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.W400,
-                    modifier = Modifier.padding(12.dp)
-                )
-                Text(text = "Name",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.W400,
-                    modifier = Modifier
-                        .padding(6.dp)
-                        .align(Alignment.Start))
-                TextField(
-                    value = name,
-                    onValueChange = { newText ->
-                        name = newText
-                        /* TODO behandle input her */
-                    },
-                    label = { Text("Enter Guildname") },
-                    placeholder = { Text("guildname") },
-                    modifier = Modifier.fillMaxWidth()
-                )
+            LazyColumn {
 
-                Text(text = "Description",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.W400,
-                    modifier = Modifier
-                        .padding(6.dp)
-                        .align(Alignment.Start))
-                TextField(
-                    value = description,
-                    onValueChange = { newText ->
-                        description = newText
-                        /* TODO behandle input her */
-                    },
-                    label = { Text("Enter Description") },
-                    placeholder = { Text("description") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Text(text = "Picture",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.W400,
-                    modifier = Modifier
-                        .padding(6.dp)
-                        .align(Alignment.Start))
-                TextField(
-                    value = picture,
-                    onValueChange = { newText ->
-                        picture = newText
-                        /* TODO behandle input her */
-                    },
-                    label = { Text("Enter picture id") },
-                    placeholder = { Text("picture id") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(22.dp))
-                Button(
-                    onClick = {
-                        onSubmit(
-                            name,
-                            description,
-                            picture = picture,
-                            guildService = GuildService(),
-                            leader = currentuserid.toString(),
-                            userService = userService,
-                            navController = navController,
-                            guildURI = imageUri
+                item {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues)
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        verticalArrangement = Arrangement.Top,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Create Guild",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.W400,
+                            modifier = Modifier.padding(12.dp)
                         )
-                        name = ""
-                        description = ""
-                        picture = ""
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Create Guild")
-                }
+                        Text(
+                            text = "Name",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.W400,
+                            modifier = Modifier
+                                .padding(6.dp)
+                                .align(Alignment.Start)
+                        )
+                        TextField(
+                            value = name,
+                            onValueChange = { newText ->
+                                name = newText
+                                /* TODO behandle input her */
+                            },
+                            label = { Text("Enter Guildname") },
+                            placeholder = { Text("guildname") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
 
-                Button(onClick = { imagePickerLauncher.launch("image/*") }) {
-                    Text("Select Guild Image")
-                }
+                        Text(
+                            text = "Description",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.W400,
+                            modifier = Modifier
+                                .padding(6.dp)
+                                .align(Alignment.Start)
+                        )
+                        TextField(
+                            value = description,
+                            onValueChange = { newText ->
+                                description = newText
+                                /* TODO behandle input her */
+                            },
+                            label = { Text("Enter Description") },
+                            placeholder = { Text("description") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
 
+                        Text(
+                            text = "Picture",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.W400,
+                            modifier = Modifier
+                                .padding(6.dp)
+                                .align(Alignment.Start)
+                        )
+                        TextField(
+                            value = picture,
+                            onValueChange = { newText ->
+                                picture = newText
+                                /* TODO behandle input her */
+                            },
+                            label = { Text("Enter picture id") },
+                            placeholder = { Text("picture id") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        Spacer(modifier = Modifier.height(22.dp))
+                        Button(
+                            onClick = {
+                                onSubmit(
+                                    name,
+                                    description,
+                                    picture = picture,
+                                    guildService = GuildService(),
+                                    leader = currentuserid.toString(),
+                                    userService = userService,
+                                    navController = navController,
+                                    guildURI = imageUri
+                                )
+                                name = ""
+                                description = ""
+                                picture = ""
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Create Guild")
+                        }
+
+                        Button(onClick = { imagePickerLauncher.launch("image/*") }) {
+                            Text("Select Guild Image")
+                        }
+                    }
+                }
             }
         },
         bottomBar = {

@@ -59,7 +59,6 @@ fun GuildBox(guildData: GuildData, userService: UserService, navController: NavC
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .border(2.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
             .padding(12.dp)
     ) {
         GetGuildProfileImageView(guildID = guildData.guildId, size = 500)
