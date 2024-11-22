@@ -209,7 +209,7 @@ fun SettingsView(navController: NavController, onDarkModeToggle: (Boolean) -> Un
                     ) {
                         Text("Update Profile Picture")
                     }
-                    
+
                     Spacer(modifier = Modifier.height(24.dp))
 
                     OutlinedTextField(

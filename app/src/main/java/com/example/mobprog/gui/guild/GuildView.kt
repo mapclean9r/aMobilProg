@@ -147,7 +147,7 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
                     }
                 },
                 content = { paddingValues ->
-                    Column(
+                    LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(paddingValues)
@@ -155,160 +155,177 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
                         verticalArrangement = Arrangement.Top,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .size(162.dp)
-                                .background(
-                                    MaterialTheme.colorScheme.secondary,
-                                    shape = CircleShape
-                                )
-                                .padding(1.dp)
-                        ) {
-                            GetGuildProfileImageCircle(guildID = guildData.guildId, size = 250)
-                        }
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(12.dp)
-                        ) {
-                            Text(
-                                text = guildData.name,
-                                fontSize = 28.sp,
-                                fontWeight = FontWeight.Bold,
+                        item {
+                            Box(
                                 modifier = Modifier
-                                    .padding(12.dp)
-                                    .align(Alignment.CenterHorizontally)
-                            )
-                            Row {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.crown),
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier
-                                        .size(34.dp)
-                                        .padding(5.dp)
-                                )
-                                Text(
-                                    text = "${guildLeaderId.value}",
-                                    fontSize = 18.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    fontStyle = FontStyle.Italic,
-                                    modifier = Modifier.padding(5.dp)
-                                )
-                            }
-
-                            Text(
-                                text = "Members:",
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.W400,
-                                modifier = Modifier.padding(12.dp)
-                            )
-                            LazyColumn(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(250.dp)
-                                    .padding(horizontal = 16.dp)
+                                    .size(162.dp)
+                                    .background(
+                                        MaterialTheme.colorScheme.secondary,
+                                        shape = CircleShape
+                                    )
+                                    .padding(1.dp)
                             ) {
-                                items(membersMap.toList()) { (memberId, username) ->
-                                    Box(
+                                GetGuildProfileImageCircle(guildID = guildData.guildId, size = 250)
+                            }
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(12.dp)
+                            ) {
+                                Text(
+                                    text = guildData.name,
+                                    fontSize = 28.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier
+                                        .padding(12.dp)
+                                        .align(Alignment.CenterHorizontally)
+                                )
+                                Row {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.crown),
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary,
                                         modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(vertical = 4.dp)
-                                            .background(
-                                                color = MaterialTheme.colorScheme.secondaryContainer,
-                                                shape = MaterialTheme.shapes.medium
-                                            )
-                                            .padding(12.dp)
-                                            .clickable(enabled = guildData.leader == currentUserId && guildData.leader != memberId) {
-                                                promoteButtonVisibilityMap[memberId] = !(promoteButtonVisibilityMap[memberId] ?: false)
-                                            }
-                                    ) {
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            modifier = Modifier.fillMaxWidth()
+                                            .size(34.dp)
+                                            .padding(5.dp)
+                                    )
+                                    Text(
+                                        text = "${guildLeaderId.value}",
+                                        fontSize = 18.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        fontStyle = FontStyle.Italic,
+                                        modifier = Modifier.padding(5.dp)
+                                    )
+                                }
+
+                                Text(
+                                    text = "Members:",
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.W400,
+                                    modifier = Modifier.padding(12.dp)
+                                )
+                                LazyColumn(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(250.dp)
+                                        .padding(horizontal = 16.dp)
+                                ) {
+                                    items(membersMap.toList()) { (memberId, username) ->
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(vertical = 4.dp)
+                                                .background(
+                                                    color = MaterialTheme.colorScheme.secondaryContainer,
+                                                    shape = MaterialTheme.shapes.medium
+                                                )
+                                                .padding(12.dp)
+                                                .clickable(enabled = guildData.leader == currentUserId && guildData.leader != memberId) {
+                                                    promoteButtonVisibilityMap[memberId] =
+                                                        !(promoteButtonVisibilityMap[memberId]
+                                                            ?: false)
+                                                }
                                         ) {
-                                            if(guildLeaderId.value != username){
-                                                Icon(
-                                                    imageVector = Icons.Default.Person,
-                                                    contentDescription = null,
-                                                    tint = MaterialTheme.colorScheme.primary,
-                                                    modifier = Modifier
-                                                        .size(24.dp)
-                                                        .padding(end = 8.dp)
-                                                )
-                                            }
-                                            if(guildLeaderId.value == username){
-                                                Icon(
-                                                    painter = painterResource(id = R.drawable.crown),
-                                                    contentDescription = null,
-                                                    tint = MaterialTheme.colorScheme.primary,
-                                                    modifier = Modifier
-                                                        .size(24.dp)
-                                                        .padding(end = 8.dp)
-                                                )
-                                            }
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                modifier = Modifier.fillMaxWidth()
+                                            ) {
+                                                if (guildLeaderId.value != username) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.Person,
+                                                        contentDescription = null,
+                                                        tint = MaterialTheme.colorScheme.primary,
+                                                        modifier = Modifier
+                                                            .size(24.dp)
+                                                            .padding(end = 8.dp)
+                                                    )
+                                                }
+                                                if (guildLeaderId.value == username) {
+                                                    Icon(
+                                                        painter = painterResource(id = R.drawable.crown),
+                                                        contentDescription = null,
+                                                        tint = MaterialTheme.colorScheme.primary,
+                                                        modifier = Modifier
+                                                            .size(24.dp)
+                                                            .padding(end = 8.dp)
+                                                    )
+                                                }
 
-                                            Text(
-                                                text = username,
-                                                fontSize = 16.sp,
-                                                fontWeight = FontWeight.Medium,
-                                                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                                                modifier = Modifier.weight(1f)
-                                            )
+                                                Text(
+                                                    text = username,
+                                                    fontSize = 16.sp,
+                                                    fontWeight = FontWeight.Medium,
+                                                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                                    modifier = Modifier.weight(1f)
+                                                )
 
-                                            if (promoteButtonVisibilityMap[memberId] == true) {
-                                                Button(
-                                                    onClick = {
-                                                        guildService.transferGuildLeadership(
-                                                            guildId = guildData.guildId,
-                                                            currentLeaderId = currentUserId,
-                                                            newLeaderId = memberId
-                                                        ) { success, exception ->
-                                                            if (success) {
-                                                                promoteButtonVisibilityMap[memberId] = false
-                                                                userService.getUsernameWithDocID(memberId) { newLeaderName ->
-                                                                    guildDataState.value =
-                                                                        guildDataState.value?.copy(
-                                                                            leader = memberId,
-                                                                            name = newLeaderName
-                                                                                ?: "Unknown"
-                                                                        )
+                                                if (promoteButtonVisibilityMap[memberId] == true) {
+                                                    Button(
+                                                        onClick = {
+                                                            guildService.transferGuildLeadership(
+                                                                guildId = guildData.guildId,
+                                                                currentLeaderId = currentUserId,
+                                                                newLeaderId = memberId
+                                                            ) { success, exception ->
+                                                                if (success) {
+                                                                    promoteButtonVisibilityMap[memberId] =
+                                                                        false
+                                                                    userService.getUsernameWithDocID(
+                                                                        memberId
+                                                                    ) { newLeaderName ->
+                                                                        guildDataState.value =
+                                                                            guildDataState.value?.copy(
+                                                                                leader = memberId,
+                                                                                name = newLeaderName
+                                                                                    ?: "Unknown"
+                                                                            )
+                                                                    }
+                                                                } else {
+                                                                    exception?.printStackTrace()
                                                                 }
-                                                            } else {
-                                                                exception?.printStackTrace()
                                                             }
-                                                        }
-                                                    },
-                                                    modifier = Modifier.padding(start = 8.dp)
-                                                ) {
-                                                    Text(text = "Promote")
+                                                        },
+                                                        modifier = Modifier.padding(start = 8.dp)
+                                                    ) {
+                                                        Text(text = "Promote")
+                                                    }
                                                 }
                                             }
                                         }
                                     }
                                 }
-                            }
 
-                            Button(
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color.Red
-                                ),
-                                onClick = {
-                                    if (guildData.leader == currentUserId) {
-                                        if (membersMap.size == 1) {
-                                            userService.leaveGuild(navController, guildData.guildId, userService, guildService)
+                                Button(
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color.Red
+                                    ),
+                                    onClick = {
+                                        if (guildData.leader == currentUserId) {
+                                            if (membersMap.size == 1) {
+                                                userService.leaveGuild(
+                                                    navController,
+                                                    guildData.guildId,
+                                                    userService,
+                                                    guildService
+                                                )
+                                            } else {
+                                                showChooseNewLeaderDialog = true
+                                            }
                                         } else {
-                                            showChooseNewLeaderDialog = true
+                                            userService.leaveGuild(
+                                                navController,
+                                                guildData.guildId,
+                                                userService,
+                                                guildService
+                                            )
                                         }
-                                    } else {
-                                        userService.leaveGuild(navController, guildData.guildId, userService, guildService)
-                                    }
-                                },
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .align(Alignment.End)
-                            ) {
-                                Text(text = "Leave Guild")
+                                    },
+                                    modifier = Modifier
+                                        .padding(16.dp)
+                                        .align(Alignment.End)
+                                ) {
+                                    Text(text = "Leave Guild")
+                                }
                             }
                         }
                     }
