@@ -226,7 +226,7 @@ fun AddFriendView(navController: NavController) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(64.dp)
+                        .height(70.dp)
                         .padding(bottom = 10.dp, top = 24.dp)
                         .background(MaterialTheme.colorScheme.primary)
                     ,
@@ -235,21 +235,7 @@ fun AddFriendView(navController: NavController) {
                 ) {
                     Box(modifier = Modifier.fillMaxWidth()) {
 
-                        IconButton(
-                            onClick = {
-                                navController.navigate("friendsScreen")
-                                {
-                                    popUpTo(0) { inclusive = true }
-                                }
-                            },
-                            modifier = Modifier.align(Alignment.CenterStart)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowBack,
-                                contentDescription = "Search Icon",
-                                tint = Color.White
-                            )
-                        }
+
                         Text(
                             text = "Add Friend",
                             fontSize = 20.sp,

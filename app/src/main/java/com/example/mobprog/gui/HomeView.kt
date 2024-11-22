@@ -155,26 +155,33 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(64.dp)
+                    .height(70.dp)
                     .padding(bottom = 10.dp, top = 24.dp)
                     .background(MaterialTheme.colorScheme.primary),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(modifier = Modifier.fillMaxWidth()) {
-                    IconButton(onClick = { showSearch = true }) {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = "Search Icon",
-                            tint = Color.White
-                        )
-                    }
+                Box(modifier = Modifier.weight(1f) .padding(start = 50.dp)) {
                     Text(
                         text = "Homepage",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White,
                         modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+
+                IconButton(
+
+                    onClick = { showSearch = true },
+
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                            .padding(end = 25.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = "Search Icon",
+                        tint = Color.White
                     )
                 }
             }

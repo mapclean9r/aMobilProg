@@ -39,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -57,6 +58,9 @@ import com.example.mobprog.gui.components.GetUserProfileImageCircle
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "MutableCollectionMutableState")
 @Composable
 fun FriendsView(navController: NavController) {
+
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
 
     val friends = remember { mutableStateOf<ArrayList<FriendData>?>(ArrayList()) }
     val allFriends = remember { mutableStateOf<ArrayList<FriendData>?>(ArrayList()) }
@@ -84,61 +88,120 @@ fun FriendsView(navController: NavController) {
         }
     }
 
-    Scaffold(topBar = {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(88.dp)
-                .padding(bottom = 10.dp, top = 24.dp)
-                .background(MaterialTheme.colorScheme.primary),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            IconButton(
-                onClick = { navController.navigate("friendRequestScreen") },
+    Scaffold(
+        topBar = {
+            if (!isLandscape) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(88.dp)
+                        .padding(bottom = 10.dp, top = 24.dp)
+                        .background(MaterialTheme.colorScheme.primary),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    IconButton(
+                        onClick = { navController.navigate("friendRequestScreen") },
 
-            ) {
-                Box {
-                    Icon(
-                        imageVector = Icons.Default.Notifications,
-                        contentDescription = "Notifications",
-                        tint = Color.White
+                        ) {
+                        Box {
+                            Icon(
+                                imageVector = Icons.Default.Notifications,
+                                contentDescription = "Notifications",
+                                tint = Color.White
+                            )
+                            if (hasRequests.value) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(10.dp)
+                                        .background(Color.Red, shape = CircleShape)
+                                        .align(Alignment.TopEnd)
+                                        .offset(x = (-4).dp, y = 4.dp)
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.width(32.dp))
+                    Text(
+                        text = "Friends",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        modifier = Modifier
+                            .weight(2f)
+                            .wrapContentWidth(Alignment.CenterHorizontally)
                     )
-                    if (hasRequests.value) {
-                        Box(
-                            modifier = Modifier
-                                .size(10.dp)
-                                .background(Color.Red, shape = CircleShape)
-                                .align(Alignment.TopEnd)
-                                .offset(x = (-4).dp, y = 4.dp)
+
+                    Spacer(modifier = Modifier.width(32.dp))
+
+                    IconButton(
+                        onClick = { navController.navigate("addFriendScreen") },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Add Friend",
+                            tint = Color.White
+                        )
+                    }
+                }
+            } else {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(70.dp)
+                        .padding(bottom = 10.dp, top = 24.dp)
+                        .background(MaterialTheme.colorScheme.primary),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
+                    IconButton(
+                        onClick = { navController.navigate("friendRequestScreen") },
+                        Modifier.padding(start = 25.dp)
+                        ) {
+                        Box {
+                            Icon(
+                                imageVector = Icons.Default.Notifications,
+                                contentDescription = "Notifications",
+                                tint = Color.White
+                            )
+                            if (hasRequests.value) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(10.dp)
+                                        .background(Color.Red, shape = CircleShape)
+                                        .align(Alignment.TopEnd)
+                                        .offset(x = (-4).dp, y = 4.dp)
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.width(32.dp))
+                    Text(
+                        text = "Friends",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        modifier = Modifier
+                            .weight(2f)
+                            .wrapContentWidth(Alignment.CenterHorizontally)
+                    )
+
+                    Spacer(modifier = Modifier.width(32.dp))
+
+                    IconButton(
+                        onClick = { navController.navigate("addFriendScreen") },
+                        Modifier.padding(end = 25.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Add Friend",
+                            tint = Color.White
                         )
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.width(32.dp))
-            Text(
-                text = "Friends",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White,
-                modifier = Modifier
-                    .weight(2f)
-                    .wrapContentWidth(Alignment.CenterHorizontally)
-            )
-
-            Spacer(modifier = Modifier.width(32.dp))
-
-            IconButton(
-                onClick = { navController.navigate("addFriendScreen") },
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add Friend",
-                    tint = Color.White
-                )
-            }
-        }
 
     }, content = {
         if (!isLoading.value) {

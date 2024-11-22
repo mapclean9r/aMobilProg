@@ -382,7 +382,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(64.dp)
+                        .height(70.dp)
                         .padding(bottom = 10.dp, top = 24.dp)
                         .background(MaterialTheme.colorScheme.primary),
                     verticalAlignment = Alignment.CenterVertically,
@@ -570,70 +570,138 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
     }
 
     if (showSearch) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.onPrimary)
-                .padding()
-                .clickable {
-                    showSearch = false
+        if (!isLandscape) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.onPrimary)
+                    .padding()
+                    .clickable {
+                        showSearch = false
+                    }
+            )
+
+            TextField(
+                value = searchGameText,
+                onValueChange = { searchGameText = it },
+                placeholder = { Text("Search...") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxSize(fraction = 0.09f)
+                    .padding(top = 24.dp),
+                singleLine = true
+            )
+            Button(
+                onClick = { showSearch = false },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 80.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Transparent,
+                    contentColor = Color.Gray
+                )
+
+            ) {
+                Text("Cancel Search")
+            }
+
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 8.dp, vertical = 8.dp)
+                    .padding(top = 110.dp)
+            ) {
+                if (filteredGames.isEmpty()) {
+                    items(games) { game ->
+                        Spacer(modifier = Modifier.height(8.dp))
+                        GameBox(gameData = game) {
+                            selectedGame = game
+                            println("Game cover = " + game.thumbnail)
+                            gameCoverImage = game.thumbnail
+                            showSearch = false
+
+                        }
+
+                    }
                 }
-        )
-
-        TextField(
-            value = searchGameText,
-            onValueChange = { searchGameText = it },
-            placeholder = { Text("Search...") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxSize(fraction = 0.09f)
-                .padding(top = 24.dp),
-            singleLine = true
-        )
-        Button(onClick = {showSearch = false},
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 80.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent,
-                contentColor = Color.Gray)
-
-        ) {
-            Text("Cancel Search")
-        }
-
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 8.dp, vertical = 8.dp)
-                .padding(top = 110.dp)
-        ) {
-            if (filteredGames.isEmpty()) {
-                items(games) { game ->
+                items(filteredGames) { game ->
                     Spacer(modifier = Modifier.height(8.dp))
                     GameBox(gameData = game) {
                         selectedGame = game
                         println("Game cover = " + game.thumbnail)
                         gameCoverImage = game.thumbnail
                         showSearch = false
+                    }
+                }
+                println("Selected Game: $selectedGame")
+            }
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.onPrimary)
+                    .padding()
+                    .clickable {
+                        showSearch = false
+                    }
+            )
+
+            TextField(
+                value = searchGameText,
+                onValueChange = { searchGameText = it },
+                placeholder = { Text("Search...") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxSize(fraction = 0.20f)
+                    .padding(top = 24.dp),
+                singleLine = true
+            )
+            Button(
+                onClick = { showSearch = false },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 80.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Transparent,
+                    contentColor = Color.Gray
+                )
+
+            ) {
+                Text("Cancel Search")
+            }
+
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 8.dp, vertical = 8.dp)
+                    .padding(top = 110.dp)
+            ) {
+                if (filteredGames.isEmpty()) {
+                    items(games) { game ->
+                        Spacer(modifier = Modifier.height(8.dp))
+                        GameBox(gameData = game) {
+                            selectedGame = game
+                            println("Game cover = " + game.thumbnail)
+                            gameCoverImage = game.thumbnail
+                            showSearch = false
+
+                        }
 
                     }
-
                 }
-            }
-            items(filteredGames) { game ->
-                Spacer(modifier = Modifier.height(8.dp))
-                GameBox(gameData = game) {
-                    selectedGame = game
-                    println("Game cover = " + game.thumbnail)
-                    gameCoverImage = game.thumbnail
-                    showSearch = false
+                items(filteredGames) { game ->
+                    Spacer(modifier = Modifier.height(8.dp))
+                    GameBox(gameData = game) {
+                        selectedGame = game
+                        println("Game cover = " + game.thumbnail)
+                        gameCoverImage = game.thumbnail
+                        showSearch = false
+                    }
                 }
-            }
-            println("Selected Game: $selectedGame")
+                println("Selected Game: $selectedGame")
             }
         }
-
+    }
 }
 
 fun onSubmit(name: String,
