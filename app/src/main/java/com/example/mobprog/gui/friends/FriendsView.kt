@@ -148,15 +148,13 @@ fun FriendsView(navController: NavController) {
                     return@Scaffold
                 }
             }
-
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 16.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.Center, // Center content vertically
+                verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Text when there are no friends
                 Text(
                     text = "No Friends Yet",
                     maxLines = 1,
@@ -164,7 +162,7 @@ fun FriendsView(navController: NavController) {
                     style = TextStyle(
                         fontFamily = FontFamily.SansSerif,
                         fontSize = 18.sp,
-                        color = MaterialTheme.colorScheme.primary // Text color
+                        color = MaterialTheme.colorScheme.primary
                     )
                 )
             }
@@ -173,10 +171,9 @@ fun FriendsView(navController: NavController) {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 16.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.Center, // Center content vertically
+                verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Text when there are no friends
                 Text(
                     text = "Loading...",
                     maxLines = 1,
@@ -184,7 +181,7 @@ fun FriendsView(navController: NavController) {
                     style = TextStyle(
                         fontFamily = FontFamily.SansSerif,
                         fontSize = 18.sp,
-                        color = MaterialTheme.colorScheme.primary // Text color
+                        color = MaterialTheme.colorScheme.primary
                     )
                 )
             }
