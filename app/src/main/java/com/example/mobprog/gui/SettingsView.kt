@@ -1,6 +1,7 @@
 package com.example.mobprog.gui
 
 import android.annotation.SuppressLint
+import android.content.ClipData.Item
 import android.content.Context
 import android.net.Uri
 import android.widget.Toast
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -181,171 +183,180 @@ fun SettingsView(navController: NavController, onDarkModeToggle: (Boolean) -> Un
                 .padding(16.dp),
             contentAlignment = Alignment.TopStart
         ) {
-            Column(
+            LazyColumn (
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
-
-                Box(modifier = Modifier.size(145.dp)){
-                    selectedImageUri?.let { uri ->
-                        Image(
-                            painter = rememberAsyncImagePainter(uri),
-                            contentDescription = "User Profile Image",
-                            modifier = Modifier
-                                .size(140.dp)
-                                .clip(CircleShape),
-                            contentScale = ContentScale.Crop
-                        )
-                    } ?: run {
-                        GetSelfProfileImageCircle(140)
-                    }
-                }
-                Spacer(modifier = Modifier.padding(5.dp))
-
-                Button(
-                    onClick = { launcher.launch("image/*") }
-                ) {
-                    Text("Update Profile Picture")
-                }
-
-
-
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                OutlinedTextField(
-                    value = newName,
-                    onValueChange = { newName = it },
-                    label = { Text("New Name") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Button(
-                    onClick = {
-                        updateUserName(newName) { success, message ->
-                            isUpdating = false
-                            updateStatus = message
-                            if (success) {
-                                newName = ""
-                            }
+                item {
+                    Box(modifier = Modifier.size(145.dp)) {
+                        selectedImageUri?.let { uri ->
+                            Image(
+                                painter = rememberAsyncImagePainter(uri),
+                                contentDescription = "User Profile Image",
+                                modifier = Modifier
+                                    .size(140.dp)
+                                    .clip(CircleShape),
+                                contentScale = ContentScale.Crop
+                            )
+                        } ?: run {
+                            GetSelfProfileImageCircle(140)
                         }
-                    },
-                    enabled = newName.isNotBlank() && !isUpdating,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    if (isUpdating) {
-                        CircularProgressIndicator(
-                            color = Color.White,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    } else {
-                        Text("Update Name")
                     }
-                }
+                    Spacer(modifier = Modifier.padding(5.dp))
 
-                updateStatus?.let { statusMessage ->
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = statusMessage,
-                        color = if (statusMessage.contains("success", true)) Color.Green else Color.Red,
-                        fontWeight = FontWeight.Bold
+                    Button(
+                        onClick = { launcher.launch("image/*") }
+                    ) {
+                        Text("Update Profile Picture")
+                    }
+                    
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    OutlinedTextField(
+                        value = newName,
+                        onValueChange = { newName = it },
+                        label = { Text("New Name") },
+                        modifier = Modifier.fillMaxWidth()
                     )
-                }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                // New Password Input
-                OutlinedTextField(
-                    value = newPassword,
-                    onValueChange = { newPassword = it },
-                    label = { Text("New Password") },
-                    visualTransformation = PasswordVisualTransformation(),
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                OutlinedTextField(
-                    value = confirmPassword,
-                    onValueChange = { confirmPassword = it },
-                    label = { Text("Confirm Password") },
-                    visualTransformation = PasswordVisualTransformation(),
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Button(
-                    onClick = {
-                        if (newPassword == confirmPassword) {
-                            isPasswordUpdating = true
-                            UserService().updatePassword(newPassword) { success, message ->
-                                isPasswordUpdating = false
-                                passwordUpdateStatus = message
+                    Button(
+                        onClick = {
+                            updateUserName(newName) { success, message ->
+                                isUpdating = false
+                                updateStatus = message
+                                if (success) {
+                                    newName = ""
+                                }
                             }
+                        },
+                        enabled = newName.isNotBlank() && !isUpdating,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        if (isUpdating) {
+                            CircularProgressIndicator(
+                                color = Color.White,
+                                modifier = Modifier.size(24.dp)
+                            )
                         } else {
-                            passwordUpdateStatus = "Passwords do not match."
+                            Text("Update Name")
                         }
-                    },
-                    enabled = newPassword.isNotBlank() && confirmPassword.isNotBlank() && !isPasswordUpdating,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    if (isPasswordUpdating) {
-                        CircularProgressIndicator(
-                            color = Color.White,
-                            modifier = Modifier.size(24.dp)
+                    }
+
+                    updateStatus?.let { statusMessage ->
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = statusMessage,
+                            color = if (statusMessage.contains(
+                                    "success",
+                                    true
+                                )
+                            ) Color.Green else Color.Red,
+                            fontWeight = FontWeight.Bold
                         )
-                    } else {
-                        Text("Update Password")
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    // New Password Input
+                    OutlinedTextField(
+                        value = newPassword,
+                        onValueChange = { newPassword = it },
+                        label = { Text("New Password") },
+                        visualTransformation = PasswordVisualTransformation(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    OutlinedTextField(
+                        value = confirmPassword,
+                        onValueChange = { confirmPassword = it },
+                        label = { Text("Confirm Password") },
+                        visualTransformation = PasswordVisualTransformation(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Button(
+                        onClick = {
+                            if (newPassword == confirmPassword) {
+                                isPasswordUpdating = true
+                                UserService().updatePassword(newPassword) { success, message ->
+                                    isPasswordUpdating = false
+                                    passwordUpdateStatus = message
+                                }
+                            } else {
+                                passwordUpdateStatus = "Passwords do not match."
+                            }
+                        },
+                        enabled = newPassword.isNotBlank() && confirmPassword.isNotBlank() && !isPasswordUpdating,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        if (isPasswordUpdating) {
+                            CircularProgressIndicator(
+                                color = Color.White,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        } else {
+                            Text("Update Password")
+                        }
+                    }
+
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+
+                        Text("Dark Mode")
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Switch(
+                            checked = isPreChecked,
+                            onCheckedChange = { isChecked ->
+                                isDarkTheme = isChecked
+                                isPreChecked = isChecked
+                                onDarkModeToggle(isChecked)
+                            }
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = if (isPreChecked) "ON" else "OFF",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+
+
+
+                    passwordUpdateStatus?.let { statusMessage ->
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = statusMessage,
+                            color = if (statusMessage.contains(
+                                    "success",
+                                    true
+                                )
+                            ) Color.Green else Color.Red,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Button(
+
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Red
+                        ),
+                        onClick = {
+                            logout(navController)
+                        },
+                    ) {
+                        Text(text = "Logout")
                     }
                 }
 
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-
-                    Text("Dark Mode")
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Switch(
-                        checked = isPreChecked,
-                        onCheckedChange = { isChecked ->
-                            isDarkTheme = isChecked
-                            isPreChecked = isChecked
-                            onDarkModeToggle(isChecked)
-                        }
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = if (isPreChecked) "ON" else "OFF",
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
-
-
-
-                passwordUpdateStatus?.let { statusMessage ->
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = statusMessage,
-                        color = if (statusMessage.contains("success", true)) Color.Green else Color.Red,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-
-
-                Spacer(modifier = Modifier.height(6.dp))
-                Button(
-                    modifier = Modifier.align(Alignment.End),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Red
-                    ),
-                    onClick = {
-                        logout(navController) }, ) {
-                    Text(text = "Logout")
-                }
             }
         }
     }, bottomBar = {
