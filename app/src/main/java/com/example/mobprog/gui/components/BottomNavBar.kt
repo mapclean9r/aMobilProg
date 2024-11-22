@@ -2,6 +2,7 @@ package com.example.mobprog.gui.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -16,7 +17,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.mobprog.R
@@ -24,6 +27,9 @@ import com.example.mobprog.data.UserService
 
 @Composable
 fun BottomNavBar(navController: NavController, userService: UserService) {
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
+
     var guild by remember { mutableStateOf<String?>(null) }
     var isLoading by remember { mutableStateOf(true) }
 
@@ -46,81 +52,162 @@ fun BottomNavBar(navController: NavController, userService: UserService) {
         ),
         NavBarItem("Profile", R.drawable.baseline_person_24, "profileScreen", iconColor)
     )
+    if (!isLandscape) {
+        NavigationBar {
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentDestination = navBackStackEntry?.destination
 
-    NavigationBar {
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentDestination = navBackStackEntry?.destination
+            navigationBarItemsList.forEach { navigationBarItem ->
+                val isSelected = if (navigationBarItem.routeAlternatives.isNotEmpty()) {
+                    currentDestination?.route in navigationBarItem.routeAlternatives
+                } else {
+                    currentDestination?.route == navigationBarItem.route
+                }
 
-        navigationBarItemsList.forEach { navigationBarItem ->
-            val isSelected = if (navigationBarItem.routeAlternatives.isNotEmpty()) {
-                currentDestination?.route in navigationBarItem.routeAlternatives
-            } else {
-                currentDestination?.route == navigationBarItem.route
-            }
+                val animatedIconColor by animateColorAsState(
+                    targetValue = if (isSelected) selectedColor else navigationBarItem.color
+                )
+                val animatedTextColor by animateColorAsState(
+                    targetValue = if (isSelected) selectedColor else Color.Gray
+                )
 
-            val animatedIconColor by animateColorAsState(
-                targetValue = if (isSelected) selectedColor else navigationBarItem.color
-            )
-            val animatedTextColor by animateColorAsState(
-                targetValue = if (isSelected) selectedColor else Color.Gray
-            )
+                val scale by animateFloatAsState(targetValue = if (isSelected) 1.2f else 1.0f)
 
-            val scale by animateFloatAsState(targetValue = if (isSelected) 1.2f else 1.0f)
-
-            NavigationBarItem(
-                selected = isSelected,
-                onClick = {
-                    if (navigationBarItem.label == "Guild") {
-                        if (isLoading) {
-                            return@NavigationBarItem
-                        }
-                        if (guild.isNullOrEmpty()) {
-                            navController.navigate("noGuildScreen") {
-                                while (navController.popBackStack() == true) {
-                                    navController.popBackStack()
+                NavigationBarItem(
+                    selected = isSelected,
+                    onClick = {
+                        if (navigationBarItem.label == "Guild") {
+                            if (isLoading) {
+                                return@NavigationBarItem
+                            }
+                            if (guild.isNullOrEmpty()) {
+                                navController.navigate("noGuildScreen") {
+                                    while (navController.popBackStack() == true) {
+                                        navController.popBackStack()
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
                                 }
-                                launchSingleTop = true
-                                restoreState = true
+                            } else {
+                                navController.navigate("guildScreen") {
+                                    while (navController.popBackStack() == true) {
+                                        navController.popBackStack()
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
                             }
                         } else {
-                            navController.navigate("guildScreen") {
-                                while (navController.popBackStack() == true) {
-                                    navController.popBackStack()
+                            if (!isSelected) {
+                                navController.navigate(navigationBarItem.route) {
+                                    while (navController.popBackStack() == true) {
+                                        navController.popBackStack()
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
                                 }
-                                launchSingleTop = true
-                                restoreState = true
                             }
                         }
-                    } else {
-                        if (!isSelected) {
-                            navController.navigate(navigationBarItem.route) {
-                                while (navController.popBackStack() == true) {
-                                    navController.popBackStack()
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        }
-                    }
-                },
-                icon = {
-                    Icon(
-                        painter = painterResource(id = navigationBarItem.icon),
-                        contentDescription = navigationBarItem.label,
-                        tint = animatedIconColor,
-                        modifier = Modifier.graphicsLayer(
-                            scaleX = scale,
-                            scaleY = scale,
+                    },
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = navigationBarItem.icon),
+                            contentDescription = navigationBarItem.label,
+                            tint = animatedIconColor,
+                            modifier = Modifier.graphicsLayer(
+                                scaleX = scale,
+                                scaleY = scale,
+                            )
                         )
-                    )
-                },
-                label = {
-                    Text(
-                        text = navigationBarItem.label,
-                        color = animatedTextColor
-                    )
+                    },
+                    label = {
+                        Text(
+                            text = navigationBarItem.label,
+                            color = animatedTextColor
+                        )
+                    }
+                )
+            }
+        }
+    }
+    else {
+        NavigationBar(
+            modifier = Modifier.height(82.dp)
+        ) {
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentDestination = navBackStackEntry?.destination
+
+            navigationBarItemsList.forEach { navigationBarItem ->
+                val isSelected = if (navigationBarItem.routeAlternatives.isNotEmpty()) {
+                    currentDestination?.route in navigationBarItem.routeAlternatives
+                } else {
+                    currentDestination?.route == navigationBarItem.route
                 }
-            )
+
+                val animatedIconColor by animateColorAsState(
+                    targetValue = if (isSelected) selectedColor else navigationBarItem.color
+                )
+                val animatedTextColor by animateColorAsState(
+                    targetValue = if (isSelected) selectedColor else Color.Gray
+                )
+
+                val scale by animateFloatAsState(targetValue = if (isSelected) 1.2f else 1.0f)
+
+                NavigationBarItem(
+                    selected = isSelected,
+                    onClick = {
+                        if (navigationBarItem.label == "Guild") {
+                            if (isLoading) {
+                                return@NavigationBarItem
+                            }
+                            if (guild.isNullOrEmpty()) {
+                                navController.navigate("noGuildScreen") {
+                                    while (navController.popBackStack() == true) {
+                                        navController.popBackStack()
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            } else {
+                                navController.navigate("guildScreen") {
+                                    while (navController.popBackStack() == true) {
+                                        navController.popBackStack()
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
+                        } else {
+                            if (!isSelected) {
+                                navController.navigate(navigationBarItem.route) {
+                                    while (navController.popBackStack() == true) {
+                                        navController.popBackStack()
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
+                        }
+                    },
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = navigationBarItem.icon),
+                            contentDescription = navigationBarItem.label,
+                            tint = animatedIconColor,
+                            modifier = Modifier.graphicsLayer(
+                                scaleX = scale,
+                                scaleY = scale,
+                            )
+                        )
+                    },
+                    label = {
+                        Text(
+                            text = navigationBarItem.label,
+                            color = animatedTextColor
+                        )
+                    }
+                )
+            }
         }
     }
 }

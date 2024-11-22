@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
@@ -56,7 +57,10 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun AddFriendView(navController: NavController) {
 
-    var uid by remember { mutableStateOf("") }
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
+
+    val uid by remember { mutableStateOf("") }
     var showSearch by remember { mutableStateOf(true) }
     var searchFriendText by remember { mutableStateOf("") }
     var selectedFriend by remember { mutableStateOf<FriendData?>(null) }
@@ -81,6 +85,7 @@ fun AddFriendView(navController: NavController) {
         }
     }
 
+    if (!isLandscape) {
     Scaffold(
         topBar = {
             Row(
@@ -213,8 +218,143 @@ fun AddFriendView(navController: NavController) {
                 }
             }
         },
-
         )
+    }
+    else {
+        Scaffold(
+            topBar = {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp)
+                        .padding(bottom = 10.dp, top = 24.dp)
+                        .background(MaterialTheme.colorScheme.primary)
+                    ,
+                    verticalAlignment = Alignment.CenterVertically,
+                    //horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Box(modifier = Modifier.fillMaxWidth()) {
+
+                        IconButton(
+                            onClick = {
+                                navController.navigate("friendsScreen")
+                                {
+                                    popUpTo(0) { inclusive = true }
+                                }
+                            },
+                            modifier = Modifier.align(Alignment.CenterStart)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowBack,
+                                contentDescription = "Search Icon",
+                                tint = Color.White
+                            )
+                        }
+                        Text(
+                            text = "Add Friend",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+                }
+            },
+            bottomBar = {
+                // inspirert av link under for å lage navbar.
+                // https://www.youtube.com/watch?v=O9csfKW3dZ4
+                BottomNavBar(navController = navController, userService = UserService())
+            },
+            content = { paddingValues ->
+
+                val currentUser = FirebaseAuth.getInstance().currentUser ?: return@Scaffold
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Box(
+                        modifier = Modifier
+
+                            .background(MaterialTheme.colorScheme.background)
+                            .padding()
+                            .clickable {
+                                showSearch = false
+                            }
+                    )
+                    Column {
+                        TextField(
+                            value = searchFriendText,
+                            onValueChange = { newText ->
+                                searchFriendText = newText
+                            },
+                            placeholder = { Text("Search...") },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxSize(fraction = 0.25f)
+                                .background(MaterialTheme.colorScheme.primary)
+                                .focusRequester(focusRequester),
+                            keyboardActions = KeyboardActions(
+                                onDone = {
+                                    focusManager.clearFocus()
+                                    keyboardController?.hide()
+                                }
+                            ),
+                            singleLine = true
+                        )
+                        Button(
+                            onClick = {
+                                searchFriendText = ""
+                                focusManager.clearFocus()
+                                keyboardController?.hide()
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Transparent,
+                                contentColor = Color.Gray
+                            )
+                        ) {
+                            Text("Cancel Search")
+                        }
+
+                        val filteredFriends = friends.filter { friend ->
+                            !currentUserFriends.contains(friend.id) && friend.name.contains(searchFriendText, ignoreCase = true)
+                        }
+
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                        ) {
+                            if (filteredFriends.isEmpty()) {
+                                item {
+                                    Text(
+                                        text = "No users found matching \"$searchFriendText\"",
+                                        modifier = Modifier.padding(16.dp),
+                                        color = Color.Gray
+                                    )
+                                }
+                            } else {
+                                items(filteredFriends) { friend ->
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    if (friend.id != uid) {
+                                        FriendBox(friendData = friend, navController) {
+                                            selectedFriend = friend
+                                            showSearch = false
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+        )
+    }
 
 
 }
