@@ -329,6 +329,20 @@ class UserService {
             }
     }
 
+    fun removeEventFromAttend(userId: String, eventId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+        val userRef = db.collection("users").document(userId)
+
+        userRef.update("eventsToAttend", FieldValue.arrayRemove(eventId))
+            .addOnSuccessListener {
+                onSuccess()
+            }
+            .addOnFailureListener { exception ->
+                onFailure(exception)
+            }
+    }
+
+
     fun getAttendingEvents(callback: (List<EventData>?) -> Unit) {
         val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser != null) {
