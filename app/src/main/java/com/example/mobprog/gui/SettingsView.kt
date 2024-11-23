@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.ClipData.Item
 import android.content.Context
 import android.net.Uri
+import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -59,6 +60,7 @@ import com.example.mobprog.data.handlers.ImageHandler
 import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.gui.components.GetSelfProfileImage
 import com.example.mobprog.gui.components.GetSelfProfileImageCircle
+import com.example.mobprog.notifications.sendNotification
 import com.example.mobprog.ui.theme.MobProgTheme
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -318,6 +320,7 @@ fun SettingsView(navController: NavController, onDarkModeToggle: (Boolean) -> Un
                                 isDarkTheme = isChecked
                                 isPreChecked = isChecked
                                 onDarkModeToggle(isChecked)
+                                sendNotification(context = context)
                             }
                         )
                         Spacer(modifier = Modifier.width(6.dp))

@@ -78,7 +78,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(platform("com.google.firebase:firebase-bom:33.3.0"))
     implementation("com.google.firebase:firebase-firestore")
-    implementation(platform("com.google.firebase:firebase-bom:33.3.0"))
+    implementation(platform(libs.firebase.bom.v3360))
     implementation("com.google.firebase:firebase-auth")
     implementation("androidx.compose.material:material:1.7.2")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
@@ -89,9 +89,15 @@ dependencies {
     implementation("com.google.code.gson:gson:2.8.6")
     implementation("io.coil-kt:coil-compose:2.4.0")
     implementation("com.google.android.material:material:1.8.0")
-    implementation ("com.google.maps.android:maps-compose:2.8.0")
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.google.maps.android:maps-compose:2.8.0")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.activity:activity-ktx:1.8.0")
+    implementation("androidx.fragment:fragment-ktx:1.6.1")
+    implementation(libs.firebase.messaging.ktx)
+    implementation(libs.google.firebase.messaging.ktx)
+    implementation(libs.play.services.basement)
 }
 
 secrets {
