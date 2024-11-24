@@ -3,49 +3,31 @@ package com.example.mobprog.gui
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.widget.DatePicker
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -58,59 +40,65 @@ import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.gui.components.GameBox
 import com.google.firebase.auth.FirebaseAuth
 import java.util.Calendar
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import com.example.mobprog.ui.theme.BackgroundTheme40
 
-
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CreateEventView(navController: NavController, eventService: EventService) {
     val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
-
     var isLoading by remember { mutableStateOf(false) }
-
     val scrollState = rememberScrollState()
     val configuration = LocalConfiguration.current
-    val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
+    val isLandscape =
+        configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
 
     var name by remember { mutableStateOf(savedStateHandle?.get<String>("name") ?: "") }
     var location by remember { mutableStateOf("") }
     var startDate by remember { mutableStateOf(savedStateHandle?.get<String>("startDate") ?: "") }
-    var description by remember { mutableStateOf(savedStateHandle?.get<String>("description") ?: "") }
-    var gameCoverImage by remember { mutableStateOf(savedStateHandle?.get<String>("gameCoverImage") ?: "") }
-    var maxAttendance by remember { mutableIntStateOf(savedStateHandle?.get<Int>("maxAttendance") ?: 0) }
-    var maxAttendanceString by remember { mutableStateOf(savedStateHandle?.get<String>("maxAttendanceString") ?: "") }
+    var description by remember {
+        mutableStateOf(
+            savedStateHandle?.get<String>("description") ?: ""
+        )
+    }
+    var gameCoverImage by remember {
+        mutableStateOf(
+            savedStateHandle?.get<String>("gameCoverImage") ?: ""
+        )
+    }
+    var maxAttendance by remember {
+        mutableIntStateOf(
+            savedStateHandle?.get<Int>("maxAttendance") ?: 0
+        )
+    }
+    var maxAttendanceString by remember {
+        mutableStateOf(
+            savedStateHandle?.get<String>("maxAttendanceString") ?: ""
+        )
+    }
 
     var showSearch by remember { mutableStateOf(false) }
     var searchGameText by remember { mutableStateOf("") }
     var games by remember { mutableStateOf(emptyList<GameData>()) }
     var filteredGames by remember { mutableStateOf(emptyList<GameData>()) }
-
     var selectedGame by remember { mutableStateOf(savedStateHandle?.get<GameData>("selectedGame")) }
 
     val calendar = Calendar.getInstance()
-    val year = calendar.get(Calendar.YEAR)
-    val month = calendar.get(Calendar.MONTH)
-    val day = calendar.get(Calendar.DAY_OF_MONTH)
     val context = LocalContext.current
     val datePickerDialog = DatePickerDialog(
         context,
         { _: DatePicker, pickedYear: Int, pickedMonth: Int, pickedDay: Int ->
             startDate = "$pickedDay/${pickedMonth + 1}/$pickedYear"
-        }, year, month, day
+        },
+        calendar.get(Calendar.YEAR),
+        calendar.get(Calendar.MONTH),
+        calendar.get(Calendar.DAY_OF_MONTH)
     )
+
     var latitude by remember { mutableStateOf<Double?>(null) }
     var longitude by remember { mutableStateOf<Double?>(null) }
 
-    val selectedLocation = savedStateHandle?.getLiveData<Triple<Double, Double, String>>("selected_location")
+    val selectedLocation =
+        savedStateHandle?.getLiveData<Triple<Double, Double, String>>("selected_location")
     selectedLocation?.observe(LocalLifecycleOwner.current) { locationTriple ->
         val (selectedLatitude, selectedLongitude, selectedLocationName) = locationTriple
         latitude = selectedLatitude
@@ -118,14 +106,8 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
         location = selectedLocationName
     }
 
-
-
     GamingApi().fetchAllGames { gameList ->
-        gameList?.let {
-            games = gameList
-        } ?: run {
-            println("No games found")
-        }
+        gameList?.let { games = it }
     }
 
     LaunchedEffect(isLoading) {
@@ -140,404 +122,549 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
         }
     }
 
-
     LaunchedEffect(searchGameText) {
         filteredGames = games.filter { game ->
             game.title.contains(searchGameText, ignoreCase = true)
         }
     }
+
     if (isLoading) {
         LoadingScreen()
     } else {
-
-
-    if (!isLandscape) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(88.dp)
-                        .padding(bottom = 10.dp, top = 24.dp)
-                        .background(MaterialTheme.colorScheme.primary),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Box(modifier = Modifier.fillMaxWidth()) {
+                CenterAlignedTopAppBar(
+                    title = {
                         Text(
                             text = "Create Event",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            modifier = Modifier.align(Alignment.Center)
+                            style = MaterialTheme.typography.headlineMedium
                         )
-                    }
-                }
-            },
-            content = { paddingValues ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(scrollState)
-                        .padding(paddingValues)
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                    verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "Title",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.W400,
-                        modifier = Modifier
-                            .padding(6.dp)
-                            .align(Alignment.Start),
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    TextField(
-                        value = name,
-                        onValueChange = { newText ->
-                            name = newText
-                            /* TODO behandle input her */
-                        },
-                        label = { Text("Enter Title") },
-                        placeholder = { Text("title") },
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                    // Location END
-                    Text(
-                        text = "Description",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.W400,
-                        modifier = Modifier
-                            .padding(6.dp)
-                            .align(Alignment.Start),
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    TextField(
-                        value = description,
-                        onValueChange = { newText ->
-                            description = newText
-                        },
-                        label = { Text("Enter Description") },
-                        placeholder = { Text("description") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 6.dp)
-                    )
-                // Location START
-                Text(
-                    text = "Location",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.W400,
-                    modifier = Modifier
-                        .padding(6.dp)
-                        .align(Alignment.Start),
-                    color = MaterialTheme.colorScheme.primary
-                )
-                TextField(
-                    value = location,
-                    onValueChange = { newText ->
-                        location = newText
                     },
-                    label = { Text("Enter Location") },
-                    placeholder = { Text("location") },
-                    modifier = Modifier.fillMaxWidth(),
-                    readOnly = true
-                )
-                Button(
-                    onClick = {
-                        savedStateHandle?.set("name", name)
-                        savedStateHandle?.set("startDate", startDate)
-                        savedStateHandle?.set("description", description)
-                        savedStateHandle?.set("gameCoverImage", gameCoverImage)
-                        savedStateHandle?.set("maxAttendance", maxAttendance)
-                        savedStateHandle?.set("maxAttendanceString", maxAttendanceString)
-                        savedStateHandle?.set("selectedGame", selectedGame)
-                        navController.navigate("locationPickerScreen")
-                    },
-                    modifier = Modifier
-                        .width(275.dp)
-                        .padding(bottom = 8.dp, top = 8.dp),
-
-                ) {
-                    Text("Select Location with Google Maps")
-                }
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(end = 12.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Button(
-                                onClick = { datePickerDialog.show() },
-                                modifier = Modifier
-                                    .width(120.dp)
-                                    .padding(bottom = 8.dp)
-
-                            ) {
-                                Text(text = "Velg dato")
-                            }
-                            Text(
-                                text = "Valgt dato: $startDate",
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Medium,
-                                modifier = Modifier.padding(4.dp)
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.width(16.dp))
-
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = "Max Attendance",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.W400,
-                                modifier = Modifier.padding(bottom = 6.dp),
-                            )
-                            TextField(
-                                value = maxAttendanceString,
-                                onValueChange = { newText ->
-                                    maxAttendanceString = newText
-                                    val convertToInt = maxAttendanceString.toIntOrNull() ?: 0
-                                    maxAttendance = convertToInt
-                                },
-                                label = { Text("Enter Attendance", fontSize = 12.sp) },
-                                placeholder = { Text("attendance") },
-                                modifier = Modifier
-                                    .width(140.dp)
-                                    .padding(top = 8.dp)
-                                    .height(50.dp),
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                singleLine = true
-                            )
-                        }
-                    }
-
-                    Text(
-                        text = "Game: " + (selectedGame?.title ?: "None"),
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.W400,
-                        modifier = Modifier
-                            .padding(6.dp)
-                            .align(Alignment.Start),
-                        color = MaterialTheme.colorScheme.primary
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        titleContentColor = MaterialTheme.colorScheme.onPrimary
                     )
-                    Button(
-                        onClick = {
-                            showSearch = true
-                        },
-                        modifier = Modifier
-                        .width(275.dp),
-                    ) {
-                        Text("Select Game")
-                    }
-                    Spacer(modifier = Modifier.weight(1f))
-                    Button(
-                        onClick = {
-                            isLoading = true
-                            onSubmit(
-                                name,
-                                maxAttendance,
-                                location,
-                                startDate,
-                                description,
-                                gameCoverImage,
-                                eventService = eventService,
-                                creatorId = FirebaseAuth.getInstance().currentUser?.uid.toString(),
-                                locationCoordinates = selectedLocation?.value?.let { "${it.first},${it.second}" } ?: ""
-                            )
-
-
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                            .height(75.dp),
-                        shape = RoundedCornerShape(8.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.DarkGray,
-                            contentColor = Color.White,
-                            disabledContainerColor = Color.Gray,
-                            disabledContentColor = Color.LightGray
-                        )
-
-                    ) {
-                        Text("Create Event")
-                    }
-
-                }
+                )
             },
             bottomBar = {
                 BottomNavBar(navController = navController, userService = UserService())
             }
-        )
-    } else {
-        Scaffold(
-            modifier = Modifier.fillMaxSize().systemBarsPadding(),
-            topBar = {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(70.dp)
-                        .padding(bottom = 10.dp, top = 24.dp)
-                        .background(MaterialTheme.colorScheme.primary),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Box(modifier = Modifier.fillMaxWidth()) {
-                        Text(
-                            text = "Create Event",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            modifier = Modifier.align(Alignment.Center)
-                        )
+        ) { paddingValues ->
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                color = MaterialTheme.colorScheme.background
+            ) {
+                if (isLandscape) {
+                    // Landscape layout with shared scroll
+                    Row(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(scrollState)
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        // Left column - Basic form elements
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            // Title Section
+                            OutlinedTextField(
+                                value = name,
+                                onValueChange = { name = it },
+                                label = { Text("Event Title") },
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                                )
+                            )
+
+                            // Description Section
+                            OutlinedTextField(
+                                value = description,
+                                onValueChange = { description = it },
+                                label = { Text("Description") },
+                                modifier = Modifier.fillMaxWidth(),
+                                minLines = 3,
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                                )
+                            )
+
+                            // Location Section
+                            OutlinedTextField(
+                                value = location,
+                                onValueChange = { location = it },
+                                label = { Text("Location") },
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                                )
+                            )
+
+                            ElevatedButton(
+                                onClick = {
+                                    savedStateHandle?.apply {
+                                        set("name", name)
+                                        set("startDate", startDate)
+                                        set("description", description)
+                                        set("gameCoverImage", gameCoverImage)
+                                        set("maxAttendance", maxAttendance)
+                                        set("maxAttendanceString", maxAttendanceString)
+                                        set("selectedGame", selectedGame)
+                                    }
+                                    navController.navigate("locationPickerScreen")
+                                },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(
+                                    Icons.Default.Search,
+                                    contentDescription = "Select location",
+                                    modifier = Modifier.padding(end = 8.dp)
+                                )
+                                Text("Select Location on Map")
+                            }
+                        }
+
+                        // Right column - Game selection, date, attendance, and create button
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            // Date and Attendance Section
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                                ),
+                                elevation = CardDefaults.cardElevation(
+                                    defaultElevation = 2.dp
+                                )
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .padding(16.dp),
+                                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                                ) {
+                                    Text(
+                                        text = "Event Details",
+                                        style = MaterialTheme.typography.titleLarge,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+
+                                    // Date Selection
+                                    Column(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        ElevatedButton(
+                                            onClick = { datePickerDialog.show() },
+                                            modifier = Modifier.wrapContentWidth()
+                                        ) {
+                                            Icon(
+                                                Icons.Default.DateRange,
+                                                contentDescription = "Select date",
+                                                modifier = Modifier.padding(end = 8.dp)
+                                            )
+                                            Text("Select Date")
+                                        }
+                                        if (startDate.isNotEmpty()) {
+                                            Surface(
+                                                modifier = Modifier.wrapContentWidth(),
+                                                shape = MaterialTheme.shapes.medium,
+                                                color = MaterialTheme.colorScheme.surface,
+                                                tonalElevation = 1.dp
+                                            ) {
+                                                Row(
+                                                    modifier = Modifier.padding(
+                                                        horizontal = 12.dp,
+                                                        vertical = 8.dp
+                                                    ),
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                                ) {
+                                                    Icon(
+                                                        Icons.Default.DateRange,
+                                                        contentDescription = null,
+                                                        tint = MaterialTheme.colorScheme.primary,
+                                                        modifier = Modifier.size(16.dp)
+                                                    )
+                                                    Text(
+                                                        text = startDate,
+                                                        style = MaterialTheme.typography.bodyMedium,
+                                                        color = MaterialTheme.colorScheme.onSurface
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    // Attendance Input
+                                    OutlinedTextField(
+                                        value = maxAttendanceString,
+                                        onValueChange = {
+                                            maxAttendanceString = it
+                                            maxAttendance = it.toIntOrNull() ?: 0
+                                        },
+                                        label = { Text("Max Attendees") },
+                                        modifier = Modifier.fillMaxWidth(),
+                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                        singleLine = true,
+                                        colors = OutlinedTextFieldDefaults.colors(
+                                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                                            unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                                        )
+                                    )
+                                }
+                            }
+
+                            // Game Selection
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                                ),
+                                elevation = CardDefaults.cardElevation(
+                                    defaultElevation = 2.dp
+                                )
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .padding(16.dp)
+                                        .height(IntrinsicSize.Min),
+                                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+                                    Text(
+                                        text = "Game Selection",
+                                        style = MaterialTheme.typography.titleLarge,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(56.dp)
+                                    ) {
+                                        if (selectedGame != null) {
+                                            Surface(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                color = MaterialTheme.colorScheme.surface,
+                                                tonalElevation = 1.dp,
+                                                shape = MaterialTheme.shapes.medium
+                                            ) {
+                                                Row(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(
+                                                            horizontal = 12.dp,
+                                                            vertical = 8.dp
+                                                        ),
+                                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    Text(
+                                                        text = selectedGame!!.title,
+                                                        style = MaterialTheme.typography.titleMedium,
+                                                        color = MaterialTheme.colorScheme.onSurface
+                                                    )
+                                                    IconButton(
+                                                        onClick = { selectedGame = null }
+                                                    ) {
+                                                        Icon(
+                                                            Icons.Default.Close,
+                                                            contentDescription = "Clear selection",
+                                                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        } else {
+                                            Text(
+                                                text = "No game selected",
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                modifier = Modifier.padding(vertical = 8.dp)
+                                            )
+                                        }
+                                    }
+
+                                    ElevatedButton(
+                                        onClick = { showSearch = true },
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Icon(
+                                            Icons.Default.Search,
+                                            contentDescription = "Select game",
+                                            modifier = Modifier.padding(end = 8.dp)
+                                        )
+                                        Text(if (selectedGame == null) "Select Game" else "Change Game")
+                                    }
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            // Create Button
+                            Button(
+                                onClick = {
+                                    isLoading = true
+                                    onSubmit(
+                                        name,
+                                        maxAttendance,
+                                        location,
+                                        startDate,
+                                        description,
+                                        gameCoverImage,
+                                        eventService,
+                                        FirebaseAuth.getInstance().currentUser?.uid.toString(),
+                                        selectedLocation?.value?.let { "${it.first},${it.second}" }
+                                            ?: ""
+                                    )
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(56.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.primary
+                                )
+                            ) {
+                                Text(
+                                    "Create Event",
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                            }
+                        }
                     }
-                }
-            },
-            content = { paddingValues ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                        .verticalScroll(scrollState),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Top
-                ) {
+                } else {
                     Column(
                         modifier = Modifier
-                            .weight(1f)
-                            .padding(end = 16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                            .fillMaxSize()
+                            .verticalScroll(scrollState)
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        Text(
-                            text = "Title",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.W400,
-                            modifier = Modifier.align(Alignment.Start),
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        TextField(
+                        // Original portrait layout content...
+                        // Title Section
+                        OutlinedTextField(
                             value = name,
-                            onValueChange = { newText -> name = newText },
-                            label = { Text("Enter Title") },
-                            placeholder = { Text("title") },
-                            modifier = Modifier.fillMaxWidth()
+                            onValueChange = { name = it },
+                            label = { Text("Event Title") },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                            )
                         )
 
-                        // Location START
-                        Text(
-                            text = "Location",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.W400,
-                            modifier = Modifier
-                                .padding(6.dp)
-                                .align(Alignment.Start),
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        TextField(
-                            value = location,
-                            onValueChange = { newText ->
-                                location = newText
-                            },
-                            label = { Text("Enter Location or use Map") },
-                            placeholder = { Text("location") },
+                        // Description Section
+                        OutlinedTextField(
+                            value = description,
+                            onValueChange = { description = it },
+                            label = { Text("Description") },
                             modifier = Modifier.fillMaxWidth(),
-                            readOnly = true
+                            minLines = 3,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                            )
                         )
-                        Button(
+
+                        // Location Section
+                        OutlinedTextField(
+                            value = location,
+                            onValueChange = { location = it },
+                            label = { Text("Location") },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                            )
+                        )
+
+                        ElevatedButton(
                             onClick = {
+                                savedStateHandle?.apply {
+                                    set("name", name)
+                                    set("startDate", startDate)
+                                    set("description", description)
+                                    set("gameCoverImage", gameCoverImage)
+                                    set("maxAttendance", maxAttendance)
+                                    set("maxAttendanceString", maxAttendanceString)
+                                    set("selectedGame", selectedGame)
+                                }
                                 navController.navigate("locationPickerScreen")
                             },
-                            modifier = Modifier.fillMaxWidth(),
-
-                        ) {
-                            Text("Select Location on Map")
-                        }
-                        // Location END
-
-                        Text(
-                            text = "Description",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.W400,
-                            modifier = Modifier.align(Alignment.Start),
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        TextField(
-                            value = description,
-                            onValueChange = { newText -> description = newText },
-                            label = { Text("Enter Description") },
-                            placeholder = { Text("description") },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 6.dp)
-                        )
-                    }
-
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(start = 16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Button(
-                            onClick = { datePickerDialog.show() },
-                            modifier = Modifier
-                                .width(120.dp)
-                                .padding(bottom = 8.dp)
-                        ) {
-                            Text(text = "Velg dato")
-                        }
-                        Text(
-                            text = "Valgt dato: $startDate",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium,
-                            modifier = Modifier.padding(4.dp)
-                        )
-
-                        Text(
-                            text = "Max Attendance",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.W400,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        TextField(
-                            value = maxAttendanceString,
-                            onValueChange = { newText ->
-                                maxAttendanceString = newText
-                                val convertToInt = maxAttendanceString.toIntOrNull() ?: 0
-                                maxAttendance = convertToInt
-                            },
-                            label = { Text("Enter Attendance", fontSize = 12.sp) },
-                            placeholder = { Text("attendance") },
-                            modifier = Modifier
-                                .width(140.dp)
-                                .padding(top = 8.dp)
-                                .height(50.dp),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                            singleLine = true
-                        )
-
-                        Text(
-                            text = "Game: " + (selectedGame?.title ?: "None"),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.W400,
-                            modifier = Modifier.padding(6.dp),
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        Button(
-                            onClick = { showSearch = true },
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text("Select Game")
+                            Icon(
+                                Icons.Default.Search,
+                                contentDescription = "Select location",
+                                modifier = Modifier.padding(end = 8.dp)
+                            )
+                            Text("Select Location on Map")
                         }
-                        Spacer(modifier = Modifier.weight(1f))
+
+                        // Date and Attendance Row
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            // Date Selection
+                            Column(
+                                horizontalAlignment = Alignment.Start,
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                ElevatedButton(
+                                    onClick = { datePickerDialog.show() },
+                                    modifier = Modifier.wrapContentWidth()
+                                ) {
+                                    Icon(
+                                        Icons.Default.DateRange,
+                                        contentDescription = "Select date",
+                                        modifier = Modifier.padding(end = 8.dp)
+                                    )
+                                    Text("Select Date")
+                                }
+                                if (startDate.isNotEmpty()) {
+                                    Surface(
+                                        modifier = Modifier
+                                            .padding(top = 8.dp)
+                                            .wrapContentWidth(),
+                                        shape = MaterialTheme.shapes.medium,
+                                        color = MaterialTheme.colorScheme.surfaceVariant,
+                                        tonalElevation = 1.dp
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.padding(
+                                                horizontal = 12.dp,
+                                                vertical = 8.dp
+                                            ),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                        ) {
+                                            Icon(
+                                                Icons.Default.DateRange,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.primary,
+                                                modifier = Modifier.size(16.dp)
+                                            )
+                                            Text(
+                                                text = startDate,
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+
+                            // Attendance Input
+                            OutlinedTextField(
+                                value = maxAttendanceString,
+                                onValueChange = {
+                                    maxAttendanceString = it
+                                    maxAttendance = it.toIntOrNull() ?: 0
+                                },
+                                label = { Text("Max Attendees") },
+                                modifier = Modifier.width(120.dp),
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                singleLine = true,
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                                )
+                            )
+                        }
+
+                        // Game Selection
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant
+                            ),
+                            elevation = CardDefaults.cardElevation(
+                                defaultElevation = 2.dp
+                            )
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .height(IntrinsicSize.Min),
+                                verticalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                Text(
+                                    text = "Game Selection",
+                                    style = MaterialTheme.typography.titleLarge,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(56.dp)
+                                ) {
+                                    if (selectedGame != null) {
+                                        Surface(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            color = MaterialTheme.colorScheme.surface,
+                                            tonalElevation = 1.dp,
+                                            shape = MaterialTheme.shapes.medium
+                                        ) {
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                Text(
+                                                    text = selectedGame!!.title,
+                                                    style = MaterialTheme.typography.titleMedium,
+                                                    color = MaterialTheme.colorScheme.onSurface
+                                                )
+                                                IconButton(
+                                                    onClick = { selectedGame = null }
+                                                ) {
+                                                    Icon(
+                                                        Icons.Default.Close,
+                                                        contentDescription = "Clear selection",
+                                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        Text(
+                                            text = "No game selected",
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            modifier = Modifier.padding(vertical = 8.dp)
+                                        )
+                                    }
+                                }
+
+                                ElevatedButton(
+                                    onClick = { showSearch = true },
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Icon(
+                                        Icons.Default.Search,
+                                        contentDescription = "Select game",
+                                        modifier = Modifier.padding(end = 8.dp)
+                                    )
+                                    Text(if (selectedGame == null) "Select Game" else "Change Game")
+                                }
+                            }
+                        }
+
+                        // Create Button
                         Button(
                             onClick = {
                                 isLoading = true
@@ -548,218 +675,135 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                                     startDate,
                                     description,
                                     gameCoverImage,
-                                    eventService = eventService,
-                                    creatorId = FirebaseAuth.getInstance().currentUser?.uid.toString(),
-                                    locationCoordinates = selectedLocation?.value?.let { "${it.first},${it.second}" } ?: ""
+                                    eventService,
+                                    FirebaseAuth.getInstance().currentUser?.uid.toString(),
+                                    selectedLocation?.value?.let { "${it.first},${it.second}" }
+                                        ?: ""
                                 )
-
-
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .height(56.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary
+                            )
                         ) {
-                            Text("Create Event")
+                            Text(
+                                "Create Event",
+                                style = MaterialTheme.typography.titleMedium
+                            )
                         }
                     }
                 }
-            },
-            bottomBar = {
-                BottomNavBar(navController = navController, userService = UserService())
             }
-        )
-    }
-    }
-
-    if (showSearch) {
-        if (!isLandscape) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.onPrimary)
-                    .padding()
-                    .clickable {
-                        showSearch = false
-                    }
-            )
-
-            TextField(
-                value = searchGameText,
-                onValueChange = { searchGameText = it },
-                placeholder = { Text("Search...") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxSize(fraction = 0.09f)
-                    .padding(top = 24.dp),
-                singleLine = true
-            )
-            Button(
-                onClick = { showSearch = false },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 80.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = Color.Gray
-                )
-
+        }
+        if (showSearch) {
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colorScheme.background
             ) {
-                Text("Cancel Search")
-            }
-
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 8.dp, vertical = 8.dp)
-                    .padding(top = 110.dp)
-            ) {
-                if (filteredGames.isEmpty()) {
-                    items(games) { game ->
-                        Spacer(modifier = Modifier.height(8.dp))
-                        GameBox(gameData = game) {
-                            selectedGame = game
-                            println("Game cover = " + game.thumbnail)
-                            gameCoverImage = game.thumbnail
-                            showSearch = false
-
-                        }
-
-                    }
-                }
-                items(filteredGames) { game ->
-                    Spacer(modifier = Modifier.height(8.dp))
-                    GameBox(gameData = game) {
-                        selectedGame = game
-                        println("Game cover = " + game.thumbnail)
-                        gameCoverImage = game.thumbnail
-                        showSearch = false
-                    }
-                }
-                println("Selected Game: $selectedGame")
-            }
-        } else {
-            Box(
-                modifier = Modifier
-                    .systemBarsPadding()
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.onPrimary)
-                    .padding()
-                    .clickable {
-                        showSearch = false
-                    }
-            ) {
-
-                TextField(
-                    value = searchGameText,
-                    onValueChange = { searchGameText = it },
-                    placeholder = { Text("Search...") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxSize(fraction = 0.20f)
-                        .padding(top = 24.dp),
-                    singleLine = true
-                )
-                Button(
-                    onClick = { showSearch = false },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 80.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Transparent,
-                        contentColor = Color.Gray
-                    )
-
-                ) {
-                    Text("Cancel Search")
-                }
-
-                LazyColumn(
+                Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 8.dp, vertical = 8.dp)
-                        .padding(top = 110.dp)
+                        .padding(16.dp)
                 ) {
-                    if (filteredGames.isEmpty()) {
-                        items(games) { game ->
-                            Spacer(modifier = Modifier.height(8.dp))
-                            GameBox(gameData = game) {
-                                selectedGame = game
-                                println("Game cover = " + game.thumbnail)
-                                gameCoverImage = game.thumbnail
-                                showSearch = false
-
-                            }
-
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        OutlinedTextField(
+                            value = searchGameText,
+                            onValueChange = { searchGameText = it },
+                            placeholder = { Text("Search games...") },
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(end = 8.dp),
+                            leadingIcon = {
+                                Icon(Icons.Default.Search, contentDescription = "Search")
+                            },
+                            singleLine = true
+                        )
+                        IconButton(onClick = { showSearch = false }) {
+                            Icon(Icons.Default.Close, contentDescription = "Close search")
                         }
                     }
-                    items(filteredGames) { game ->
-                        Spacer(modifier = Modifier.height(8.dp))
-                        GameBox(gameData = game) {
-                            selectedGame = game
-                            println("Game cover = " + game.thumbnail)
-                            gameCoverImage = game.thumbnail
-                            showSearch = false
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    LazyColumn(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(if (filteredGames.isEmpty()) games else filteredGames) { game ->
+                            GameBox(
+                                gameData = game,
+                                onClick = {
+                                    selectedGame = game
+                                    gameCoverImage = game.thumbnail
+                                    showSearch = false
+                                }
+                            )
                         }
                     }
-                    println("Selected Game: $selectedGame")
                 }
             }
         }
     }
 }
 
-fun onSubmit(name: String,
-             maxAttendance: Int,
-             location: String,
-             startDate: String,
-             description: String,
-             gameCoverImage: String,
-             eventService: EventService,
-             creatorId: String,
-             locationCoordinates: String) {
-    eventService.createEvent(EventData(
-        name = name,
-        image = gameCoverImage,
-        maxAttendance = maxAttendance,
-        location = location,
-        description = description,
-        startDate = startDate,
-        creatorId = creatorId,
-        coordinates = locationCoordinates))
-}
-
 @Composable
 fun LoadingScreen() {
-    val infiniteTransition = rememberInfiniteTransition()
-    val animatedAlpha by infiniteTransition.animateFloat(
-        initialValue = 0.3f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1000, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .wrapContentSize(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .size(64.dp)
+                    .padding(bottom = 16.dp),
+                color = MaterialTheme.colorScheme.primary
+            )
+            Text(
+                text = "Creating your event...",
+                style = MaterialTheme.typography.titleMedium,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        }
+    }
+}
+
+fun onSubmit(
+    name: String,
+    maxAttendance: Int,
+    location: String,
+    startDate: String,
+    description: String,
+    gameCoverImage: String,
+    eventService: EventService,
+    creatorId: String,
+    locationCoordinates: String
+) {
+    eventService.createEvent(
+        EventData(
+            name = name,
+            image = gameCoverImage,
+            maxAttendance = maxAttendance,
+            location = location,
+            description = description,
+            startDate = startDate,
+            creatorId = creatorId,
+            coordinates = locationCoordinates
         )
     )
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .wrapContentSize(Alignment.Center),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        CircularProgressIndicator(
-            progress = {
-                animatedAlpha
-            },
-            modifier = Modifier
-                .size(64.dp)
-                .padding(bottom = 16.dp),
-        )
-        Text(
-            text = "Your event is being created, please wait...",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Medium
-        )
-    }
 }
 
 @Preview(showBackground = true)
@@ -767,4 +811,3 @@ fun LoadingScreen() {
 fun CreateEventViewPreview() {
     CreateEventView(navController = rememberNavController(), eventService = EventService())
 }
-
