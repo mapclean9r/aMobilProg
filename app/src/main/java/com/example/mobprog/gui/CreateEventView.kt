@@ -468,7 +468,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                             onValueChange = { description = it },
                             label = { Text("Description") },
                             modifier = Modifier.fillMaxWidth(),
-                            minLines = 3,
+                            minLines = 2,
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = MaterialTheme.colorScheme.primary,
                                 unfocusedBorderColor = MaterialTheme.colorScheme.outline
