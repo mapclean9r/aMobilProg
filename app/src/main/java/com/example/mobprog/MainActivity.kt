@@ -35,7 +35,6 @@ import com.example.mobprog.gui.RegisterView
 import com.example.mobprog.gui.SettingsView
 import com.example.mobprog.gui.event.EventView
 import com.example.mobprog.gui.friends.AddFriendView
-import com.example.mobprog.gui.friends.FriendInfoView
 import com.example.mobprog.gui.friends.FriendRequestView
 import com.example.mobprog.gui.friends.message.FriendMessageView
 import com.example.mobprog.gui.guild.CreateGuildView
@@ -45,27 +44,22 @@ import com.example.mobprog.maps.LocationPickerView
 import com.example.mobprog.settings.SettingsManager
 import com.example.mobprog.ui.theme.MobProgTheme
 import com.example.mobprog.user.UserData
-
 import android.Manifest
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.runtime.LaunchedEffect
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavType
 import com.example.mobprog.gui.event.eventDataSaver
+import com.example.mobprog.notifications.createNotificationChannel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @SuppressLint("StaticFieldLeak")
 lateinit var settingsManager: SettingsManager
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -73,10 +67,13 @@ class MainActivity : ComponentActivity() {
 
             settingsManager = SettingsManager(this)
             Arena(settingsManager.isDarkMode())
+            createNotificationChannel(this)
         }
     }
+
 }
 
+@SuppressLint("NewApi")
 @Composable
 fun Arena(darkMODE: Boolean) {
     var thisEvent by rememberSaveable(stateSaver = eventDataSaver) {
@@ -84,7 +81,6 @@ fun Arena(darkMODE: Boolean) {
     }
     var isDarkMode by remember { mutableStateOf(darkMODE) }
     val navController = rememberNavController()
-
     var selectedUser by remember { mutableStateOf(UserData()) }
     val context = LocalContext.current
     var isFineLocationGranted by remember { mutableStateOf(false) }
@@ -103,14 +99,39 @@ fun Arena(darkMODE: Boolean) {
         }
     }
 
-    LaunchedEffect(Unit) {
-        locationPermissionLauncher.launch(
-            arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            )
-        )
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { pIsGranted ->
+        if (pIsGranted) {
+            println("Notification permission true")
+        } else {
+            println("Notification permission false")
+        }
     }
+
+    LaunchedEffect(Unit) {
+        launch(Dispatchers.IO) {
+            locationPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
+
+        launch(Dispatchers.IO) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                val isPermissionGranted =
+                    ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS
+                    ) == PackageManager.PERMISSION_GRANTED
+
+                if (!isPermissionGranted) {
+                    notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
+            }
+        }
+    }
+
 
     MobProgTheme(darkTheme = isDarkMode) {
 
