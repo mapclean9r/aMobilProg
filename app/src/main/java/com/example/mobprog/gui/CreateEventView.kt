@@ -40,6 +40,8 @@ import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.gui.components.GameBox
 import com.google.firebase.auth.FirebaseAuth
 import java.util.Calendar
+import com.example.mobprog.util.Validation
+import com.example.mobprog.util.ValidationResult
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -82,12 +84,28 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
     var filteredGames by remember { mutableStateOf(emptyList<GameData>()) }
     var selectedGame by remember { mutableStateOf(savedStateHandle?.get<GameData>("selectedGame")) }
 
+    var nameError by remember { mutableStateOf<String?>(null) }
+    var descriptionError by remember { mutableStateOf<String?>(null) }
+    var locationError by remember { mutableStateOf<String?>(null) }
+    var dateError by remember { mutableStateOf<String?>(null) }
+    var maxAttendanceError by remember { mutableStateOf<String?>(null) }
+
     val calendar = Calendar.getInstance()
     val context = LocalContext.current
     val datePickerDialog = DatePickerDialog(
         context,
         { _: DatePicker, pickedYear: Int, pickedMonth: Int, pickedDay: Int ->
-            startDate = "$pickedDay/${pickedMonth + 1}/$pickedYear"
+            val newDate = "$pickedDay/${pickedMonth + 1}/$pickedYear"
+            when (val result = Validation.validateEventDate(newDate)) {
+                is ValidationResult.Success -> {
+                    startDate = newDate
+                    dateError = null
+                }
+
+                is ValidationResult.Error -> {
+                    dateError = result.message
+                }
+            }
         },
         calendar.get(Calendar.YEAR),
         calendar.get(Calendar.MONTH),
@@ -126,6 +144,56 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
         filteredGames = games.filter { game ->
             game.title.contains(searchGameText, ignoreCase = true)
         }
+    }
+
+    fun validateFields(): Boolean {
+        // Reset all errors
+        nameError = null
+        descriptionError = null
+        locationError = null
+        dateError = null
+        maxAttendanceError = null
+
+        val validations = Validation.validateEventFields(
+            name = name,
+            description = description,
+            location = location,
+            date = startDate,
+            maxAttendance = maxAttendance
+        )
+
+        var isValid = true
+        validations.forEach { result ->
+            when (result) {
+                is ValidationResult.Error -> {
+                    isValid = false
+                    when {
+                        result.message.contains("name", ignoreCase = true) -> nameError =
+                            result.message
+
+                        result.message.contains(
+                            "description",
+                            ignoreCase = true
+                        ) -> descriptionError = result.message
+
+                        result.message.contains("location", ignoreCase = true) -> locationError =
+                            result.message
+
+                        result.message.contains("date", ignoreCase = true) -> dateError =
+                            result.message
+
+                        result.message.contains(
+                            "attendance",
+                            ignoreCase = true
+                        ) -> maxAttendanceError = result.message
+                    }
+                }
+
+                is ValidationResult.Success -> { /* Field is valid */
+                }
+            }
+        }
+        return isValid
     }
 
     if (isLoading) {
@@ -172,36 +240,61 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                         ) {
                             OutlinedTextField(
                                 value = name,
-                                onValueChange = { name = it },
+                                onValueChange = {
+                                    name = it
+                                    nameError = null // Clear error when user types
+                                },
                                 label = { Text("Event Title") },
+                                isError = nameError != null,
+                                supportingText = nameError?.let {
+                                    { Text(it, color = MaterialTheme.colorScheme.error) }
+                                },
                                 modifier = Modifier.fillMaxWidth(),
                                 colors = OutlinedTextFieldDefaults.colors(
                                     focusedBorderColor = MaterialTheme.colorScheme.primary,
-                                    unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                                    errorBorderColor = MaterialTheme.colorScheme.error
                                 )
                             )
                             OutlinedTextField(
                                 value = description,
-                                onValueChange = { description = it },
+                                onValueChange = {
+                                    description = it
+                                    descriptionError = null // Clear error when user types
+                                },
                                 label = { Text("Description") },
+                                isError = descriptionError != null,
+                                supportingText = descriptionError?.let {
+                                    { Text(it, color = MaterialTheme.colorScheme.error) }
+                                },
                                 modifier = Modifier.fillMaxWidth(),
                                 minLines = 3,
                                 colors = OutlinedTextFieldDefaults.colors(
                                     focusedBorderColor = MaterialTheme.colorScheme.primary,
-                                    unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                                    errorBorderColor = MaterialTheme.colorScheme.error
                                 )
                             )
                             OutlinedTextField(
                                 value = location,
-                                onValueChange = { location = it },
+                                onValueChange = {
+                                    location = it
+                                    locationError = null // Clear error when user types
+                                },
                                 label = { Text("Location") },
+                                isError = locationError != null,
+                                supportingText = locationError?.let {
+                                    { Text(it, color = MaterialTheme.colorScheme.error) }
+                                },
                                 modifier = Modifier.fillMaxWidth(),
                                 colors = OutlinedTextFieldDefaults.colors(
                                     focusedBorderColor = MaterialTheme.colorScheme.primary,
-                                    unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                                    errorBorderColor = MaterialTheme.colorScheme.error
                                 )
                             )
 
+                            // Location Button remains unchanged
                             ElevatedButton(
                                 onClick = {
                                     savedStateHandle?.apply {
@@ -239,8 +332,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                                 )
                             ) {
                                 Column(
-                                    modifier = Modifier
-                                        .padding(16.dp),
+                                    modifier = Modifier.padding(16.dp),
                                     verticalArrangement = Arrangement.spacedBy(16.dp)
                                 ) {
                                     Text(
@@ -292,20 +384,33 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                                                 }
                                             }
                                         }
+                                        if (dateError != null) {
+                                            Text(
+                                                text = dateError!!,
+                                                color = MaterialTheme.colorScheme.error,
+                                                style = MaterialTheme.typography.bodySmall
+                                            )
+                                        }
                                     }
                                     OutlinedTextField(
                                         value = maxAttendanceString,
                                         onValueChange = {
                                             maxAttendanceString = it
                                             maxAttendance = it.toIntOrNull() ?: 0
+                                            maxAttendanceError = null // Clear error when user types
                                         },
                                         label = { Text("Max Attendees") },
+                                        isError = maxAttendanceError != null,
+                                        supportingText = maxAttendanceError?.let {
+                                            { Text(it, color = MaterialTheme.colorScheme.error) }
+                                        },
                                         modifier = Modifier.fillMaxWidth(),
                                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                         singleLine = true,
                                         colors = OutlinedTextFieldDefaults.colors(
                                             focusedBorderColor = MaterialTheme.colorScheme.primary,
-                                            unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                                            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                                            errorBorderColor = MaterialTheme.colorScheme.error
                                         )
                                     )
                                 }
@@ -396,19 +501,21 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                             Spacer(modifier = Modifier.weight(1f))
                             Button(
                                 onClick = {
-                                    isLoading = true
-                                    onSubmit(
-                                        name,
-                                        maxAttendance,
-                                        location,
-                                        startDate,
-                                        description,
-                                        gameCoverImage,
-                                        eventService,
-                                        FirebaseAuth.getInstance().currentUser?.uid.toString(),
-                                        selectedLocation?.value?.let { "${it.first},${it.second}" }
-                                            ?: ""
-                                    )
+                                    if (validateFields()) {
+                                        isLoading = true
+                                        onSubmit(
+                                            name,
+                                            maxAttendance,
+                                            location,
+                                            startDate,
+                                            description,
+                                            gameCoverImage,
+                                            eventService,
+                                            FirebaseAuth.getInstance().currentUser?.uid.toString(),
+                                            selectedLocation?.value?.let { "${it.first},${it.second}" }
+                                                ?: ""
+                                        )
+                                    }
                                 },
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -432,38 +539,64 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                             .padding(horizontal = 16.dp, vertical = 8.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
+                        // Title Section
                         OutlinedTextField(
                             value = name,
-                            onValueChange = { name = it },
+                            onValueChange = {
+                                name = it
+                                nameError = null // Clear error when user types
+                            },
                             label = { Text("Event Title") },
+                            isError = nameError != null,
+                            supportingText = nameError?.let {
+                                { Text(it, color = MaterialTheme.colorScheme.error) }
+                            },
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = MaterialTheme.colorScheme.primary,
-                                unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                                errorBorderColor = MaterialTheme.colorScheme.error
                             )
                         )
                         OutlinedTextField(
                             value = description,
-                            onValueChange = { description = it },
+                            onValueChange = {
+                                description = it
+                                descriptionError = null // Clear error when user types
+                            },
                             label = { Text("Description") },
+                            isError = descriptionError != null,
+                            supportingText = descriptionError?.let {
+                                { Text(it, color = MaterialTheme.colorScheme.error) }
+                            },
                             modifier = Modifier.fillMaxWidth(),
                             minLines = 2,
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = MaterialTheme.colorScheme.primary,
-                                unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                                errorBorderColor = MaterialTheme.colorScheme.error
                             )
                         )
                         OutlinedTextField(
                             value = location,
-                            onValueChange = { location = it },
+                            onValueChange = {
+                                location = it
+                                locationError = null // Clear error when user types
+                            },
                             label = { Text("Location") },
+                            isError = locationError != null,
+                            supportingText = locationError?.let {
+                                { Text(it, color = MaterialTheme.colorScheme.error) }
+                            },
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = MaterialTheme.colorScheme.primary,
-                                unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                                errorBorderColor = MaterialTheme.colorScheme.error
                             )
                         )
 
+                        // Location Button remains unchanged
                         ElevatedButton(
                             onClick = {
                                 savedStateHandle?.apply {
@@ -537,20 +670,34 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                                         }
                                     }
                                 }
+                                if (dateError != null) {
+                                    Text(
+                                        text = dateError!!,
+                                        color = MaterialTheme.colorScheme.error,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        modifier = Modifier.padding(top = 4.dp)
+                                    )
+                                }
                             }
                             OutlinedTextField(
                                 value = maxAttendanceString,
                                 onValueChange = {
                                     maxAttendanceString = it
                                     maxAttendance = it.toIntOrNull() ?: 0
+                                    maxAttendanceError = null // Clear error when user types
                                 },
                                 label = { Text("Max Attendees") },
+                                isError = maxAttendanceError != null,
+                                supportingText = maxAttendanceError?.let {
+                                    { Text(it, color = MaterialTheme.colorScheme.error) }
+                                },
                                 modifier = Modifier.width(120.dp),
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                 singleLine = true,
                                 colors = OutlinedTextFieldDefaults.colors(
                                     focusedBorderColor = MaterialTheme.colorScheme.primary,
-                                    unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                                    errorBorderColor = MaterialTheme.colorScheme.error
                                 )
                             )
                         }
@@ -633,21 +780,25 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                                 }
                             }
                         }
+
+                        // Create Button remains unchanged
                         Button(
                             onClick = {
-                                isLoading = true
-                                onSubmit(
-                                    name,
-                                    maxAttendance,
-                                    location,
-                                    startDate,
-                                    description,
-                                    gameCoverImage,
-                                    eventService,
-                                    FirebaseAuth.getInstance().currentUser?.uid.toString(),
-                                    selectedLocation?.value?.let { "${it.first},${it.second}" }
-                                        ?: ""
-                                )
+                                if (validateFields()) {
+                                    isLoading = true
+                                    onSubmit(
+                                        name,
+                                        maxAttendance,
+                                        location,
+                                        startDate,
+                                        description,
+                                        gameCoverImage,
+                                        eventService,
+                                        FirebaseAuth.getInstance().currentUser?.uid.toString(),
+                                        selectedLocation?.value?.let { "${it.first},${it.second}" }
+                                            ?: ""
+                                    )
+                                }
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -719,6 +870,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
         }
     }
 }
+
 
 @Composable
 fun LoadingScreen() {

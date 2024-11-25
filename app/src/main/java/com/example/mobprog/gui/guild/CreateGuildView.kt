@@ -5,31 +5,10 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Button
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,24 +23,25 @@ import com.example.mobprog.data.UserService
 import com.example.mobprog.data.handlers.ImageHandler
 import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.guild.GuildData
+import com.example.mobprog.util.Validation
+import com.example.mobprog.util.ValidationResult
 import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateGuildView(navController: NavController, modifier: Modifier = Modifier, userService: UserService) {
-
-    val currentuserid = FirebaseAuth.getInstance().currentUser?.uid;
-
+    val currentuserid = FirebaseAuth.getInstance().currentUser?.uid
 
     var username by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var picture by remember { mutableStateOf("") }
     var members by remember { mutableStateOf("") }
-
     var GID by remember { mutableStateOf("") }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
 
+    var nameError by remember { mutableStateOf<String?>(null) }
+    var descriptionError by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
         userService.getCurrentUserData { userData ->
@@ -81,6 +61,32 @@ fun CreateGuildView(navController: NavController, modifier: Modifier = Modifier,
         if (uri != null) {
             imageUri = uri
         }
+    }
+
+    fun validateFields(): Boolean {
+        // Reset errors
+        nameError = null
+        descriptionError = null
+
+        val validations = Validation.validateGuildFields(
+            name = name,
+            description = description
+        )
+
+        var isValid = true
+        validations.forEach { result ->
+            when (result) {
+                is ValidationResult.Error -> {
+                    isValid = false
+                    when {
+                        result.message.contains("name", ignoreCase = true) -> nameError = result.message
+                        result.message.contains("description", ignoreCase = true) -> descriptionError = result.message
+                    }
+                }
+                is ValidationResult.Success -> { /* Field is valid */ }
+            }
+        }
+        return isValid
     }
 
     Scaffold(
@@ -104,7 +110,6 @@ fun CreateGuildView(navController: NavController, modifier: Modifier = Modifier,
         ,
         content = { paddingValues ->
             LazyColumn {
-
                 item {
                     Column(
                         modifier = Modifier
@@ -120,6 +125,7 @@ fun CreateGuildView(navController: NavController, modifier: Modifier = Modifier,
                             fontWeight = FontWeight.W400,
                             modifier = Modifier.padding(12.dp)
                         )
+                        
                         Text(
                             text = "Name",
                             fontSize = 16.sp,
@@ -128,14 +134,19 @@ fun CreateGuildView(navController: NavController, modifier: Modifier = Modifier,
                                 .padding(6.dp)
                                 .align(Alignment.Start)
                         )
+                        
                         TextField(
                             value = name,
                             onValueChange = { newText ->
                                 name = newText
-                                /* TODO behandle input her */
+                                nameError = null // Clear error when user types
                             },
                             label = { Text("Enter Guildname") },
                             placeholder = { Text("guildname") },
+                            isError = nameError != null,
+                            supportingText = nameError?.let { 
+                                { Text(it, color = MaterialTheme.colorScheme.error) }
+                            },
                             modifier = Modifier.fillMaxWidth()
                         )
 
@@ -147,14 +158,19 @@ fun CreateGuildView(navController: NavController, modifier: Modifier = Modifier,
                                 .padding(6.dp)
                                 .align(Alignment.Start)
                         )
+                        
                         TextField(
                             value = description,
                             onValueChange = { newText ->
                                 description = newText
-                                /* TODO behandle input her */
+                                descriptionError = null // Clear error when user types
                             },
                             label = { Text("Enter Description") },
                             placeholder = { Text("description") },
+                            isError = descriptionError != null,
+                            supportingText = descriptionError?.let { 
+                                { Text(it, color = MaterialTheme.colorScheme.error) }
+                            },
                             modifier = Modifier.fillMaxWidth()
                         )
 
@@ -166,11 +182,11 @@ fun CreateGuildView(navController: NavController, modifier: Modifier = Modifier,
                                 .padding(6.dp)
                                 .align(Alignment.Start)
                         )
+                        
                         TextField(
                             value = picture,
                             onValueChange = { newText ->
                                 picture = newText
-                                /* TODO behandle input her */
                             },
                             label = { Text("Enter picture id") },
                             placeholder = { Text("picture id") },
@@ -178,21 +194,24 @@ fun CreateGuildView(navController: NavController, modifier: Modifier = Modifier,
                         )
 
                         Spacer(modifier = Modifier.height(22.dp))
+                        
                         Button(
                             onClick = {
-                                onSubmit(
-                                    name,
-                                    description,
-                                    picture = picture,
-                                    guildService = GuildService(),
-                                    leader = currentuserid.toString(),
-                                    userService = userService,
-                                    navController = navController,
-                                    guildURI = imageUri
-                                )
-                                name = ""
-                                description = ""
-                                picture = ""
+                                if (validateFields()) {
+                                    onSubmit(
+                                        name,
+                                        description,
+                                        picture = picture,
+                                        guildService = GuildService(),
+                                        leader = currentuserid.toString(),
+                                        userService = userService,
+                                        navController = navController,
+                                        guildURI = imageUri
+                                    )
+                                    name = ""
+                                    description = ""
+                                    picture = ""
+                                }
                             },
                             modifier = Modifier.fillMaxWidth()
                         ) {
