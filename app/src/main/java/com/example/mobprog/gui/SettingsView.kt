@@ -96,7 +96,7 @@ fun SettingsView(navController: NavController, onDarkModeToggle: (Boolean) -> Un
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
     val context = LocalContext.current
 
-
+    
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->

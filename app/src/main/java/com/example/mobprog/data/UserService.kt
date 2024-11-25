@@ -1,9 +1,11 @@
 package com.example.mobprog.data
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import com.example.mobprog.createEvent.EventData
+import com.example.mobprog.data.handlers.ImageHandler
 import com.example.mobprog.gui.friends.FriendData
 import com.example.mobprog.user.UserData
 import com.example.mobprog.user.formattedDateTime
@@ -23,7 +25,7 @@ class UserService {
     private val db = Firebase.firestore
     private val auth = FirebaseAuth.getInstance()
 
-    fun createUser(email: String, username: String, password: String, callback: (Boolean, Exception?) -> Unit) {
+    fun createUser(email: String, username: String, password: String, context: Context, callback: (Boolean, Exception?) -> Unit) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -36,6 +38,8 @@ class UserService {
                             email = email,
                             name = username
                         )
+                        ImageHandler().uploadDefaultProfilePicture(context, uid)
+
 
                         db.collection("users").document(uid).set(newUser)
                             .addOnSuccessListener {

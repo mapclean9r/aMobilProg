@@ -1,6 +1,9 @@
 package com.example.mobprog.gui
 
+import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,6 +42,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobprog.R
 import com.example.mobprog.data.UserService
+import com.example.mobprog.data.handlers.ImageHandler
 import com.example.mobprog.user.UserData
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -60,6 +64,7 @@ fun RegisterView(navController: NavController, isDarkMode: Boolean) {
     var emailTextController by remember { mutableStateOf("") }
     var usernameTextController by remember { mutableStateOf("") }
     var passwordTextController by remember { mutableStateOf("") }
+
 
     if (isDarkMode) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -135,7 +140,8 @@ fun RegisterView(navController: NavController, isDarkMode: Boolean) {
                             userService.createUser(
                                 emailTextController,
                                 usernameTextController,
-                                passwordTextController
+                                passwordTextController,
+                                context
                             ) { success, exception ->
                                 if (success) {
                                     Toast.makeText(
@@ -255,7 +261,8 @@ fun RegisterView(navController: NavController, isDarkMode: Boolean) {
                             userService.createUser(
                                 emailTextController,
                                 usernameTextController,
-                                passwordTextController
+                                passwordTextController,
+                                context
                             ) { success, exception ->
                                 if (success) {
                                     Toast.makeText(
