@@ -27,13 +27,15 @@ import coil.compose.AsyncImage
 @Composable
 fun GameBox(gameData: GameData, onClick: (GameData) -> Unit) {
     Card(
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
-        elevation = CardDefaults.cardElevation(8.dp),
+        shape = RoundedCornerShape(6.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.25F)
+        ),
         modifier = Modifier
             .fillMaxWidth()
             .padding(2.dp)
             .clickable { onClick(gameData) }
+            .size(60.dp)
     ) {
         Row(
             modifier = Modifier
@@ -61,7 +63,8 @@ fun GameBox(gameData: GameData, onClick: (GameData) -> Unit) {
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    modifier = Modifier.padding(bottom = 4.dp)
+                    modifier = Modifier.padding(bottom = 4.dp),
+                    maxLines = 1
                 )
 
                 Text(
@@ -71,23 +74,6 @@ fun GameBox(gameData: GameData, onClick: (GameData) -> Unit) {
                     fontWeight = FontWeight.Medium
                 )
 
-                Text(
-                    text = gameData.platform ?: "Unknown Platform",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.secondary,
-                    fontWeight = FontWeight.Medium
-                )
-
-
-                Spacer(modifier = Modifier.height(8.dp))
-                if (!gameData.description.isNullOrEmpty()) {
-                    Text(
-                        text = gameData.description,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        maxLines = 2,
-                    )
-                }
             }
         }
     }
