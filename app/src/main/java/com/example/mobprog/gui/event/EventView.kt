@@ -324,9 +324,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                     title = {
                         Text(
                             text = "Event",
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
+                            style = MaterialTheme.typography.headlineMedium
                         )
                     },
                     colors = TopAppBarDefaults.centerAlignedTopAppBarColors(

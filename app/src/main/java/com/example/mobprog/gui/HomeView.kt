@@ -160,9 +160,7 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
                 title = {
                     Text(
                         text = "Homepage",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        style = MaterialTheme.typography.headlineMedium
                     )
                 },
                 actions = {
