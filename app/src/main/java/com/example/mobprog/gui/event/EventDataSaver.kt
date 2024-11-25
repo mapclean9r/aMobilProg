@@ -1,7 +1,5 @@
 package com.example.mobprog.gui.event
 
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.rememberSaveable
 import com.example.mobprog.createEvent.EventData
 
 val eventDataSaver = androidx.compose.runtime.saveable.Saver<EventData, Map<String, Any>>(

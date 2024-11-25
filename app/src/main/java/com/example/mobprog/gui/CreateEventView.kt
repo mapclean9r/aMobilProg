@@ -3,9 +3,6 @@ package com.example.mobprog.gui
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.widget.DatePicker
-import androidx.compose.animation.core.*
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -20,7 +17,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -817,6 +813,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
             }
         }
         if (showSearch) {
+            if (!isLandscape) {
             Surface(
                 modifier = Modifier.fillMaxSize(),
                 color = MaterialTheme.colorScheme.background
@@ -863,6 +860,58 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                                     showSearch = false
                                 }
                             )
+                        }
+                    }
+                }
+            }
+                } else {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            OutlinedTextField(
+                                value = searchGameText,
+                                onValueChange = { searchGameText = it },
+                                placeholder = { Text("Search games...") },
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(end = 8.dp, top = 10.dp),
+                                leadingIcon = {
+                                    Icon(Icons.Default.Search, contentDescription = "Search")
+                                },
+                                singleLine = true
+                            )
+                            IconButton(onClick = { showSearch = false }, modifier = Modifier.padding(end = 40.dp)) {
+                                Icon(Icons.Default.Close, contentDescription = "Close search")
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        LazyColumn(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            items(if (filteredGames.isEmpty()) games else filteredGames) { game ->
+                                GameBox(
+                                    gameData = game,
+                                    onClick = {
+                                        selectedGame = game
+                                        gameCoverImage = game.thumbnail
+                                        showSearch = false
+                                    }
+                                )
+                            }
                         }
                     }
                 }

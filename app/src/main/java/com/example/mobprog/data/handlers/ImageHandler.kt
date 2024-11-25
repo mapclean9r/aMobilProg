@@ -2,7 +2,6 @@ package com.example.mobprog.data.handlers
 
 import android.content.Context
 import android.net.Uri
-import com.example.mobprog.z_Old_Code.Guild
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 
