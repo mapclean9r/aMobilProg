@@ -3,7 +3,7 @@ package com.example.mobprog
 import com.example.mobprog.createEvent.EventData
 import com.example.mobprog.data.EventService
 import com.example.mobprog.gui.onSubmit
-import junit.framework.TestCase.assertEquals
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
@@ -14,11 +14,11 @@ import org.mockito.kotlin.eq
  *
  * See [testing documentation](http://d.android.com/tools/testing).
  */
-class ExampleUnitTest {
+class EventUnitTest {
+
 
     @Test
-    fun testEventCreate() {
-        // Arrange
+    fun `test om onSubmit bruker createEvent med riktig data`() {
         val mockEventService: EventService = mock()
         val name = "Test Event"
         val maxAttendance = 100
