@@ -24,12 +24,15 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -57,6 +60,7 @@ import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.gui.components.GetGuildProfileImageCircle
 import com.example.mobprog.guild.GuildData
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GuildView(navController: NavController, modifier: Modifier = Modifier, userService: UserService) {
 
@@ -121,34 +125,32 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     topBar = {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(88.dp)
-                                .padding(bottom = 10.dp, top = 24.dp)
-                                .background(MaterialTheme.colorScheme.primary),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Box(modifier = Modifier.fillMaxWidth()) {
+                        CenterAlignedTopAppBar(
+                            title = {
+                                Text(
+                                    text = "Guild",
+                                    style = MaterialTheme.typography.headlineMedium
+                                )
+                            },
+                            navigationIcon = {
                                 IconButton(
-                                    onClick = { /* TODO - åpne søkefelt */ },
-                                    modifier = Modifier.align(Alignment.CenterStart)
+                                    onClick = { /* TODO - åpne søkefelt */ }
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Search,
                                         contentDescription = "Search Icon",
-                                        tint = Color.White,
+                                        tint = Color.White
                                     )
                                 }
-                                Text(
-                                    text = "Guild",
-                                    fontSize = 20.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White,
-                                    modifier = Modifier.align(Alignment.Center)
-                                )
-                            }
-                        }
+                            },
+                            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                titleContentColor = Color.White,
+                                navigationIconContentColor = Color.White
+                            ),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        )
                     },
                     content = { paddingValues ->
                         LazyColumn(
@@ -389,35 +391,33 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     topBar = {
-                        Row(
-                            modifier = Modifier
-                                .systemBarsPadding()
-                                .fillMaxWidth()
-                                .height(88.dp)
-                                .padding(bottom = 10.dp, top = 24.dp)
-                                .background(MaterialTheme.colorScheme.primary),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Box(modifier = Modifier.fillMaxWidth()) {
+                        CenterAlignedTopAppBar(
+                            title = {
+                                Text(
+                                    text = "Guild",
+                                    style = MaterialTheme.typography.headlineMedium
+                                )
+                            },
+                            navigationIcon = {
                                 IconButton(
-                                    onClick = { /* TODO - åpne søkefelt */ },
-                                    modifier = Modifier.align(Alignment.CenterStart)
+                                    onClick = { /* TODO - åpne søkefelt */ }
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Search,
                                         contentDescription = "Search Icon",
-                                        tint = Color.White,
+                                        tint = Color.White
                                     )
                                 }
-                                Text(
-                                    text = "Guild",
-                                    fontSize = 20.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White,
-                                    modifier = Modifier.align(Alignment.Center)
-                                )
-                            }
-                        }
+                            },
+                            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                titleContentColor = Color.White,
+                                navigationIconContentColor = Color.White
+                            ),
+                            modifier = Modifier
+                                .fillMaxWidth()
+
+                        )
                     },
                     content = { paddingValues ->
                         LazyColumn(

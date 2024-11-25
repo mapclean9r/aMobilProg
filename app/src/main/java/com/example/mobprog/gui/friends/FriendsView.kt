@@ -96,7 +96,6 @@ fun FriendsView(navController: NavController) {
     Scaffold(
         topBar =  {
             if (!isLandscape) {
-                // Når det ikke er i landskapsmodus
                 CenterAlignedTopAppBar(
                     title = {
                         Text(
@@ -145,7 +144,6 @@ fun FriendsView(navController: NavController) {
                         .fillMaxWidth()
                 )
             } else {
-                // Når det er i landskapsmodus
                 CenterAlignedTopAppBar(
                     title = {
                         Text(
@@ -286,7 +284,6 @@ fun FriendItem(navController: NavController, friend: FriendData, onClick: () -> 
                 navController.navigate("anyProfileView/${friend.id}")
             }
             .padding(8.dp),
-        //.border(2.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
         verticalAlignment = Alignment.CenterVertically,
 
         ){
@@ -303,7 +300,7 @@ fun FriendItem(navController: NavController, friend: FriendData, onClick: () -> 
                 )
                 Row(
                     modifier = Modifier.padding(top = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp) // Space between buttons
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Button(
                         onClick = { FriendService().removeFriend(friend.id, callback = {
