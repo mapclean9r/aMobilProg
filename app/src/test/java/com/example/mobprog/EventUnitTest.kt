@@ -3,7 +3,6 @@ package com.example.mobprog
 import com.example.mobprog.createEvent.EventData
 import com.example.mobprog.data.EventService
 import com.example.mobprog.gui.onSubmit
-import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
@@ -51,7 +50,6 @@ class EventUnitTest {
             creatorId = creatorId,
             locationCoordinates = locationCoordinates
         )
-
         verify(mockEventService).createEvent(eq(curEventData))
     }
 

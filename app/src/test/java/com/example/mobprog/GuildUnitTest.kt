@@ -3,7 +3,6 @@ import android.net.Uri
 import androidx.navigation.NavController
 import com.example.mobprog.data.GuildService
 import com.example.mobprog.data.UserService
-import com.example.mobprog.data.handlers.ImageHandler
 import com.example.mobprog.gui.guild.onSubmit
 import com.example.mobprog.guild.GuildData
 import org.junit.Test
