@@ -138,7 +138,8 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                     title = {
                         Text(
                             text = "Create Event",
-                            style = MaterialTheme.typography.headlineMedium
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = Color.White
                         )
                     },
                     colors = TopAppBarDefaults.centerAlignedTopAppBarColors(

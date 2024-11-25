@@ -26,12 +26,15 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -56,6 +59,7 @@ import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.gui.components.GetUserProfileImageCircle
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "MutableCollectionMutableState")
 @Composable
 fun FriendsView(navController: NavController) {
@@ -90,121 +94,108 @@ fun FriendsView(navController: NavController) {
     }
 
     Scaffold(
-        topBar = {
+        topBar =  {
             if (!isLandscape) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(88.dp)
-                        .padding(bottom = 10.dp, top = 24.dp)
-                        .background(MaterialTheme.colorScheme.primary),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    IconButton(
-                        onClick = { navController.navigate("friendRequestScreen") },
-
+                // Når det ikke er i landskapsmodus
+                CenterAlignedTopAppBar(
+                    title = {
+                        Text(
+                            text = "Friends",
+                            style = MaterialTheme.typography.headlineMedium
+                        )
+                    },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = { navController.navigate("friendRequestScreen") }
                         ) {
-                        Box {
-                            Icon(
-                                imageVector = Icons.Default.Notifications,
-                                contentDescription = "Notifications",
-                                tint = Color.White
-                            )
-                            if (hasRequests.value) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(10.dp)
-                                        .background(Color.Red, shape = CircleShape)
-                                        .align(Alignment.TopEnd)
-                                        .offset(x = (-4).dp, y = 4.dp)
+                            Box {
+                                Icon(
+                                    imageVector = Icons.Default.Notifications,
+                                    contentDescription = "Notifications",
+                                    tint = Color.White
                                 )
+                                if (hasRequests.value) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(10.dp)
+                                            .background(Color.Red, shape = CircleShape)
+                                            .align(Alignment.TopEnd)
+                                            .offset(x = (-4).dp, y = 4.dp)
+                                    )
+                                }
                             }
                         }
-                    }
-
-                    Spacer(modifier = Modifier.width(32.dp))
-                    Text(
-                        text = "Friends",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                        modifier = Modifier
-                            .weight(2f)
-                            .wrapContentWidth(Alignment.CenterHorizontally)
-                    )
-
-                    Spacer(modifier = Modifier.width(32.dp))
-
-                    IconButton(
-                        onClick = { navController.navigate("addFriendScreen") },
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "Add Friend",
-                            tint = Color.White
-                        )
-                    }
-                }
+                    },
+                    actions = {
+                        IconButton(
+                            onClick = { navController.navigate("addFriendScreen") }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "Add Friend",
+                                tint = Color.White
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        titleContentColor = Color.White
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
             } else {
-                Row(
-                    modifier = Modifier
-                        .systemBarsPadding()
-                        .fillMaxWidth()
-                        .height(70.dp)
-                        .padding(bottom = 10.dp, top = 24.dp)
-                        .background(MaterialTheme.colorScheme.primary),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceAround
-                ) {
-                    IconButton(
-                        onClick = { navController.navigate("friendRequestScreen") },
+                // Når det er i landskapsmodus
+                CenterAlignedTopAppBar(
+                    title = {
+                        Text(
+                            text = "Friends",
+                            style = MaterialTheme.typography.headlineMedium
+                        )
+                    },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = { navController.navigate("friendRequestScreen") }
                         ) {
-                        Box {
-                            Icon(
-                                imageVector = Icons.Default.Notifications,
-                                contentDescription = "Notifications",
-                                tint = Color.White
-                            )
-                            if (hasRequests.value) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(10.dp)
-                                        .background(Color.Red, shape = CircleShape)
-                                        .align(Alignment.TopEnd)
-                                        .offset(x = (-4).dp, y = 4.dp)
+                            Box {
+                                Icon(
+                                    imageVector = Icons.Default.Notifications,
+                                    contentDescription = "Notifications",
+                                    tint = Color.White
                                 )
+                                if (hasRequests.value) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(10.dp)
+                                            .background(Color.Red, shape = CircleShape)
+                                            .align(Alignment.TopEnd)
+                                            .offset(x = (-4).dp, y = 4.dp)
+                                    )
+                                }
                             }
                         }
-                    }
-
-                    Spacer(modifier = Modifier.width(32.dp))
-                    Text(
-                        text = "Friends",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                        modifier = Modifier
-                            .weight(2f)
-                            .wrapContentWidth(Alignment.CenterHorizontally)
-                    )
-
-                    Spacer(modifier = Modifier.width(32.dp))
-
-                    IconButton(
-                        onClick = { navController.navigate("addFriendScreen") },
-
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "Add Friend",
-                            tint = Color.White
-                        )
-                    }
-                }
+                    },
+                    actions = {
+                        IconButton(
+                            onClick = { navController.navigate("addFriendScreen") }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "Add Friend",
+                                tint = Color.White
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        titleContentColor = Color.White
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
             }
-
-    }, content = {
+        },
+             content = {
         if (!isLoading.value) {
             if (allFriends.value?.isEmpty() != true) {
                 if(allFriends.value?.stream()?.filter{it.accepted}?.count()!! >= 1) {
