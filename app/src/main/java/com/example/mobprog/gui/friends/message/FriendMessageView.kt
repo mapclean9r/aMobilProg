@@ -48,7 +48,7 @@ import com.google.firebase.firestore.Query
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun FriendMessageView(navController: NavController, friendId: String) {
+fun FriendMessageView(navController: NavController, friendId: String, friendService: FriendService) {
     val db = FirebaseFirestore.getInstance()
     val messages = remember { mutableStateListOf<Map<String, Any>>() }
     var friend by remember { mutableStateOf("Unknown") }
@@ -66,7 +66,7 @@ fun FriendMessageView(navController: NavController, friendId: String) {
         }
 
         if (currentUser != null) {
-            FriendService().getFriendRelationshipId(friendId) { userRel ->
+            friendService.getFriendRelationshipId(friendId) { userRel ->
                 if(userRel != null) {
                     db.collection("friends")
                         .document(userRel)
@@ -147,7 +147,7 @@ fun FriendMessageView(navController: NavController, friendId: String) {
                         )
                     }
                 }
-                MessageInput(friendId)
+                MessageInput(friendId, friendService)
             }
         }
     )

@@ -56,12 +56,10 @@ import com.example.mobprog.gui.components.FriendBox
 import com.example.mobprog.gui.components.GameBox
 import com.google.firebase.auth.FirebaseAuth
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun AddFriendView(navController: NavController) {
-
+fun AddFriendView(navController: NavController, friendService: FriendService) {
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
 
@@ -84,14 +82,14 @@ fun AddFriendView(navController: NavController) {
         }
     }
 
-    FriendService().getAcceptedFriends { friendData ->
+    friendService.getAcceptedFriends { friendData ->
         friendData?.let {
             currentUserFriends = it.map { friend -> friend.id }
         }
     }
 
     if (!isLandscape) {
-    Scaffold(
+        Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
@@ -285,7 +283,7 @@ fun AddFriendView(navController: NavController) {
                                 onDone = {
                                     focusManager.clearFocus()
                                     keyboardController?.hide()
-                                }
+    }
                             ),
                             singleLine = true
                         )
@@ -342,14 +340,12 @@ fun AddFriendView(navController: NavController) {
 
 }
 
-fun onAddFriend(uid: String) {
-    FriendService().addFriend(uid) { callback ->
+fun onAddFriend(friendService: FriendService, uid: String) {
+    friendService.addFriend(uid) { callback ->
         if(callback) {
-            Log.w("UserData", "Succesfully added friend")
+            Log.w("UserData", "Successfully added friend")
         } else {
-            Log.w("UserData",  "User Not Found")
-
+            Log.w("UserData", "User Not Found")
         }
     }
 }
-

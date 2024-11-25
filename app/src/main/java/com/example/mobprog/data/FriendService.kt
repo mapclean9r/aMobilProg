@@ -1,8 +1,11 @@
 package com.example.mobprog.data
 
+import android.content.Context
 import android.util.Log
 import com.example.mobprog.gui.friends.FriendData
 import com.example.mobprog.gui.friends.message.MessageData
+import com.example.mobprog.notifications.sendFriendRequestNotification
+import com.example.mobprog.notifications.sendMessageNotification
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -14,10 +17,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class FriendService {
-
     private val db = Firebase.firestore
     private val auth = FirebaseAuth.getInstance()
+    private var context: Context? = null
 
+    fun setContext(context: Context) {
+        this.context = context
+    }
 
     fun getAllFriends(callback: (ArrayList<FriendData>?) -> Unit) {
         val currentUser = FirebaseAuth.getInstance().currentUser
@@ -108,7 +114,6 @@ class FriendService {
                 // Process results from both queries
 
 
-
                 query2.documents.forEach { document ->
                     val friendId = document.getString("u_id")
                     val friendAccepted = document.getBoolean("accepted")
@@ -162,8 +167,12 @@ class FriendService {
 
                 val friendIds = mutableMapOf<String, Boolean>()
 
-                val query1 = friendsRef.whereEqualTo("u_id", uid).whereEqualTo("accepted", true).get().await()
-                val query2 = friendsRef.whereEqualTo("f_id", uid).whereEqualTo("accepted", true).get().await()
+                val query1 =
+                    friendsRef.whereEqualTo("u_id", uid).whereEqualTo("accepted", true).get()
+                        .await()
+                val query2 =
+                    friendsRef.whereEqualTo("f_id", uid).whereEqualTo("accepted", true).get()
+                        .await()
 
                 query1.documents.forEach { document ->
                     val friendId = document.getString("f_id")
@@ -218,28 +227,35 @@ class FriendService {
 
         val friendsRef = db.collection("friends")
 
+        db.collection("users").document(friendId).get()
+            .addOnSuccessListener { userDoc ->
+                val friendName = userDoc.getString("name") ?: "Someone"
 
-        friendsRef.whereEqualTo("u_id", uid).whereEqualTo("f_id", friendId).get()
-            .addOnSuccessListener { documents ->
-                if (documents.isEmpty) {
-                    val friendData = hashMapOf(
-                        "u_id" to uid,
-                        "f_id" to friendId,
-                        "accepted" to false
-                    )
-                    friendsRef.add(friendData)
-                        .addOnSuccessListener {
-                            callback(true)
-                        }
-                        .addOnFailureListener {
+                friendsRef.whereEqualTo("u_id", uid).whereEqualTo("f_id", friendId).get()
+                    .addOnSuccessListener { documents ->
+                        if (documents.isEmpty) {
+                            val friendData = hashMapOf(
+                                "u_id" to uid,
+                                "f_id" to friendId,
+                                "accepted" to false
+                            )
+                            friendsRef.add(friendData)
+                                .addOnSuccessListener {
+                                    context?.let { ctx ->
+                                        sendFriendRequestNotification(ctx, friendName)
+                                    }
+                                    callback(true)
+                                }
+                                .addOnFailureListener {
+                                    callback(false)
+                                }
+                        } else {
                             callback(false)
                         }
-                } else {
-                    callback(false)
-                }
-            }
-            .addOnFailureListener {
-                callback(false)
+                    }
+                    .addOnFailureListener {
+                        callback(false)
+                    }
             }
     }
 
@@ -257,7 +273,10 @@ class FriendService {
         // Query for the friend request where the current user is either `u_id` or `f_id`
         friendsRef
             .whereEqualTo("accepted", false)
-            .whereIn("u_id", listOf(uid, friendId)) // Check if the current user is `u_id` or `f_id`
+            .whereIn(
+                "u_id",
+                listOf(uid, friendId)
+            ) // Check if the current user is `u_id` or `f_id`
             .get()
             .addOnSuccessListener { documents ->
                 if (documents.isEmpty) {
@@ -417,29 +436,36 @@ class FriendService {
 
         val uid = currentUser.uid
 
+        db.collection("users").document(uid).get()
+            .addOnSuccessListener { userDoc ->
+                val senderName = userDoc.getString("name") ?: "Someone"
 
+                val message = hashMapOf(
+                    "senderId" to uid,
+                    "content" to content,
+                    "timestamp" to Timestamp.now()
+                )
 
-        val message = hashMapOf(
-            "senderId" to uid,
-            "content" to content,
-            "timestamp" to Timestamp.now()
-        )
-        getFriendRelationshipId(friendId) { relationshipId ->
-            if (relationshipId != null) {
-                db.collection("friends")
-                    .document(relationshipId)
-                    .collection("messages")
-                    .add(message)
-                    .addOnSuccessListener {
-                        callback(true)
+                getFriendRelationshipId(friendId) { relationshipId ->
+                    if (relationshipId != null) {
+                        db.collection("friends")
+                            .document(relationshipId)
+                            .collection("messages")
+                            .add(message)
+                            .addOnSuccessListener {
+                                context?.let { ctx ->
+                                    sendMessageNotification(ctx, senderName, content)
+                                }
+                                callback(true)
+                            }
+                            .addOnFailureListener {
+                                callback(false)
+                            }
+                    } else {
+                        println("Friend relationship not found.")
                     }
-                    .addOnFailureListener {
-                        callback(false)
-                    }
-            } else {
-                println("Friend relationship not found.")
+                }
             }
-        }
     }
 
     fun getMessages(relationshipId: String, callback: (List<MessageData>?) -> Unit) {
@@ -459,3 +485,4 @@ class FriendService {
             }
     }
 }
+
