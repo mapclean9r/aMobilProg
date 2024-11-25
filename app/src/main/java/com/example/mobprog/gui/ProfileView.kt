@@ -116,9 +116,7 @@ if (!isLandscape) {
                 title = {
                     Text(
                         text = "Profile",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        style = MaterialTheme.typography.headlineMedium
                     )
                 },
                 actions = {
