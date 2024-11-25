@@ -225,24 +225,46 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
     )
     }
     if (showSearch) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.5f))
-                .padding()
-                .clickable {
-                    showSearch = false
-                }
-        )
-        TextField(
-            value = searchText,
-            onValueChange = { searchText = it },
-            placeholder = { Text("Search...") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxSize(fraction = 0.09f)
-                .padding(top = 24.dp),
-            singleLine = true
-        )
+        if (!isLandscape) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.5f))
+                    .padding()
+                    .clickable {
+                        showSearch = false
+                    }
+            )
+            TextField(
+                value = searchText,
+                onValueChange = { searchText = it },
+                placeholder = { Text("Search...") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxSize(fraction = 0.09f)
+                    .padding(top = 24.dp),
+                singleLine = true
+            )
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.5f))
+                    .padding()
+                    .clickable {
+                        showSearch = false
+                    }
+            )
+            TextField(
+                value = searchText,
+                onValueChange = { searchText = it },
+                placeholder = { Text("Search...") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxSize(fraction = 0.20f)
+                    .padding(top = 24.dp),
+                singleLine = true
+            )
+        }
     }
 }

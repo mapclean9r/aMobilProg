@@ -817,6 +817,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
             }
         }
         if (showSearch) {
+            if (!isLandscape) {
             Surface(
                 modifier = Modifier.fillMaxSize(),
                 color = MaterialTheme.colorScheme.background
@@ -863,6 +864,58 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                                     showSearch = false
                                 }
                             )
+                        }
+                    }
+                }
+            }
+                } else {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            OutlinedTextField(
+                                value = searchGameText,
+                                onValueChange = { searchGameText = it },
+                                placeholder = { Text("Search games...") },
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(end = 8.dp, top = 10.dp),
+                                leadingIcon = {
+                                    Icon(Icons.Default.Search, contentDescription = "Search")
+                                },
+                                singleLine = true
+                            )
+                            IconButton(onClick = { showSearch = false }, modifier = Modifier.padding(end = 40.dp)) {
+                                Icon(Icons.Default.Close, contentDescription = "Close search")
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        LazyColumn(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            items(if (filteredGames.isEmpty()) games else filteredGames) { game ->
+                                GameBox(
+                                    gameData = game,
+                                    onClick = {
+                                        selectedGame = game
+                                        gameCoverImage = game.thumbnail
+                                        showSearch = false
+                                    }
+                                )
+                            }
                         }
                     }
                 }
