@@ -34,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,6 +52,8 @@ import com.example.mobprog.gui.components.ProfileEventBox
 @Composable
 fun ProfileView(navController: NavController, userService: UserService, onEventClick: (EventData) -> Unit) {
 
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var createdAt by remember { mutableStateOf("") }
@@ -101,7 +104,210 @@ fun ProfileView(navController: NavController, userService: UserService, onEventC
             }
         }
     }
+if (!isLandscape) {
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(88.dp)
+                    .padding(bottom = 10.dp, top = 24.dp)
+                    .background(MaterialTheme.colorScheme.primary),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        text = "Profile",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                    IconButton(
+                        onClick = { navController.navigate("settingsScreen") },
+                        modifier = Modifier.align(Alignment.CenterEnd)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Profile Icon",
+                            tint = Color.White,
+                        )
+                    }
+                }
+            }
+        },
+        content = { paddingValues ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
 
+
+                Box(
+                    modifier = Modifier
+                        .size(152.dp)
+                        .background(
+                            MaterialTheme.colorScheme.secondary,
+                            shape = CircleShape
+                        )
+                        .padding(1.dp)
+                ) {
+                    GetSelfProfileImageCircle(200)
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(12.dp)
+                ) {
+                    Text(
+                        text = username,
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .padding(top = 12.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                    Icon(
+                        imageVector = Icons.Default.CheckCircle,
+                        contentDescription = "Profile Icon",
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+
+                    Text(
+                        text = createdAt,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.W400,
+                        modifier = Modifier
+                            .padding(2.dp, bottom = 15.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "My Events",
+                            modifier = Modifier
+                                .weight(1f)
+                                .clickable {
+                                    selectedMenu = "My Events"; currentView = "My Events"
+                                }
+                                .padding(1.dp)
+                                .background(
+                                    color = if (selectedMenu == "My Events") MaterialTheme.colorScheme.primary.copy(
+                                        alpha = 0.1f
+                                    ) else Color.Transparent,
+                                    shape = MaterialTheme.shapes.small
+                                )
+                                .padding(vertical = 8.dp),
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                fontSize = 18.sp,
+                                fontWeight = if (selectedMenu == "My Events") {
+                                    FontWeight.Bold
+                                } else FontWeight.Normal,
+                                color = if (selectedMenu == "My Events") {
+                                    MaterialTheme.colorScheme.primary
+                                } else Color.Gray,
+                                textAlign = TextAlign.Center
+                            )
+                        )
+
+                        Text(
+                            text = "Attending",
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(1.dp)
+                                .clickable {
+                                    selectedMenu = "Attending"; currentView = "Attending Events"
+                                }
+                                .background(
+                                    color = if (selectedMenu == "Attending") MaterialTheme.colorScheme.primary.copy(
+                                        alpha = 0.1f
+                                    ) else Color.Transparent,
+                                    shape = MaterialTheme.shapes.small
+                                )
+                                .padding(vertical = 8.dp),
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                fontSize = 18.sp,
+                                fontWeight = if (selectedMenu == "Attending") {
+                                    FontWeight.Bold
+                                } else FontWeight.Normal,
+                                color = if (selectedMenu == "Attending") {
+                                    MaterialTheme.colorScheme.primary
+                                } else Color.Gray,
+                                textAlign = TextAlign.Center
+                            )
+                        )
+                    }
+
+
+                    Spacer(modifier = Modifier.height(5.dp))
+
+                    when (currentView) {
+                        "My Events" -> {
+                            if (myEvents?.size == 0) {
+                                Text(
+                                    text = "You have no events created",
+                                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                                        .padding(top = 20.dp)
+                                )
+                            }
+                            LazyColumn {
+                                items(myEvents ?: emptyList()) { event ->
+                                    ProfileEventBox(
+                                        navController = navController,
+                                        eventData = event,
+                                        eventClick = { event ->
+                                            onEventClick(event)
+                                        })
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                }
+                            }
+                        }
+
+                        "Attending Events" -> {
+                            if (attendingEvents?.size == 0) {
+                                Text(
+                                    text = "You are not attending any events",
+                                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                                        .padding(top = 20.dp)
+                                )
+                            }
+                            LazyColumn {
+                                items(attendingEvents ?: emptyList()) { event ->
+                                    ProfileEventBox(
+                                        navController = navController,
+                                        eventData = event,
+                                        eventClick = { event ->
+                                            onEventClick(event)
+                                        })
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        },
+        bottomBar = {
+            // inspirert av link under for å lage navbar.
+            // https://www.youtube.com/watch?v=O9csfKW3dZ4
+            BottomNavBar(navController = navController, userService = UserService())
+        }
+    )
+} else {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -114,7 +320,7 @@ fun ProfileView(navController: NavController, userService: UserService, onEventC
                     .background(MaterialTheme.colorScheme.primary),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Box(modifier = Modifier.fillMaxWidth()){
+                Box(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = "Profile",
                         fontSize = 20.sp,
@@ -122,8 +328,10 @@ fun ProfileView(navController: NavController, userService: UserService, onEventC
                         color = Color.White,
                         modifier = Modifier.align(Alignment.Center)
                     )
-                    IconButton(onClick = { navController.navigate("settingsScreen") },
-                        modifier = Modifier.align(Alignment.CenterEnd)) {
+                    IconButton(
+                        onClick = { navController.navigate("settingsScreen") },
+                        modifier = Modifier.align(Alignment.CenterEnd)
+                    ) {
                         Icon(
                             imageVector = Icons.Default.Settings,
                             contentDescription = "Profile Icon",
@@ -134,165 +342,167 @@ fun ProfileView(navController: NavController, userService: UserService, onEventC
             }
         },
         content = { paddingValues ->
-            Column(modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally) {
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
 
 
-                    Box(
+                Box(
+                    modifier = Modifier
+                        .size(152.dp)
+                        .background(
+                            MaterialTheme.colorScheme.secondary,
+                            shape = CircleShape
+                        )
+                        .padding(1.dp)
+                ) {
+                    GetSelfProfileImageCircle(200)
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(12.dp)
+                ) {
+                    Text(
+                        text = username,
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.Bold,
                         modifier = Modifier
-                            .size(152.dp)
-                            .background(
-                                MaterialTheme.colorScheme.secondary,
-                                shape = CircleShape
-                            )
-                            .padding(1.dp)
+                            .padding(top = 12.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                    Icon(
+                        imageVector = Icons.Default.CheckCircle,
+                        contentDescription = "Profile Icon",
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+
+                    Text(
+                        text = createdAt,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.W400,
+                        modifier = Modifier
+                            .padding(2.dp, bottom = 15.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        GetSelfProfileImageCircle(200)
+                        Text(
+                            text = "My Events",
+                            modifier = Modifier
+                                .weight(1f)
+                                .clickable {
+                                    selectedMenu = "My Events"; currentView = "My Events"
+                                }
+                                .padding(1.dp)
+                                .background(
+                                    color = if (selectedMenu == "My Events") MaterialTheme.colorScheme.primary.copy(
+                                        alpha = 0.1f
+                                    ) else Color.Transparent,
+                                    shape = MaterialTheme.shapes.small
+                                )
+                                .padding(vertical = 8.dp),
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                fontSize = 18.sp,
+                                fontWeight = if (selectedMenu == "My Events") {
+                                    FontWeight.Bold
+                                } else FontWeight.Normal,
+                                color = if (selectedMenu == "My Events") {
+                                    MaterialTheme.colorScheme.primary
+                                } else Color.Gray,
+                                textAlign = TextAlign.Center
+                            )
+                        )
+
+                        Text(
+                            text = "Attending",
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(1.dp)
+                                .clickable {
+                                    selectedMenu = "Attending"; currentView = "Attending Events"
+                                }
+                                .background(
+                                    color = if (selectedMenu == "Attending") MaterialTheme.colorScheme.primary.copy(
+                                        alpha = 0.1f
+                                    ) else Color.Transparent,
+                                    shape = MaterialTheme.shapes.small
+                                )
+                                .padding(vertical = 8.dp),
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                fontSize = 18.sp,
+                                fontWeight = if (selectedMenu == "Attending") {
+                                    FontWeight.Bold
+                                } else FontWeight.Normal,
+                                color = if (selectedMenu == "Attending") {
+                                    MaterialTheme.colorScheme.primary
+                                } else Color.Gray,
+                                textAlign = TextAlign.Center
+                            )
+                        )
                     }
 
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(12.dp)
-                    ) {
-                        Text(
-                            text = username,
-                            fontSize = 26.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .padding(top = 12.dp)
-                                .align(Alignment.CenterHorizontally)
-                        )
-                        Icon(
-                            imageVector = Icons.Default.CheckCircle,
-                            contentDescription = "Profile Icon",
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
-                        )
 
-                        Text(
-                            text = createdAt,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.W400,
-                            modifier = Modifier
-                                .padding(2.dp, bottom = 15.dp)
-                                .align(Alignment.CenterHorizontally)
-                        )
+                    Spacer(modifier = Modifier.height(5.dp))
 
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "My Events",
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .clickable {
-                                        selectedMenu = "My Events"; currentView = "My Events"
-                                    }
-                                    .padding(1.dp)
-                                    .background(
-                                        color = if (selectedMenu == "My Events") MaterialTheme.colorScheme.primary.copy(
-                                            alpha = 0.1f
-                                        ) else Color.Transparent,
-                                        shape = MaterialTheme.shapes.small
-                                    )
-                                    .padding(vertical = 8.dp),
-                                style = MaterialTheme.typography.bodyLarge.copy(
-                                    fontSize = 18.sp,
-                                    fontWeight = if (selectedMenu == "My Events") {
-                                        FontWeight.Bold
-                                    } else FontWeight.Normal,
-                                    color = if (selectedMenu == "My Events") {
-                                        MaterialTheme.colorScheme.primary
-                                    } else Color.Gray,
-                                    textAlign = TextAlign.Center
+                    when (currentView) {
+                        "My Events" -> {
+                            if (myEvents?.size == 0) {
+                                Text(
+                                    text = "You have no events created",
+                                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                                        .padding(top = 20.dp)
                                 )
-                            )
-
-                            Text(
-                                text = "Attending",
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(1.dp)
-                                    .clickable {
-                                        selectedMenu = "Attending"; currentView = "Attending Events"
-                                    }
-                                    .background(
-                                        color = if (selectedMenu == "Attending") MaterialTheme.colorScheme.primary.copy(
-                                            alpha = 0.1f
-                                        ) else Color.Transparent,
-                                        shape = MaterialTheme.shapes.small
-                                    )
-                                    .padding(vertical = 8.dp),
-                                style = MaterialTheme.typography.bodyLarge.copy(
-                                    fontSize = 18.sp,
-                                    fontWeight = if (selectedMenu == "Attending") {
-                                        FontWeight.Bold
-                                    } else FontWeight.Normal,
-                                    color = if (selectedMenu == "Attending") {
-                                        MaterialTheme.colorScheme.primary
-                                    } else Color.Gray,
-                                    textAlign = TextAlign.Center
-                                )
-                            )
-                        }
-
-
-                        Spacer(modifier = Modifier.height(5.dp))
-
-                        when (currentView) {
-                            "My Events" -> {
-                                if (myEvents?.size == 0) {
-                                    Text(
-                                        text = "You have no events created",
-                                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                                            .padding(top = 20.dp)
-                                    )
-                                }
-                                LazyColumn {
-                                    items(myEvents ?: emptyList()) { event ->
-                                        ProfileEventBox(
-                                            navController = navController,
-                                            eventData = event,
-                                            eventClick = { event ->
-                                                onEventClick(event)
-                                            })
-                                        Spacer(modifier = Modifier.height(8.dp))
-                                    }
+                            }
+                            LazyColumn {
+                                items(myEvents ?: emptyList()) { event ->
+                                    ProfileEventBox(
+                                        navController = navController,
+                                        eventData = event,
+                                        eventClick = { event ->
+                                            onEventClick(event)
+                                        })
+                                    Spacer(modifier = Modifier.height(8.dp))
                                 }
                             }
+                        }
 
-                            "Attending Events" -> {
-                                if (attendingEvents?.size == 0) {
-                                    Text(
-                                        text = "You are not attending any events",
-                                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                                            .padding(top = 20.dp)
-                                    )
-                                }
-                                LazyColumn {
-                                    items(attendingEvents ?: emptyList()) { event ->
-                                        ProfileEventBox(
-                                            navController = navController,
-                                            eventData = event,
-                                            eventClick = { event ->
-                                                onEventClick(event)
-                                            })
-                                        Spacer(modifier = Modifier.height(8.dp))
-                                    }
+                        "Attending Events" -> {
+                            if (attendingEvents?.size == 0) {
+                                Text(
+                                    text = "You are not attending any events",
+                                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                                        .padding(top = 20.dp)
+                                )
+                            }
+                            LazyColumn {
+                                items(attendingEvents ?: emptyList()) { event ->
+                                    ProfileEventBox(
+                                        navController = navController,
+                                        eventData = event,
+                                        eventClick = { event ->
+                                            onEventClick(event)
+                                        })
+                                    Spacer(modifier = Modifier.height(8.dp))
                                 }
                             }
                         }
                     }
                 }
+            }
 
         },
         bottomBar = {
@@ -301,6 +511,7 @@ fun ProfileView(navController: NavController, userService: UserService, onEventC
             BottomNavBar(navController = navController, userService = UserService())
         }
     )
+}
 }
 
 /*
