@@ -20,11 +20,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -49,6 +52,7 @@ import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.gui.components.GetSelfProfileImageCircle
 import com.example.mobprog.gui.components.ProfileEventBox
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileView(navController: NavController, userService: UserService, onEventClick: (EventData) -> Unit) {
 
@@ -108,34 +112,34 @@ if (!isLandscape) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(88.dp)
-                    .padding(bottom = 10.dp, top = 24.dp)
-                    .background(MaterialTheme.colorScheme.primary),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Box(modifier = Modifier.fillMaxWidth()) {
+            CenterAlignedTopAppBar(
+                title = {
                     Text(
                         text = "Profile",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                        modifier = Modifier.align(Alignment.Center)
+                        color = Color.White
                     )
+                },
+                actions = {
                     IconButton(
-                        onClick = { navController.navigate("settingsScreen") },
-                        modifier = Modifier.align(Alignment.CenterEnd)
+                        onClick = { navController.navigate("settingsScreen") }
                     ) {
                         Icon(
                             imageVector = Icons.Default.Settings,
-                            contentDescription = "Profile Icon",
-                            tint = Color.White,
+                            contentDescription = "Settings Icon",
+                            tint = Color.White
                         )
                     }
-                }
-            }
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = Color.White,
+                    actionIconContentColor = Color.White
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
         },
         content = { paddingValues ->
             Column(
@@ -311,35 +315,32 @@ if (!isLandscape) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            Row(
-                modifier = Modifier
-                    .systemBarsPadding()
-                    .fillMaxWidth()
-                    .height(88.dp)
-                    .padding(bottom = 10.dp, top = 24.dp)
-                    .background(MaterialTheme.colorScheme.primary),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Box(modifier = Modifier.fillMaxWidth()) {
+            CenterAlignedTopAppBar(
+                title = {
                     Text(
                         text = "Profile",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                        modifier = Modifier.align(Alignment.Center)
+                        style = MaterialTheme.typography.headlineMedium
                     )
+                },
+                actions = {
                     IconButton(
-                        onClick = { navController.navigate("settingsScreen") },
-                        modifier = Modifier.align(Alignment.CenterEnd)
+                        onClick = { navController.navigate("settingsScreen") }
                     ) {
                         Icon(
                             imageVector = Icons.Default.Settings,
-                            contentDescription = "Profile Icon",
-                            tint = Color.White,
+                            contentDescription = "Settings Icon",
+                            tint = Color.White
                         )
                     }
-                }
-            }
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = Color.White,
+                    actionIconContentColor = Color.White
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
         },
         content = { paddingValues ->
             Column(

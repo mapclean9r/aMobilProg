@@ -24,9 +24,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -34,6 +37,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -77,6 +81,7 @@ private fun logout(navController: NavController) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun SettingsView(navController: NavController, onDarkModeToggle: (Boolean) -> Unit, currentSettingsDarkMode: Boolean){
@@ -135,48 +140,45 @@ fun SettingsView(navController: NavController, onDarkModeToggle: (Boolean) -> Un
         isPreChecked = currentSettingsDarkMode
     }
 
-    Scaffold(topBar = {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(88.dp)
-                .padding(bottom = 10.dp, top = 24.dp)
-                .background(MaterialTheme.colorScheme.primary),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Box(modifier = Modifier.fillMaxWidth()) {
-
-                IconButton(onClick = {
-                    UserService().getCurrentUserData { docFields ->
-                        println("$docFields")
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = "Settings",
+                        style = MaterialTheme.typography.headlineMedium
+                    )
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = {
+                            UserService().getCurrentUserData { docFields ->
+                                println("$docFields")
+                            }
+                            navController.navigate("profileScreen") {
+                                while (navController.popBackStack()) {
+                                    navController.popBackStack()
+                                }
+                            }
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back Button",
+                            tint = Color.White
+                        )
                     }
                 },
-                    modifier = Modifier.align(Alignment.CenterStart)
-                ) {
-                    IconButton(onClick = {
-                        navController.navigate("profileScreen") {
-                            while (navController.popBackStack()) {
-                                navController.popBackStack()
-                            }
-                        } },
-                        modifier = Modifier.align(Alignment.CenterEnd)) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back Button",
-                        tint = Color.White
-                    )
-                }
-                }
-                Text(
-                    text = "Settings",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    modifier = Modifier.align(Alignment.Center)
-                )
-            }
-        }
-    }, content = { paddingValues ->
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = Color.White,
+                    navigationIconContentColor = Color.White,
+                    actionIconContentColor = Color.White
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+        }, content = { paddingValues ->
 
         Box(
             modifier = Modifier
@@ -261,7 +263,6 @@ fun SettingsView(navController: NavController, onDarkModeToggle: (Boolean) -> Un
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // New Password Input
                     OutlinedTextField(
                         value = newPassword,
                         onValueChange = { newPassword = it },

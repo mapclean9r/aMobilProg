@@ -21,12 +21,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,6 +57,7 @@ import com.example.mobprog.gui.components.GameBox
 import com.google.firebase.auth.FirebaseAuth
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AddFriendView(navController: NavController) {
@@ -89,43 +93,38 @@ fun AddFriendView(navController: NavController) {
     if (!isLandscape) {
     Scaffold(
         topBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(88.dp)
-                    .padding(bottom = 10.dp, top = 24.dp)
-                    .background(MaterialTheme.colorScheme.primary)
-                 ,
-                verticalAlignment = Alignment.CenterVertically,
-                //horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Box(modifier = Modifier.fillMaxWidth()) {
-
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = "Add Friend",
+                        style = MaterialTheme.typography.headlineMedium
+                    )
+                },
+                navigationIcon = {
                     IconButton(
                         onClick = {
-                            navController.navigate("friendsScreen")
-                            {
+                            navController.navigate("friendsScreen") {
                                 popUpTo(0) { inclusive = true }
                             }
-                        },
-                        modifier = Modifier.align(Alignment.CenterStart)
+                        }
                     ) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Search Icon",
+                            contentDescription = "Back",
                             tint = Color.White
                         )
                     }
-                    Text(
-                        text = "Add Friend",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-            }
-        },
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = Color.White,
+                    navigationIconContentColor = Color.White
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+        }
+        ,
         bottomBar = {
             // inspirert av link under for å lage navbar.
             // https://www.youtube.com/watch?v=O9csfKW3dZ4
@@ -232,7 +231,6 @@ fun AddFriendView(navController: NavController) {
                         .background(MaterialTheme.colorScheme.primary)
                     ,
                     verticalAlignment = Alignment.CenterVertically,
-                    //horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Box(modifier = Modifier.fillMaxWidth()) {
                         Text(

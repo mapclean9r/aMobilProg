@@ -12,9 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
@@ -22,7 +19,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -151,7 +147,6 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                 ) {
                     item {
                         currentEvent?.let {
-                            // Cover Image
                             CoverImageAPIEvent(it.image)
 
                             val dateFormatter =
@@ -175,8 +170,6 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                                     modifier = Modifier.padding(5.dp)
                                 )
                             }
-
-                            // Event Details
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -230,7 +223,6 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                             Divider(color = Color.Gray, thickness = 1.dp)
 
 
-                            // Location
                             val coordinatesParts = currentEvent.coordinates.split(",")
                             if (coordinatesParts.size == 2) {
                                 val latitude = coordinatesParts[0].toDoubleOrNull()
@@ -263,7 +255,6 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                     }
 
                     item {
-                        // Action Buttons
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -333,7 +324,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                     title = {
                         Text(
                             text = "Event",
-                            fontSize = 24.sp, // Beholder den større fontstørrelsen
+                            fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White
                         )
@@ -354,13 +345,11 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                 ) {
                     item {
                         currentEvent?.let {
-                            // First Row: Image and Event Details
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(horizontal = 16.dp)
                             ) {
-                                // Cover Image
                                 Box(
                                     modifier = Modifier
                                         .weight(1f)
@@ -370,7 +359,6 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                                     CoverImageAPIEvent(it.image)
                                 }
 
-                                // Event Details Column
                                 Column(
                                     modifier = Modifier
                                         .weight(1f)
@@ -501,7 +489,6 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                     }
 
                     item {
-                        // Second Row: Map and Buttons
                         currentEvent?.let {
                             Row(
                                 modifier = Modifier
@@ -519,7 +506,6 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                                         EventLocationMapView(latitude, longitude)
                                     }
                                 }
-                                // Show delete button if the event belongs to the current user
 
                             }
 

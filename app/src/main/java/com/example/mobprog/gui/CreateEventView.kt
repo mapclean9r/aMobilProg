@@ -159,7 +159,6 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                 color = MaterialTheme.colorScheme.background
             ) {
                 if (isLandscape) {
-                    // Landscape layout with shared scroll
                     Row(
                         modifier = Modifier
                             .fillMaxSize()
@@ -167,12 +166,10 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                             .padding(horizontal = 16.dp, vertical = 8.dp),
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        // Left column - Basic form elements
                         Column(
                             modifier = Modifier.weight(1f),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            // Title Section
                             OutlinedTextField(
                                 value = name,
                                 onValueChange = { name = it },
@@ -183,8 +180,6 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                                     unfocusedBorderColor = MaterialTheme.colorScheme.outline
                                 )
                             )
-
-                            // Description Section
                             OutlinedTextField(
                                 value = description,
                                 onValueChange = { description = it },
@@ -196,8 +191,6 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                                     unfocusedBorderColor = MaterialTheme.colorScheme.outline
                                 )
                             )
-
-                            // Location Section
                             OutlinedTextField(
                                 value = location,
                                 onValueChange = { location = it },
@@ -232,13 +225,10 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                                 Text("Select Location on Map")
                             }
                         }
-
-                        // Right column - Game selection, date, attendance, and create button
                         Column(
                             modifier = Modifier.weight(1f),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            // Date and Attendance Section
                             Card(
                                 modifier = Modifier.fillMaxWidth(),
                                 colors = CardDefaults.cardColors(
@@ -258,8 +248,6 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                                         style = MaterialTheme.typography.titleLarge,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
-
-                                    // Date Selection
                                     Column(
                                         modifier = Modifier.fillMaxWidth(),
                                         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -305,8 +293,6 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                                             }
                                         }
                                     }
-
-                                    // Attendance Input
                                     OutlinedTextField(
                                         value = maxAttendanceString,
                                         onValueChange = {
@@ -324,8 +310,6 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                                     )
                                 }
                             }
-
-                            // Game Selection
                             Card(
                                 modifier = Modifier.fillMaxWidth(),
                                 colors = CardDefaults.cardColors(
@@ -410,8 +394,6 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                             }
 
                             Spacer(modifier = Modifier.weight(1f))
-
-                            // Create Button
                             Button(
                                 onClick = {
                                     isLoading = true
@@ -450,8 +432,6 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                             .padding(horizontal = 16.dp, vertical = 8.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        // Original portrait layout content...
-                        // Title Section
                         OutlinedTextField(
                             value = name,
                             onValueChange = { name = it },
@@ -462,8 +442,6 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                                 unfocusedBorderColor = MaterialTheme.colorScheme.outline
                             )
                         )
-
-                        // Description Section
                         OutlinedTextField(
                             value = description,
                             onValueChange = { description = it },
@@ -475,8 +453,6 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                                 unfocusedBorderColor = MaterialTheme.colorScheme.outline
                             )
                         )
-
-                        // Location Section
                         OutlinedTextField(
                             value = location,
                             onValueChange = { location = it },
@@ -510,14 +486,11 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                             )
                             Text("Select Location on Map")
                         }
-
-                        // Date and Attendance Row
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            // Date Selection
                             Column(
                                 horizontalAlignment = Alignment.Start,
                                 modifier = Modifier.weight(1f)
@@ -565,8 +538,6 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                                     }
                                 }
                             }
-
-                            // Attendance Input
                             OutlinedTextField(
                                 value = maxAttendanceString,
                                 onValueChange = {
@@ -583,8 +554,6 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                                 )
                             )
                         }
-
-                        // Game Selection
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             colors = CardDefaults.cardColors(
@@ -664,8 +633,6 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                                 }
                             }
                         }
-
-                        // Create Button
                         Button(
                             onClick = {
                                 isLoading = true

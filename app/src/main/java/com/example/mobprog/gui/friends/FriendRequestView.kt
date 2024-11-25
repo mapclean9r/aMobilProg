@@ -25,12 +25,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -40,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -57,9 +61,13 @@ import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.gui.components.GetUserProfileImageCircle
 import com.google.firebase.auth.FirebaseAuth
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "MutableCollectionMutableState")
 @Composable
 fun FriendRequestView(navController: NavController) {
+
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
 
     val friendRequests = remember { mutableStateOf<ArrayList<FriendData>?>(null) }
     val isLoading = remember { mutableStateOf(true) }
@@ -76,55 +84,103 @@ fun FriendRequestView(navController: NavController) {
         }
     }
 
-    Scaffold(topBar = {
-        Row(
-            modifier = Modifier
-                .systemBarsPadding()
-                .fillMaxWidth()
-                .height(88.dp)
-                .padding(bottom = 10.dp, top = 24.dp)
-                .background(MaterialTheme.colorScheme.primary),
-            verticalAlignment = Alignment.CenterVertically,
-            //horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Box(modifier = Modifier.fillMaxWidth()) {
-
-                IconButton(onClick = {
-                    navController.navigate("friendsScreen")
-                    {
-                        popUpTo(0) { inclusive = true }
-                    }
-                },
-                    modifier = Modifier.align(Alignment.CenterStart)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color.White
-                    )
-                }
-                Text(
-                    text = "Friend Requests",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    modifier = Modifier.align(Alignment.Center)
+    if (!isLandscape) {
+        Scaffold(
+            topBar = {
+                CenterAlignedTopAppBar(
+                    title = {
+                        Text(
+                            text = "Friend Requests",
+                            style = MaterialTheme.typography.headlineMedium
+                        )
+                    },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = {
+                                navController.navigate("friendsScreen") {
+                                    popUpTo(0) { inclusive = true }
+                                }
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowBack,
+                                contentDescription = "Back",
+                                tint = Color.White
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        titleContentColor = Color.White,
+                        navigationIconContentColor = Color.White
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
                 )
             }
-        }
-    }, content = {
-        if (!isLoading.value) {
-            if (friendRequests.value.isNullOrEmpty()) {
-                NoFriendRequestsMessage()
-            } else {
-                FriendRequestList(navController, friendRequests.value!!)
+            , content = {
+                if (!isLoading.value) {
+                    if (friendRequests.value.isNullOrEmpty()) {
+                        NoFriendRequestsMessage()
+                    } else {
+                        FriendRequestList(navController, friendRequests.value!!)
+                    }
+                }
+            }, bottomBar = {
+                // inspirert av link under for å lage navbar.
+                // https://www.youtube.com/watch?v=O9csfKW3dZ4
+                BottomNavBar(navController = navController, userService = UserService())
             }
-        }
-    }, bottomBar = {
-        // inspirert av link under for å lage navbar.
-        // https://www.youtube.com/watch?v=O9csfKW3dZ4
-        BottomNavBar(navController = navController, userService = UserService())
-    })
+        )
+    } else {
+        Scaffold(
+            topBar = {
+                CenterAlignedTopAppBar(
+                    title = {
+                        Text(
+                            text = "Friend Requests",
+                            style = MaterialTheme.typography.headlineMedium
+                        )
+                    },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = {
+                                navController.navigate("friendsScreen") {
+                                    popUpTo(0) { inclusive = true }
+                                }
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowBack,
+                                contentDescription = "Back",
+                                tint = Color.White
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        titleContentColor = Color.White,
+                        navigationIconContentColor = Color.White
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+            }
+            , content = {
+                if (!isLoading.value) {
+                    if (friendRequests.value.isNullOrEmpty()) {
+                        NoFriendRequestsMessage()
+                    } else {
+                        FriendRequestList(navController, friendRequests.value!!)
+                    }
+                }
+            }, bottomBar = {
+                // inspirert av link under for å lage navbar.
+                // https://www.youtube.com/watch?v=O9csfKW3dZ4
+                BottomNavBar(navController = navController, userService = UserService())
+            }
+        )
+    }
 }
 
 @Composable
@@ -166,9 +222,7 @@ fun FriendRequestItem(navController: NavController, friend: FriendData, onClick:
             .clickable(onClick = {
                 navController.navigate("anyProfileView/${friend.id}")
             })
-            .padding(8.dp)
-        //.border(2.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
-        ,
+            .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically,
 
         ){
@@ -186,7 +240,7 @@ fun FriendRequestItem(navController: NavController, friend: FriendData, onClick:
 
             Row(
                 modifier = Modifier.padding(top = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp) // Space between buttons
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Button(
                     onClick = { FriendService().acceptFriendRequest(friend.id, callback = {
