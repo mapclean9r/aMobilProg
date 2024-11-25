@@ -237,7 +237,6 @@ if (!isLandscape) {
 }
 
     if (showSearch) {
-                .background(Color.Black.copy(alpha = 0.5f))
         if (!isLandscape) {
             Box(
                 modifier = Modifier
