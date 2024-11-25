@@ -837,7 +837,7 @@ fun CreateEventView(navController: NavController, eventService: EventService) {
                             placeholder = { Text("Search games...") },
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(end = 8.dp),
+                                .padding(end = 8.dp, top = 10.dp),
                             leadingIcon = {
                                 Icon(Icons.Default.Search, contentDescription = "Search")
                             },
