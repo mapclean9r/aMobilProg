@@ -22,13 +22,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -57,6 +61,7 @@ import androidx.compose.ui.text.font.FontStyle
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun EventView(navController: NavController, eventData: EventData?, currentEvent: EventData?) {
@@ -107,44 +112,37 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(88.dp)
-                        .padding(bottom = 10.dp, top = 24.dp)
-                        .background(MaterialTheme.colorScheme.primary),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Box(modifier = Modifier.fillMaxWidth()) {
-
-                        IconButton(onClick = {
-                            UserService().getCurrentUserData { docFields ->
-                                println("$docFields")
-                            }
-                        },
-                            modifier = Modifier.align(Alignment.CenterStart)
-                        ) {
-                            IconButton(onClick = {
-                                navController.popBackStack()
-                            },
-                                modifier = Modifier.align(Alignment.CenterEnd)) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                    contentDescription = "Back Button",
-                                    tint = Color.White
-                                )
-                            }
-                        }
+                CenterAlignedTopAppBar(
+                    title = {
                         Text(
                             text = "Event",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            modifier = Modifier.align(Alignment.Center)
+                            style = MaterialTheme.typography.headlineMedium
                         )
-                    }
-                }
-            },
+                    },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = {
+                                navController.popBackStack()
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back Button",
+                                tint = Color.White
+                            )
+                        }
+                    },
+
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        titleContentColor = Color.White,
+                        navigationIconContentColor = Color.White
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+            }
+            ,
             content = { paddingValues ->
                 LazyColumn(
                     modifier = Modifier
@@ -329,29 +327,24 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
 
     } else {
         Scaffold(
-            modifier = Modifier.fillMaxSize().systemBarsPadding(),
+            modifier = Modifier.fillMaxSize(),
             topBar = {
-                Row(
+                CenterAlignedTopAppBar(
+                    title = {
+                        Text(
+                            text = "Event",
+                            fontSize = 24.sp, // Beholder den større fontstørrelsen
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    },
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        titleContentColor = Color.White
+                    ),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(64.dp)
-                        .padding(bottom = 10.dp, top = 24.dp)
-                        .background(MaterialTheme.colorScheme.primary),
-
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = "Event",
-                        fontSize = 24.sp, // Slightly larger font for landscape mode
-                        fontWeight = FontWeight.Bold,
-
-                        color = Color.White,
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .align(Alignment.CenterVertically)
-                    )
-                }
+                )
             },
             content = { paddingValues ->
                 LazyColumn(

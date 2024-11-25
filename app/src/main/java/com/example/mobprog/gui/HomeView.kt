@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,12 +22,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -51,6 +55,7 @@ import com.example.mobprog.gui.components.EventBox
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeView(navController: NavController, eventService: EventService, modifier: Modifier = Modifier, onEventClick: (EventData) -> Unit) {
@@ -84,39 +89,34 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
         Scaffold(
             modifier = Modifier.fillMaxSize(),
 
-            topBar = {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(88.dp)
-                        .padding(bottom = 10.dp, top = 24.dp)
-                        .background(MaterialTheme.colorScheme.primary)
-                        ,
-
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Box(modifier = Modifier.fillMaxWidth()) {
-                        IconButton(onClick = { showSearch = true })
-
-                        {
+            topBar = @androidx.compose.runtime.Composable {
+                CenterAlignedTopAppBar(
+                    title = {
+                        Text(
+                            text = "Homepage",
+                            style = MaterialTheme.typography.headlineMedium
+                        )
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = { showSearch = true }) {
                             Icon(
                                 imageVector = Icons.Default.Search,
                                 contentDescription = "Search Icon",
                                 tint = Color.White
                             )
                         }
-                        Text(
-                            text = "Homepage",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                    }
-                }
+                    },
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        titleContentColor = Color.White,
+                        navigationIconContentColor = Color.White
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
             },
-            content = { paddingValues ->
+
+                    content = { paddingValues ->
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
@@ -152,43 +152,38 @@ fun HomeView(navController: NavController, eventService: EventService, modifier:
             }
         )
     }
-    else {Scaffold(
+    else {
+        Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            Row(
-                modifier = Modifier
-                    .systemBarsPadding()
-                    .fillMaxWidth()
-                    .height(70.dp)
-                    .padding(bottom = 10.dp, top = 24.dp)
-                    .background(MaterialTheme.colorScheme.primary),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(modifier = Modifier.weight(1f)) {
+            CenterAlignedTopAppBar(
+                title = {
                     Text(
                         text = "Homepage",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                        modifier = Modifier.align(Alignment.Center)
+                        color = Color.White
                     )
-                }
-
-                IconButton(
-
-                    onClick = { showSearch = true },
-
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                            .padding(end = 25.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Search Icon",
-                        tint = Color.White
-                    )
-                }
-            }
+                },
+                actions = {
+                    IconButton(
+                        onClick = { showSearch = true }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search Icon",
+                            tint = Color.White
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = Color.White,
+                    navigationIconContentColor = Color.White
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
         },
         content = { paddingValues ->
             LazyVerticalGrid(
