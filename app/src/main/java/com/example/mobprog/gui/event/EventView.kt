@@ -2,7 +2,6 @@ package com.example.mobprog.gui.event
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -324,9 +323,7 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                     title = {
                         Text(
                             text = "Event",
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
+                            style = MaterialTheme.typography.headlineMedium
                         )
                     },
                     colors = TopAppBarDefaults.centerAlignedTopAppBarColors(

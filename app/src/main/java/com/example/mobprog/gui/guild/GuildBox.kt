@@ -1,12 +1,10 @@
 package com.example.mobprog.gui.guild
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -17,15 +15,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mobprog.data.UserService
-import com.example.mobprog.data.handlers.ImageHandler
-import com.example.mobprog.gui.components.DynamicImageSelector
-import com.example.mobprog.gui.components.GetGuildProfileImageCircle
+import com.example.mobprog.data.picture.ImageService
 import com.example.mobprog.gui.components.GetGuildProfileImageView
 import com.example.mobprog.guild.GuildData
 
@@ -45,7 +40,7 @@ fun GuildBox(guildData: GuildData, userService: UserService, navController: NavC
     }
 
     LaunchedEffect(guildData.guildId) {
-        ImageHandler().getGuildImageUrl(
+        ImageService().getGuildImageUrl(
             guildID = guildData.guildId,
 
             onSuccess =

@@ -68,6 +68,7 @@ dependencies {
     implementation(libs.firebase.database.ktx)
     implementation(libs.play.services.maps)
     implementation(libs.play.services.location)
+    implementation(libs.junit.junit)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -98,6 +99,10 @@ dependencies {
     implementation(libs.firebase.messaging.ktx)
     implementation(libs.google.firebase.messaging.ktx)
     implementation(libs.play.services.basement)
+    testImplementation("org.mockito:mockito-core:5.5.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
+    testImplementation("junit:junit:4.13.2")
+
 }
 
 secrets {
