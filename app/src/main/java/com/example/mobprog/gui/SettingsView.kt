@@ -312,7 +312,6 @@ fun SettingsView(navController: NavController, onDarkModeToggle: (Boolean) -> Un
                                 isDarkTheme = isChecked
                                 isPreChecked = isChecked
                                 onDarkModeToggle(isChecked)
-                                sendNotification(context = context)
                             }
                         )
                         Spacer(modifier = Modifier.width(6.dp))
