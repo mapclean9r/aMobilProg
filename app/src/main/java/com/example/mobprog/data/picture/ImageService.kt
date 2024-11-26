@@ -1,11 +1,11 @@
-package com.example.mobprog.data.handlers
+package com.example.mobprog.data.picture
 
 import android.content.Context
 import android.net.Uri
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 
-class ImageHandler {
+class ImageService {
 
     fun uploadProfileImageToFirebase(userImageUri: Uri,
                                      onSuccess: () -> Unit,

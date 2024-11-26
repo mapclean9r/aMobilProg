@@ -19,7 +19,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobprog.data.GuildService
 import com.example.mobprog.data.UserService
-import com.example.mobprog.data.handlers.ImageHandler
+import com.example.mobprog.data.picture.ImageService
 import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.guild.GuildData
 import com.example.mobprog.util.Validation
@@ -250,7 +250,7 @@ fun onSubmit(
                 if (success) {
 
                     if (guildURI != null) {
-                        ImageHandler().uploadGuildImageToFirebase(
+                        ImageService().uploadGuildImageToFirebase(
                             userImageUri = guildURI,
                             guildID = guildData.guildId,
                             onSuccess = {

@@ -19,9 +19,9 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.example.mobprog.data.handlers.ImageHandler
+import com.example.mobprog.data.picture.ImageService
 
-private val imgHandler = ImageHandler()
+private val imgHandler = ImageService()
 
 @Composable
 fun GetGuildProfileImage() {

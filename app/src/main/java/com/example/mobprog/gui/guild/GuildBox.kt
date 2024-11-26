@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mobprog.data.UserService
-import com.example.mobprog.data.handlers.ImageHandler
+import com.example.mobprog.data.picture.ImageService
 import com.example.mobprog.gui.components.GetGuildProfileImageView
 import com.example.mobprog.guild.GuildData
 
@@ -40,7 +40,7 @@ fun GuildBox(guildData: GuildData, userService: UserService, navController: NavC
     }
 
     LaunchedEffect(guildData.guildId) {
-        ImageHandler().getGuildImageUrl(
+        ImageService().getGuildImageUrl(
             guildID = guildData.guildId,
 
             onSuccess =

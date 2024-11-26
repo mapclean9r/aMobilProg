@@ -2,10 +2,9 @@ package com.example.mobprog.data
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import com.example.mobprog.createEvent.EventData
-import com.example.mobprog.data.handlers.ImageHandler
+import com.example.mobprog.data.picture.ImageService
 import com.example.mobprog.gui.friends.FriendData
 import com.example.mobprog.user.UserData
 import com.example.mobprog.user.formattedDateTime
@@ -16,10 +15,6 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 
 class UserService {
     private val db = Firebase.firestore
@@ -38,7 +33,7 @@ class UserService {
                             email = email,
                             name = username
                         )
-                        ImageHandler().uploadDefaultProfilePicture(context, uid)
+                        ImageService().uploadDefaultProfilePicture(context, uid)
 
 
                         db.collection("users").document(uid).set(newUser)

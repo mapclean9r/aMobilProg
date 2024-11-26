@@ -52,7 +52,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.mobprog.data.UserService
-import com.example.mobprog.data.handlers.ImageHandler
+import com.example.mobprog.data.picture.ImageService
 import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.gui.components.GetSelfProfileImageCircle
 import com.example.mobprog.notifications.sendNotification
@@ -100,7 +100,7 @@ fun SettingsView(navController: NavController, onDarkModeToggle: (Boolean) -> Un
 
         if (uri != null) {
             selectedImageUri?.let {
-                ImageHandler().uploadProfileImageToFirebase(uri,
+                ImageService().uploadProfileImageToFirebase(uri,
                     onSuccess = {
                         Toast.makeText(context, "Profile Picture Saved", Toast.LENGTH_SHORT).show()
                         println("Image uploaded and URL saved to Firestore successfully!")
