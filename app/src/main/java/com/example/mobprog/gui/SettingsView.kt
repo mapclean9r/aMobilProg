@@ -64,6 +64,7 @@ import com.example.mobprog.data.handlers.ImageHandler
 import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.gui.components.GetSelfProfileImage
 import com.example.mobprog.gui.components.GetSelfProfileImageCircle
+import com.example.mobprog.notifications.sendNotification
 import com.example.mobprog.ui.theme.MobProgTheme
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -320,6 +321,7 @@ fun SettingsView(navController: NavController, onDarkModeToggle: (Boolean) -> Un
                                 isDarkTheme = isChecked
                                 isPreChecked = isChecked
                                 onDarkModeToggle(isChecked)
+                                sendNotification(context = context)
                             }
                         )
                         Spacer(modifier = Modifier.width(6.dp))

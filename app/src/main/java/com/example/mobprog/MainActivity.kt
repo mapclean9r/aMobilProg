@@ -22,7 +22,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.mobprog.createEvent.EventData
 import com.example.mobprog.data.EventService
-import com.example.mobprog.data.FriendService
 import com.example.mobprog.data.GuildService
 import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.AnyProfileView
@@ -52,7 +51,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavType
 import com.example.mobprog.gui.event.eventDataSaver
-import com.example.mobprog.notifications.createNotificationChannels
+import com.example.mobprog.notifications.createNotificationChannel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -60,30 +59,23 @@ import kotlinx.coroutines.launch
 lateinit var settingsManager: SettingsManager
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        
-        // Initialize notification channels
-        createNotificationChannels(this)
-        
-        // Initialize services with context
-        val friendService = FriendService()
-        friendService.setContext(this)
-        
-        val eventService = EventService()
-        eventService.setContext(this)
-        
         setContent {
+
             settingsManager = SettingsManager(this)
-            Arena(settingsManager.isDarkMode(), eventService, friendService)
+            Arena(settingsManager.isDarkMode())
+            createNotificationChannel(this)
         }
     }
+
 }
 
 @SuppressLint("NewApi")
 @Composable
-fun Arena(darkMODE: Boolean, eventService: EventService, friendService: FriendService) {
+fun Arena(darkMODE: Boolean) {
     var thisEvent by rememberSaveable(stateSaver = eventDataSaver) {
         mutableStateOf(EventData())
     }
@@ -99,16 +91,21 @@ fun Arena(darkMODE: Boolean, eventService: EventService, friendService: FriendSe
     ) { permissions ->
         isFineLocationGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
         isCoarseLocationGranted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
+
+        if (!isFineLocationGranted && !isCoarseLocationGranted) {
+            // If neither permission is granted, inform the user
+            // In a real-world app, you could use a snackbar, dialog, or similar UI element
+            println("Location permission is required to access map features.")
+        }
     }
 
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            println("Notification permission granted")
-            eventService.checkTodayEvents()
+    ) { pIsGranted ->
+        if (pIsGranted) {
+            println("Notification permission true")
         } else {
-            println("Notification permission denied")
+            println("Notification permission false")
         }
     }
 
@@ -125,23 +122,20 @@ fun Arena(darkMODE: Boolean, eventService: EventService, friendService: FriendSe
         launch(Dispatchers.IO) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 val isPermissionGranted =
-                    ContextCompat.checkSelfPermission(
-                        context,
-                        Manifest.permission.POST_NOTIFICATIONS
+                    ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS
                     ) == PackageManager.PERMISSION_GRANTED
 
                 if (!isPermissionGranted) {
                     notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                } else {
-                    eventService.checkTodayEvents()
                 }
             }
         }
     }
 
+
     MobProgTheme(darkTheme = isDarkMode) {
-        NavHost(
-            navController = navController,
+
+        NavHost(navController = navController,
             startDestination = "loginScreen",
             enterTransition = {
                 EnterTransition.None
@@ -157,18 +151,15 @@ fun Arena(darkMODE: Boolean, eventService: EventService, friendService: FriendSe
                 RegisterView(navController = navController, isDarkMode = isDarkMode)
             }
             composable("homeScreen") {
-                LaunchedEffect(Unit) {
-                    eventService.checkTodayEvents()
-                }
                 HomeView(
                     navController = navController,
-                    eventService = eventService,
+                    eventService = EventService(),
                     onEventClick = { selectedEvent ->
                         thisEvent = selectedEvent
                     })
             }
             composable("createEventScreen") {
-                CreateEventView(navController = navController, eventService = eventService)
+                CreateEventView(navController = navController, eventService = EventService())
             }
             composable("locationPickerScreen") {
                 LocationPickerView(
@@ -190,10 +181,10 @@ fun Arena(darkMODE: Boolean, eventService: EventService, friendService: FriendSe
                 )
             }
             composable("friendsScreen") {
-                FriendsView(navController = navController, friendService = friendService)
+                FriendsView(navController = navController)
             }
             composable("friendRequestScreen") {
-                FriendRequestView(navController = navController, friendService = friendService)
+                FriendRequestView(navController = navController)
             }
             composable("guildScreen") {
                 GuildView(navController = navController, userService = UserService())
@@ -223,13 +214,14 @@ fun Arena(darkMODE: Boolean, eventService: EventService, friendService: FriendSe
                 )
             }
             composable("addFriendScreen") {
-                AddFriendView(navController = navController, friendService = friendService)
+                AddFriendView(navController = navController)
             }
             composable(route = "friendMessageView/{userId}",
                 arguments = listOf(navArgument("userId") { type = NavType.StringType })
             ) { backStackEntry ->
                 val userId = backStackEntry.arguments?.getString("userId") ?: ""
-                FriendMessageView(navController = navController, friendId = userId, friendService = friendService)
+
+                FriendMessageView(navController = navController, friendId = userId)
             }
             composable(
                 route = "anyProfileView/{userId}",

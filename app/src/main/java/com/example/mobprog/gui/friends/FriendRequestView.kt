@@ -64,7 +64,8 @@ import com.google.firebase.auth.FirebaseAuth
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "MutableCollectionMutableState")
 @Composable
-fun FriendRequestView(navController: NavController, friendService: FriendService) {
+fun FriendRequestView(navController: NavController) {
+
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
 
@@ -72,7 +73,7 @@ fun FriendRequestView(navController: NavController, friendService: FriendService
     val isLoading = remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
-        friendService.getUserFriends { friendData ->
+        FriendService().getUserFriends { friendData ->
             if (friendData != null) {
                 val pendingRequests = friendData.filter { !it.accepted }
                 friendRequests.value = ArrayList(pendingRequests)
@@ -122,7 +123,7 @@ fun FriendRequestView(navController: NavController, friendService: FriendService
                     if (friendRequests.value.isNullOrEmpty()) {
                         NoFriendRequestsMessage()
                     } else {
-                        FriendRequestList(navController, friendRequests.value!!, friendService)
+                        FriendRequestList(navController, friendRequests.value!!)
                     }
                 }
             }, bottomBar = {
@@ -170,7 +171,7 @@ fun FriendRequestView(navController: NavController, friendService: FriendService
                     if (friendRequests.value.isNullOrEmpty()) {
                         NoFriendRequestsMessage()
                     } else {
-                        FriendRequestList(navController, friendRequests.value!!, friendService)
+                        FriendRequestList(navController, friendRequests.value!!)
                     }
                 }
             }, bottomBar = {
@@ -183,7 +184,8 @@ fun FriendRequestView(navController: NavController, friendService: FriendService
 }
 
 @Composable
-fun FriendRequestList(navController: NavController, friends: ArrayList<FriendData>, friendService: FriendService) {
+fun FriendRequestList(navController: NavController, friends: ArrayList<FriendData>) {
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -191,6 +193,7 @@ fun FriendRequestList(navController: NavController, friends: ArrayList<FriendDat
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         Spacer(modifier = Modifier.height(50.dp))
 
         Surface(
@@ -199,17 +202,20 @@ fun FriendRequestList(navController: NavController, friends: ArrayList<FriendDat
             LazyColumn {
                 items(friends) { friend ->
                     if(!friend.accepted) {
-                        FriendRequestItem(navController, friend, friendService) {
+                        FriendRequestItem(navController, friend) {
                         }
                     }
                 }
             }
         }
+
     }
 }
 
+
+
 @Composable
-fun FriendRequestItem(navController: NavController, friend: FriendData, friendService: FriendService, onClick: () -> Unit) {
+fun FriendRequestItem(navController: NavController, friend: FriendData, onClick: () -> Unit) {
     Row (
         modifier = Modifier
             .fillMaxWidth()
@@ -218,7 +224,9 @@ fun FriendRequestItem(navController: NavController, friend: FriendData, friendSe
             })
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically,
-    ){
+
+        ){
+
         GetUserProfileImageCircle(userID = friend.id, size = 56)
         Column(
             modifier = Modifier.padding(start = 16.dp)
@@ -235,7 +243,7 @@ fun FriendRequestItem(navController: NavController, friend: FriendData, friendSe
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Button(
-                    onClick = { friendService.acceptFriendRequest(friend.id, callback = {
+                    onClick = { FriendService().acceptFriendRequest(friend.id, callback = {
                         navController.navigate("friendRequestScreen")
                     }) },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Green),
@@ -245,7 +253,7 @@ fun FriendRequestItem(navController: NavController, friend: FriendData, friendSe
                 }
 
                 Button(
-                    onClick = { friendService.removeFriend(friend.id, callback = {
+                    onClick = { FriendService().removeFriend(friend.id, callback = {
                         navController.navigate("friendRequestScreen")
                     }) },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red),
@@ -255,6 +263,7 @@ fun FriendRequestItem(navController: NavController, friend: FriendData, friendSe
                 }
             }
         }
+
     }
 }
 
@@ -279,5 +288,5 @@ fun NoFriendRequestsMessage() {
 @Preview(showBackground = true)
 @Composable
 fun FriendRequestViewPreview() {
-    FriendRequestView(navController = rememberNavController(), friendService = FriendService())
+    FriendRequestView(navController = rememberNavController())
 }

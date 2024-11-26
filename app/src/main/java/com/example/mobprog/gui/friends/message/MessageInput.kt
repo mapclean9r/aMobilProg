@@ -23,7 +23,7 @@ import com.example.mobprog.data.FriendService
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MessageInput(friendId: String, friendService: FriendService) {
+fun MessageInput(friendId: String) {
     var message by remember { mutableStateOf("") }
 
     Row(
@@ -43,7 +43,7 @@ fun MessageInput(friendId: String, friendService: FriendService) {
         Button(
             onClick = {
                 if (message.isNotBlank()) {
-                    friendService.sendMessage(friendId, message, callback = {
+                    FriendService().sendMessage(friendId, message, callback = {
 
                     })
                     message = ""  // Clear input

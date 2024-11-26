@@ -13,103 +13,39 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.example.mobprog.R
 
-object NotificationChannels {
-    const val EVENT_CHANNEL = "event_channel"
-    const val FRIEND_REQUEST_CHANNEL = "friend_request_channel"
-    const val MESSAGE_CHANNEL = "message_channel"
-}
-
-object NotificationIds {
-    private var currentId = 0
-    fun nextId(): Int = ++currentId
-    
-    const val EVENT_BASE = 1000
-    const val FRIEND_REQUEST_BASE = 2000
-    const val MESSAGE_BASE = 3000
-}
-
-fun createNotificationChannels(context: Context) {
+fun createNotificationChannel(context: Context) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        val channels = listOf(
-            NotificationChannel(
-                NotificationChannels.EVENT_CHANNEL,
-                "Events",
-                NotificationManager.IMPORTANCE_DEFAULT
-            ).apply {
-                description = "Notifications for upcoming events"
-            },
-            NotificationChannel(
-                NotificationChannels.FRIEND_REQUEST_CHANNEL,
-                "Friend Requests",
-                NotificationManager.IMPORTANCE_HIGH
-            ).apply {
-                description = "Notifications for new friend requests"
-            },
-            NotificationChannel(
-                NotificationChannels.MESSAGE_CHANNEL,
-                "Messages",
-                NotificationManager.IMPORTANCE_HIGH
-            ).apply {
-                description = "Notifications for new messages"
-            }
-        )
-
+        val channelId = "r2d2"
+        val name = "Big name"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel(channelId, name, importance)
         val notificationManager: NotificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        channels.forEach { channel ->
-            notificationManager.createNotificationChannel(channel)
-        }
+        notificationManager.createNotificationChannel(channel)
     }
 }
 
-fun sendEventNotification(context: Context, eventTitle: String, eventTime: String) {
-    val builder = NotificationCompat.Builder(context, NotificationChannels.EVENT_CHANNEL)
+
+// bruk dette for å lage ulike notifications
+// eksempl under, bare uten data i guess .-. // lag nye av disse eller ta de inn som param(contentTitle aso..)
+// får ikke farger på app-bildet vårt hller ;( no big fix der - tmp notification bilde, noen fix?:D
+// skru av eller på darkmode for å teste denne ;S
+fun sendNotification(context: Context) {
+    val channelId = "r2d2"
+    val notificationId = 101
+
+    val builder = NotificationCompat.Builder(context, channelId)
         .setSmallIcon(R.drawable.baseline_notifications_24)
-        .setColor(Color.Blue.toArgb())
-        .setContentTitle("Event Today")
-        .setContentText("$eventTitle starts at $eventTime")
-        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-        .setAutoCancel(true)
-
-    showNotification(context, builder, NotificationIds.EVENT_BASE + NotificationIds.nextId())
-}
-
-fun sendFriendRequestNotification(context: Context, fromUser: String) {
-    val builder = NotificationCompat.Builder(context, NotificationChannels.FRIEND_REQUEST_CHANNEL)
-        .setSmallIcon(R.drawable.baseline_person_24)
-        .setColor(Color.Green.toArgb())
-        .setContentTitle("New Friend Request")
-        .setContentText("$fromUser wants to be your friend")
+        .setColor(Color.Red.toArgb())
+        .setContentTitle("Big event")
+        .setContentText("starting today at {time}")
         .setPriority(NotificationCompat.PRIORITY_HIGH)
-        .setAutoCancel(true)
 
-    showNotification(context, builder, NotificationIds.FRIEND_REQUEST_BASE + NotificationIds.nextId())
-}
-
-fun sendMessageNotification(context: Context, fromUser: String, messagePreview: String) {
-    val builder = NotificationCompat.Builder(context, NotificationChannels.MESSAGE_CHANNEL)
-        .setSmallIcon(R.drawable.baseline_contacts_24)
-        .setColor(Color.Magenta.toArgb())
-        .setContentTitle("New Message from $fromUser")
-        .setContentText(messagePreview)
-        .setPriority(NotificationCompat.PRIORITY_HIGH)
-        .setAutoCancel(true)
-
-    showNotification(context, builder, NotificationIds.MESSAGE_BASE + NotificationIds.nextId())
-}
-
-private fun showNotification(
-    context: Context,
-    builder: NotificationCompat.Builder,
-    notificationId: Int
-) {
-    if (ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.POST_NOTIFICATIONS
-        ) == PackageManager.PERMISSION_GRANTED
-    ) {
+    if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+        == PackageManager.PERMISSION_GRANTED){
         with(NotificationManagerCompat.from(context)) {
             notify(notificationId, builder.build())
         }
     }
+
 }

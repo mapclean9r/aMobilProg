@@ -56,10 +56,12 @@ import com.example.mobprog.gui.components.FriendBox
 import com.example.mobprog.gui.components.GameBox
 import com.google.firebase.auth.FirebaseAuth
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun AddFriendView(navController: NavController, friendService: FriendService) {
+fun AddFriendView(navController: NavController) {
+
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
 
@@ -82,14 +84,14 @@ fun AddFriendView(navController: NavController, friendService: FriendService) {
         }
     }
 
-    friendService.getAcceptedFriends { friendData ->
+    FriendService().getAcceptedFriends { friendData ->
         friendData?.let {
             currentUserFriends = it.map { friend -> friend.id }
         }
     }
 
     if (!isLandscape) {
-        Scaffold(
+    Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
@@ -283,7 +285,7 @@ fun AddFriendView(navController: NavController, friendService: FriendService) {
                                 onDone = {
                                     focusManager.clearFocus()
                                     keyboardController?.hide()
-    }
+                                }
                             ),
                             singleLine = true
                         )
@@ -340,12 +342,14 @@ fun AddFriendView(navController: NavController, friendService: FriendService) {
 
 }
 
-fun onAddFriend(friendService: FriendService, uid: String) {
-    friendService.addFriend(uid) { callback ->
+fun onAddFriend(uid: String) {
+    FriendService().addFriend(uid) { callback ->
         if(callback) {
-            Log.w("UserData", "Successfully added friend")
+            Log.w("UserData", "Succesfully added friend")
         } else {
-            Log.w("UserData", "User Not Found")
+            Log.w("UserData",  "User Not Found")
+
         }
     }
 }
+

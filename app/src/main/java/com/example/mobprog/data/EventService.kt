@@ -1,54 +1,14 @@
 package com.example.mobprog.data
 
-import android.content.Context
 import com.example.mobprog.createEvent.EventData
-import com.example.mobprog.notifications.sendEventNotification
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 
 class EventService {
     val db = FirebaseFirestore.getInstance()
-    private var context: Context? = null
 
-    fun setContext(context: Context) {
-        this.context = context
-    }
-
-    fun checkTodayEvents() {
-        val today = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }.time
-
-        val tomorrow = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-            add(Calendar.DAY_OF_MONTH, 1)
-        }.time
-
-        val currentUser = FirebaseAuth.getInstance().currentUser ?: return
-
-        db.collection("events")
-            .whereEqualTo("startDate", SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(today))
-            .whereArrayContains("attending", currentUser.uid)
-            .get()
-            .addOnSuccessListener { documents ->
-                for (document in documents) {
-                    val eventData = document.toObject(EventData::class.java)
-                    context?.let { ctx ->
-                        sendEventNotification(ctx, eventData.name, eventData.startDate)
-                    }
-                }
-            }
-    }
+    //Fungerer 100% @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
     fun createEvent(event: EventData){
         val newDocumentRef = db.collection("events").document()
@@ -136,10 +96,11 @@ class EventService {
             }
     }
 
-    fun deleteEvent(documentId: String) {
+                fun deleteEvent(documentId: String) {
         val docRef = db.collection("events").document(documentId)
         docRef.delete()
     }
+
 
     fun parseToEventData(data: Map<String, Any>): EventData? {
         val currentUserID = FirebaseAuth.getInstance().currentUser?.uid.toString()
