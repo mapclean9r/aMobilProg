@@ -193,7 +193,13 @@ fun CreateGuildView(navController: NavController, modifier: Modifier = Modifier,
                         )
 
                         Spacer(modifier = Modifier.height(22.dp))
-                        
+
+                        Button(onClick = { imagePickerLauncher.launch("image/*") }) {
+                            Text("Select Guild Image")
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
                         Button(
                             onClick = {
                                 if (validateFields()) {
@@ -215,10 +221,6 @@ fun CreateGuildView(navController: NavController, modifier: Modifier = Modifier,
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text("Create Guild")
-                        }
-
-                        Button(onClick = { imagePickerLauncher.launch("image/*") }) {
-                            Text("Select Guild Image")
                         }
                     }
                 }
