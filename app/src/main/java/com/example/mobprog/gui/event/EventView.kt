@@ -2,44 +2,25 @@ package com.example.mobprog.gui.event
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
-//noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.Divider
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -50,11 +31,12 @@ import com.example.mobprog.data.UserService
 import com.example.mobprog.gui.components.BottomNavBar
 import com.example.mobprog.maps.EventLocationMapView
 import com.google.firebase.auth.FirebaseAuth
-import java.util.Locale
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.text.font.FontStyle
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Locale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
+import com.example.mobprog.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
@@ -107,37 +89,29 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
-                CenterAlignedTopAppBar(
+                TopAppBar(
                     title = {
                         Text(
-                            text = "Event",
-                            style = MaterialTheme.typography.headlineMedium
+                            text = currentEvent?.name ?: "Event",
+                            style = MaterialTheme.typography.titleLarge,
+                            color = Color.White
                         )
                     },
                     navigationIcon = {
-                        IconButton(
-                            onClick = {
-                                navController.popBackStack()
-                            }
-                        ) {
+                        IconButton(onClick = { navController.popBackStack() }) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back Button",
+                                contentDescription = "Back",
                                 tint = Color.White
                             )
                         }
                     },
-
-                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.primary,
-                        titleContentColor = Color.White,
-                        navigationIconContentColor = Color.White
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
+                        titleContentColor = Color.White
+                    )
                 )
-            }
-            ,
+            },
             content = { paddingValues ->
                 LazyColumn(
                     modifier = Modifier
@@ -145,166 +119,182 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                         .padding(paddingValues)
                 ) {
                     item {
-                        currentEvent?.let {
-                            CoverImageAPIEvent(it.image)
-
-                            val dateFormatter =
-                                DateTimeFormatter.ofPattern("d/M/yyyy", Locale.getDefault())
-                            val parsedDate = LocalDate.parse(it.startDate, dateFormatter)
-
-                            val formattedDate =
-                                parsedDate.format(DateTimeFormatter.ofPattern("EEEE d MMMM yyyy"))
-
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Center,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-
-                                Text(
-                                    text = formattedDate,
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.Light,
-                                    fontStyle = FontStyle.Italic,
-                                    modifier = Modifier.padding(5.dp)
-                                )
-                            }
-                            Box(
+                        currentEvent?.let { event ->
+                            // Event Image
+                            Surface(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .wrapContentHeight()
+                                    .height(250.dp),
+                                color = MaterialTheme.colorScheme.surface
                             ) {
-                                Text(
-                                    text = it.name,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 22.sp,
-                                    modifier = Modifier
-                                        .align(Alignment.Center)
-                                        .padding(start = 28.dp, top = 1.dp, end = 28.dp)
+                                AsyncImage(
+                                    model = event.image,
+                                    contentDescription = "Event Image",
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.fillMaxSize()
                                 )
                             }
 
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Center,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-
-                                Text(
-                                    text = "Arrangement av: ",
-                                    fontSize = 15.sp,
-                                    modifier = Modifier
-                                        .padding(start = 28.dp, top = 2.dp, bottom = 8.dp)
-                                        .wrapContentHeight()
-                                )
-                                Text(
-                                    text = username,
-                                    fontWeight = FontWeight.SemiBold,
-                                    fontSize = 15.sp,
-                                    modifier = Modifier
-                                        .padding(end = 28.dp, top = 2.dp, bottom = 8.dp)
-                                        .wrapContentHeight()
-
-                                )
-                            }
-
-
-
-
-
-
-                            Text(
-                                text = it.description,
+                            // Event Details Card
+                            Card(
                                 modifier = Modifier
-                                    .padding(start = 28.dp, end = 28.dp, top = 8.dp, bottom = 20.dp)
-                                    .wrapContentHeight()
-                            )
-                            Divider(color = Color.Gray, thickness = 1.dp)
-
-
-                            val coordinatesParts = currentEvent.coordinates.split(",")
-                            if (coordinatesParts.size == 2) {
-                                val latitude = coordinatesParts[0].toDoubleOrNull()
-                                val longitude = coordinatesParts[1].toDoubleOrNull()
-                                if (latitude != null && longitude != null) {
-                                    Text(
-                                        text = currentEvent.location,
-                                        modifier = Modifier
-                                            .padding(start = 28.dp, end = 28.dp, top = 8.dp)
-                                            .wrapContentHeight()
-                                    )
-                                    EventLocationMapView(latitude, longitude)
-                                } else {
-                                    Text(
-                                        text = currentEvent.location.uppercase(Locale.ROOT),
-                                        modifier = Modifier
-                                            .padding(start = 28.dp, end = 28.dp, top = 8.dp)
-                                            .wrapContentHeight()
-                                    )
-                                }
-                            } else {
-                                Text(
-                                    text = currentEvent.location.uppercase(Locale.ROOT),
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.surface
+                                ),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                            ) {
+                                Column(
                                     modifier = Modifier
-                                        .padding(start = 28.dp, end = 28.dp, top = 8.dp)
-                                        .wrapContentHeight()
-                                )
-                            }
-                        }
-                    }
+                                        .padding(16.dp)
+                                        .fillMaxWidth()
+                                ) {
+                                    // Date
+                                    val dateFormatter = DateTimeFormatter.ofPattern("d/M/yyyy", Locale.getDefault())
+                                    val parsedDate = LocalDate.parse(event.startDate, dateFormatter)
+                                    val formattedDate = parsedDate.format(DateTimeFormatter.ofPattern("EEEE d MMMM yyyy"))
 
-                    item {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            horizontalArrangement = Arrangement.SpaceEvenly
-                        ) {
-                            if (!isAttending && currentEvent?.creatorId != currentUserID) {
-                                Button(
-                                    onClick = {
-                                        if (currentEvent != null) {
-                                            eventService.joinEvent(currentUserID, currentEvent.id)
-                                            updateAttendingPeople(true)
-                                            UserService().addEventToAttend(
-                                                currentUserID, currentEvent.id,
-                                                onSuccess = { println("Event added to user") },
-                                                onFailure = { exception -> println("Failed to add event to user: ${exception.message}") }
+                                    ListItem(
+                                        headlineContent = { Text(formattedDate) },
+                                        leadingContent = {
+                                            Icon(
+                                                Icons.Default.DateRange,
+                                                contentDescription = "Date",
+                                                tint = MaterialTheme.colorScheme.primary
                                             )
                                         }
-                                    },
-                                    modifier = Modifier.padding(16.dp)
-                                ) {
-                                    Text("Join")
-                                }
-                            }
-                            if (isAttending && currentEvent?.creatorId != currentUserID) {
-                                Button(
-                                    onClick = {
-                                        if (currentEvent != null) {
-                                            eventService.leaveEvent(currentUserID, currentEvent.id)
-                                            updateAttendingPeople(false)
-                                            UserService().removeEventFromAttend(
-                                                currentUserID, currentEvent.id,
-                                                onSuccess = { println("Event removed from user") },
-                                                onFailure = { exception -> println("Failed to remove event from user: ${exception.message}") }
+                                    )
+
+                                    // Host
+                                    ListItem(
+                                        headlineContent = { Text("Hosted by $username") },
+                                        leadingContent = {
+                                            Icon(
+                                                Icons.Default.Person,
+                                                contentDescription = "Host",
+                                                tint = MaterialTheme.colorScheme.primary
                                             )
                                         }
-                                    },
-                                    modifier = Modifier.padding(16.dp)
-                                ) {
-                                    Text("Leave")
+                                    )
+
+                                    // Attendance
+                                    ListItem(
+                                        headlineContent = { 
+                                            Text("$numberOfPeopleAttending attending")
+                                        },
+                                        supportingContent = {
+                                            Text("Maximum capacity: ${event.maxAttendance}")
+                                        },
+                                        leadingContent = {
+                                            Icon(
+                                                painter = painterResource(R.drawable.baseline_people_24),
+                                                contentDescription = "Attendance",
+                                                tint = MaterialTheme.colorScheme.primary
+                                            )
+                                        }
+                                    )
+
+                                    // Description
+                                    Text(
+                                        text = "About this event",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                                    )
+                                    Text(
+                                        text = event.description,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                                    )
+
+                                    Divider(modifier = Modifier.padding(vertical = 8.dp))
+
+                                    // Location
+                                    ListItem(
+                                        headlineContent = { Text(event.location) },
+                                        leadingContent = {
+                                            Icon(
+                                                Icons.Default.LocationOn,
+                                                contentDescription = "Location",
+                                                tint = MaterialTheme.colorScheme.primary
+                                            )
+                                        }
+                                    )
+
+                                    // Map
+                                    val coordinatesParts = event.coordinates.split(",")
+                                    if (coordinatesParts.size == 2) {
+                                        val latitude = coordinatesParts[0].toDoubleOrNull()
+                                        val longitude = coordinatesParts[1].toDoubleOrNull()
+                                        if (latitude != null && longitude != null) {
+                                            Surface(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .height(200.dp)
+                                                    .padding(16.dp)
+                                                    .clip(RoundedCornerShape(8.dp))
+                                            ) {
+                                                EventLocationMapView(latitude, longitude)
+                                            }
+                                        }
+                                    }
                                 }
                             }
 
-                            if (currentEvent != null) {
-                                ShowDeleteButton(
-                                    currentEvent.creatorId,
-                                    currentUserID,
-                                    navController,
-                                    eventService,
-                                    currentEvent
-                                )
+                            // Action Buttons
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                if (event.creatorId != currentUserID) {
+                                    FilledTonalButton(
+                                        onClick = {
+                                            if (isAttending) {
+                                                eventService.leaveEvent(currentUserID, event.id)
+                                                updateAttendingPeople(false)
+                                                UserService().removeEventFromAttend(
+                                                    currentUserID,
+                                                    event.id,
+                                                    onSuccess = { println("Event removed from user") },
+                                                    onFailure = { exception ->
+                                                        println("Failed to remove event from user: ${exception.message}")
+                                                    }
+                                                )
+                                            } else {
+                                                eventService.joinEvent(currentUserID, event.id)
+                                                updateAttendingPeople(true)
+                                                UserService().addEventToAttend(
+                                                    currentUserID,
+                                                    event.id,
+                                                    onSuccess = { println("Event added to user") },
+                                                    onFailure = { exception ->
+                                                        println("Failed to add event to user: ${exception.message}")
+                                                    }
+                                                )
+                                            }
+                                        }
+                                    ) {
+                                        Text(if (isAttending) "Leave Event" else "Join Event")
+                                    }
+                                }
+
+                                if (event.creatorId == currentUserID) {
+                                    Button(
+                                        onClick = {
+                                            eventService.deleteEvent(event.id)
+                                            navController.navigate("homeScreen") {
+                                                navController.popBackStack()
+                                            }
+                                        },
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = MaterialTheme.colorScheme.error
+                                        )
+                                    ) {
+                                        Text("Delete Event")
+                                    }
+                                }
                             }
                         }
                     }
@@ -314,24 +304,31 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                 BottomNavBar(navController = navController, userService = UserService())
             }
         )
-
     } else {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
-                CenterAlignedTopAppBar(
+                TopAppBar(
                     title = {
                         Text(
-                            text = "Event",
-                            style = MaterialTheme.typography.headlineMedium
+                            text = currentEvent?.name ?: "Event",
+                            style = MaterialTheme.typography.titleLarge,
+                            color = Color.White
                         )
                     },
-                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    navigationIcon = {
+                        IconButton(onClick = { navController.popBackStack() }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back",
+                                tint = Color.White
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.primary,
                         titleContentColor = Color.White
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
+                    )
                 )
             },
             content = { paddingValues ->
@@ -341,171 +338,195 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                         .padding(paddingValues)
                 ) {
                     item {
-                        currentEvent?.let {
+                        currentEvent?.let { event ->
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(horizontal = 16.dp)
+                                    .padding(16.dp)
                             ) {
-                                Box(
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .fillMaxHeight()
-                                        .padding(end = 8.dp)
-                                ) {
-                                    CoverImageAPIEvent(it.image)
-                                }
-
+                                // Left Column - Image and Map
                                 Column(
                                     modifier = Modifier
                                         .weight(1f)
-                                        .fillMaxHeight()
-                                        .padding(start = 8.dp)
+                                        .padding(end = 8.dp)
                                 ) {
-                                    Text(
-                                        text = it.name,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 20.sp,
-                                        modifier = Modifier.padding(bottom = 4.dp)
-                                    )
-                                    Text(
-                                        text = it.description,
+                                    // Event Image
+                                    Surface(
                                         modifier = Modifier
-                                            .padding(vertical = 8.dp)
-                                            .wrapContentHeight()
-                                    )
-                                    Divider(color = Color.Gray, thickness = 1.dp)
+                                            .fillMaxWidth()
+                                            .height(250.dp)
+                                            .clip(RoundedCornerShape(8.dp)),
+                                        color = MaterialTheme.colorScheme.surface,
+                                        shadowElevation = 4.dp
+                                    ) {
+                                        AsyncImage(
+                                            model = event.image,
+                                            contentDescription = "Event Image",
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier.fillMaxSize()
+                                        )
+                                    }
 
-                                    Text(
-                                        text = "${currentEvent.startDate} - ${currentEvent.endDate}",
-                                        modifier = Modifier
-                                            .padding(top = 8.dp)
-                                            .wrapContentHeight()
-                                    )
-                                    Text(
-                                        text = "Host: $username",
-                                        modifier = Modifier
-                                            .padding(top = 4.dp)
-                                            .wrapContentHeight()
-                                    )
-                                    Text(
-                                        text = "People attending: $numberOfPeopleAttending",
-                                        modifier = Modifier
-                                            .padding(top = 4.dp)
-                                            .wrapContentHeight()
-                                    )
-                                    Text(
-                                        text = "Max Party size: ${currentEvent.maxAttendance}",
-                                        modifier = Modifier
-                                            .padding(top = 4.dp)
-                                            .wrapContentHeight()
-                                    )
-                                    val coordinatesParts =
-                                        currentEvent.coordinates.split(",")
+                                    Spacer(modifier = Modifier.height(16.dp))
+
+                                    // Map
+                                    val coordinatesParts = event.coordinates.split(",")
                                     if (coordinatesParts.size == 2) {
                                         val latitude = coordinatesParts[0].toDoubleOrNull()
                                         val longitude = coordinatesParts[1].toDoubleOrNull()
-
                                         if (latitude != null && longitude != null) {
-                                            Text(
-                                                text = currentEvent.location,
+                                            Card(
                                                 modifier = Modifier
-                                                    .padding(top = 4.dp)
-                                                    .wrapContentHeight()
-                                            )
-
-                                        } else {
-                                            Text(
-                                                text = currentEvent.location.uppercase(
-                                                    Locale.ROOT
-                                                ),
-                                                modifier = Modifier
-                                                    .padding(top = 4.dp)
-                                                    .wrapContentHeight()
-                                            )
+                                                    .fillMaxWidth()
+                                                    .height(200.dp),
+                                                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                                            ) {
+                                                EventLocationMapView(latitude, longitude)
+                                            }
                                         }
-                                    } else {
+                                    }
+                                }
+
+                                // Right Column - Event Details
+                                Card(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(start = 8.dp),
+                                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                                ) {
+                                    Column(
+                                        modifier = Modifier
+                                            .padding(16.dp)
+                                            .fillMaxWidth()
+                                    ) {
+                                        // Date
+                                        val dateFormatter = DateTimeFormatter.ofPattern("d/M/yyyy", Locale.getDefault())
+                                        val parsedDate = LocalDate.parse(event.startDate, dateFormatter)
+                                        val formattedDate = parsedDate.format(DateTimeFormatter.ofPattern("EEEE d MMMM yyyy"))
+
+                                        ListItem(
+                                            headlineContent = { Text(formattedDate) },
+                                            leadingContent = {
+                                                Icon(
+                                                    Icons.Default.DateRange,
+                                                    contentDescription = "Date",
+                                                    tint = MaterialTheme.colorScheme.primary
+                                                )
+                                            }
+                                        )
+
+                                        // Host
+                                        ListItem(
+                                            headlineContent = { Text("Hosted by $username") },
+                                            leadingContent = {
+                                                Icon(
+                                                    Icons.Default.Person,
+                                                    contentDescription = "Host",
+                                                    tint = MaterialTheme.colorScheme.primary
+        )
+    }
+                                        )
+
+                                        // Attendance
+                                        ListItem(
+                                            headlineContent = { 
+                                                Text("$numberOfPeopleAttending attending")
+                                            },
+                                            supportingContent = {
+                                                Text("Maximum capacity: ${event.maxAttendance}")
+                                            },
+                                            leadingContent = {
+                                                Icon(
+                                                    painter = painterResource(R.drawable.baseline_people_24),
+                                                    contentDescription = "Attendance",
+                                                    tint = MaterialTheme.colorScheme.primary
+                                                )
+                                            }
+                                        )
+
+                                        // Location
+                                        ListItem(
+                                            headlineContent = { Text(event.location) },
+                                            leadingContent = {
+                                                Icon(
+                                                    Icons.Default.LocationOn,
+                                                    contentDescription = "Location",
+                                                    tint = MaterialTheme.colorScheme.primary
+                                                )
+                                            }
+                                        )
+
+                                        Divider(modifier = Modifier.padding(vertical = 8.dp))
+
+                                        // Description
                                         Text(
-                                            text = currentEvent.location.uppercase(Locale.ROOT),
-                                            modifier = Modifier
-                                                .padding(top = 4.dp)
-                                                .wrapContentHeight()
+                                            text = "About this event",
+                                            style = MaterialTheme.typography.titleMedium,
+                                            modifier = Modifier.padding(bottom = 8.dp)
                                         )
-                                    }
-                                    Row {
-                                        if (!isAttending) {
-                                            Button(
-                                                onClick = {
-                                                    eventService.joinEvent(
-                                                        currentUserID,
-                                                        currentEvent.id
-                                                    )
-                                                    updateAttendingPeople(true)
-                                                    UserService().addEventToAttend(
-                                                        currentUserID, currentEvent.id,
-                                                        onSuccess = { println("Event added to user") },
-                                                        onFailure = { exception -> println("Failed to add event to user: ${exception.message}") }
-                                                    )
-                                                },
-                                                modifier = Modifier.padding(16.dp)
-                                            ) {
-                                                Text("Join Now")
+                                        Text(
+                                            text = event.description,
+                                            style = MaterialTheme.typography.bodyMedium
+                                        )
+
+                                        Spacer(modifier = Modifier.height(16.dp))
+
+                                        // Action Buttons
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.SpaceEvenly
+                                        ) {
+                                            if (event.creatorId != currentUserID) {
+                                                FilledTonalButton(
+                                                    onClick = {
+                                                        if (isAttending) {
+                                                            eventService.leaveEvent(currentUserID, event.id)
+                                                            updateAttendingPeople(false)
+                                                            UserService().removeEventFromAttend(
+                                                                currentUserID,
+                                                                event.id,
+                                                                onSuccess = { println("Event removed from user") },
+                                                                onFailure = { exception ->
+                                                                    println("Failed to remove event from user: ${exception.message}")
+                                                                }
+                                                            )
+                                                        } else {
+                                                            eventService.joinEvent(currentUserID, event.id)
+                                                            updateAttendingPeople(true)
+                                                            UserService().addEventToAttend(
+                                                                currentUserID,
+                                                                event.id,
+                                                                onSuccess = { println("Event added to user") },
+                                                                onFailure = { exception ->
+                                                                    println("Failed to add event to user: ${exception.message}")
+                                                                }
+                                                            )
+                                                        }
+                                                    }
+                                                ) {
+                                                    Text(if (isAttending) "Leave Event" else "Join Event")
+                                                }
                                             }
-                                        } else {
-                                            Button(
-                                                onClick = {
-                                                    eventService.leaveEvent(
-                                                        currentUserID,
-                                                        currentEvent.id
+
+                                            if (event.creatorId == currentUserID) {
+                                                Button(
+                                                    onClick = {
+                                                        eventService.deleteEvent(event.id)
+                                                        navController.navigate("homeScreen") {
+                                                            navController.popBackStack()
+                                                        }
+                                                    },
+                                                    colors = ButtonDefaults.buttonColors(
+                                                        containerColor = MaterialTheme.colorScheme.error
                                                     )
-                                                    updateAttendingPeople(false)
-                                                    UserService().removeEventFromAttend(
-                                                        currentUserID, currentEvent.id,
-                                                        onSuccess = { println("Event removed from user") },
-                                                        onFailure = { exception -> println("Failed to remove event from user: ${exception.message}") }
-                                                    )
-                                                },
-                                                modifier = Modifier.padding(16.dp)
-                                            ) {
-                                                Text("Leave Now")
+                                                ) {
+                                                    Text("Delete Event")
+                                                }
                                             }
                                         }
-
-                                        ShowDeleteButton(
-                                            currentEvent.creatorId,
-                                            currentUserID,
-                                            navController,
-                                            eventService,
-                                            currentEvent
-                                        )
-                                    }
-
-                                }
-                            }
-                        }
-                    }
-
-                    item {
-                        currentEvent?.let {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp, vertical = 16.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                val coordinatesParts = currentEvent.coordinates.split(",")
-                                if (coordinatesParts.size == 2) {
-                                    val latitude = coordinatesParts[0].toDoubleOrNull()
-                                    val longitude = coordinatesParts[1].toDoubleOrNull()
-
-                                    if (latitude != null && longitude != null) {
-                                        EventLocationMapView(latitude, longitude)
                                     }
                                 }
-
                             }
-
                         }
                     }
                 }
@@ -514,7 +535,6 @@ fun EventView(navController: NavController, eventData: EventData?, currentEvent:
                 BottomNavBar(navController = navController, userService = UserService())
             }
         )
-
     }
 }
 
@@ -528,7 +548,7 @@ fun ShowDeleteButton(
 ) {
     if (userIFromDb == hostID) {
         Button(
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
             onClick = {
                 thisCurrentEvent?.let {
                     eventService.deleteEvent(it.id)
@@ -549,9 +569,8 @@ fun CoverImageAPIEvent(url: String) {
     AsyncImage(
         model = url,
         contentDescription = "Cover Image",
-        contentScale = ContentScale.Fit,
+        contentScale = ContentScale.Crop,
         modifier = Modifier
-            .padding(top = 1.dp)
             .fillMaxWidth()
             .height(250.dp)
     )
