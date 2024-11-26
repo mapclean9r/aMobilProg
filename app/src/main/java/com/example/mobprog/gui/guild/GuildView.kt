@@ -128,17 +128,6 @@ fun GuildView(navController: NavController, modifier: Modifier = Modifier, userS
                                     style = MaterialTheme.typography.headlineMedium
                                 )
                             },
-                            navigationIcon = {
-                                IconButton(
-                                    onClick = { /* TODO - åpne søkefelt */ }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Search,
-                                        contentDescription = "Search Icon",
-                                        tint = Color.White
-                                    )
-                                }
-                            },
                             colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                                 containerColor = MaterialTheme.colorScheme.primary,
                                 titleContentColor = Color.White,
